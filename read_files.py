@@ -7,10 +7,10 @@ import glob
 # path = r'C:\Users\jonas\MSci-Data\SoloA_2019-06-21--08-10-10_20'
 # all_files = glob.glob(path + "/*.csv")
 
-file_name = 'C:\Users\jonas\MSci-Data\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-19--16-19-29_1.csv'
+file_name = r'C:\Users\jonas\MSci-Data\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-19--16-19-29_1.csv'
 
-df = pd.read_csv(file_name, index_col = None, header=None, error_bad_lines=False, warn_bad_lines = False)
-df.head()
+df = pd.read_csv(file_name, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';')
+print(df.head())
 cols = list(df.columns.values)
 print(cols)
 #print(df.iloc[1]
