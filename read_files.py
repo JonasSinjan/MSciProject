@@ -27,6 +27,7 @@ df = df[new_cols]
 
 #probes 10 - 10 are also missing - which means they are in the 'SoloB files'
 #here I am reading the corresponding soloB file and merging it with the above dataframe
+#but the start times do not match - need to calibrate - not done yet
 if jonas:
     file_name = r'C:\Users\jonas\MSci-Data\SoloB_2019-06-21--08-09-10_20\SoloB_2019-06-19--16-17-38_1.csv'
 else:
