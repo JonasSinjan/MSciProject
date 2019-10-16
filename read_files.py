@@ -3,16 +3,23 @@ import numpy as np
 import scipy as sp
 import glob
 
-#set this to the directory where the data is kept on your local machine
-# path = r'C:\Users\jonas\MSci-Data\SoloA_2019-06-21--08-10-10_20'
-# all_files = glob.glob(path + "/*.csv")
-
+#set this to the directory where the data is kept on your local computer
 file_name = r'C:\Users\jonas\MSci-Data\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-19--16-19-29_1.csv'
 
 df = pd.read_csv(file_name, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';')
 print(df.head())
 cols = list(df.columns.values)
 print(cols)
+
+#can see that the columns are not in increasing order of the probe number - some are also missing - which means they are in the 'SoloB files'
+
+#so we could try to reorder the columns to get the probes in the right order and add in the missing probes from the solob files
+
+#the code below was an attempt at combining all the csv files into one dataframe - but this isn't working yet so you can ignore it
+
+
+# path = r'C:\Users\jonas\MSci-Data\SoloA_2019-06-21--08-10-10_20'
+# all_files = glob.glob(path + "/*.csv")
 #print(df.iloc[1]
 #this concatenates all the csv files in one folder into one dataframe
 #NB: for the unpowered test where it is moved through the array - unsure if should be concatenated
