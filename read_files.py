@@ -13,10 +13,17 @@ else:
 
 df = pd.read_csv(file_name, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';')
 print(df.head())
-cols = list(df.columns.values)
-print(cols)
+cols = df.columns.tolist()
+#print(cols)
 
-#can see that the columns are not in increasing order of the probe number - some are also missing - which means they are in the 'SoloB files'
+#this will reorder the columns into the correct order
+new_cols = cols[0:5] + cols[-16:-1] + [cols[-1]] + cols[13:17] + cols[9:13] + cols[5:9]
+#print(new_cols)
+
+df = df[new_cols]
+print(df.head())
+
+#probes 9 - 10 are also missing - which means they are in the 'SoloB files'
 
 #so we could try to reorder the columns to get the probes in the right order and add in the missing probes from the solob files
 
