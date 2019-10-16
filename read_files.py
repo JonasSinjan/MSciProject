@@ -4,7 +4,12 @@ import scipy as sp
 import glob
 
 #set this to the directory where the data is kept on your local computer
-file_name = r'C:\Users\jonas\MSci-Data\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-19--16-19-29_1.csv'
+jonas = True
+
+if jonas:
+    file_name = r'C:\Users\jonas\MSci-Data\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-19--16-19-29_1.csv'
+else:
+    file_name = r'your_location'#insert here
 
 df = pd.read_csv(file_name, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';')
 print(df.head())
