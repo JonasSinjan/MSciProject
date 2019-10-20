@@ -15,18 +15,18 @@ def powered_analysis():
     df_B = soloB(file_path_B)
 
     df = concatenate(df_A, df_B)
-    print(df.head())
+    # print(df.head())
 
     print(df[df['time']==1.00].index)
 
-    #plotting the raw probes results
-    plt.figure()
-    for col in df.columns.tolist()[1:13]:
-        plt.plot(df['time'], df[col], label=str(col))
+    # #plotting the raw probes results
+    # plt.figure()
+    # for col in df.columns.tolist()[1:13]:
+    #     plt.plot(df['time'], df[col], label=str(col))
 
-    plt.xlabel('Time (s)')
-    plt.ylabel('B (nT)')
-    #plt.legend()
-    plt.show()
+    # plt.xlabel('Time (s)')
+    # plt.ylabel('B (nT)')
+    # plt.legend()
+    # plt.show()
 
 powered_analysis()

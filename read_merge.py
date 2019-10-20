@@ -28,8 +28,24 @@ def soloB(file_path):
 
 def concatenate(a,b):
     df = pd.concat([a, b], axis = 1)
+    #print(len(df))
+    #trying to average over every 50 rows, but unsure how to group and cant get it to work
+    # if df['time'].iloc[1] == 0.001:
+    #     #df = df.groupby(np.arange(round(len(df), -3))//50).mean()
+    #     df = df.groupby(df.index // 50).mean()
+    #     #df = df.groupby(50).mean()
+
+    #print(df.head())
     return df
 
+    # collist = df.columns.tolist()
+    # df_new = pd.DataFrame(np.nan, index=range(len(df)), columns=collist)
+    
+    # index = 0
+    
+    # for index, row in df.iterrows()
+
+    #     index += 1
     #the code below was an attempt at combining all the csv files into one dataframe - but this isn't working yet so you can ignore it
 
     # path = r'C:\Users\jonas\MSci-Data\SoloA_2019-06-21--08-10-10_20'
