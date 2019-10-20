@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import scipy as sp
 import glob
+import matplotlib.pyplot as plt
 
 #set this to the directory where the data is kept on your local computer
 jonas = True
@@ -48,6 +49,17 @@ df_B = df_B[new_cols]
 df = pd.concat([df, df_B], axis = 1)
 
 print(df.head())
+
+print(df[df['time']==1.00].index) #returns index 20 - proves that this data file is already sampled at 20Hz.
+
+plt.figure()
+for col in df.columns.tolist()[1:20]:
+    plt.plot(df['time'], df[col], label=str(col))
+
+plt.xlabel('Time (s)')
+plt.ylabel('B (nT)')
+plt.legend()
+plt.show()
 
 #the code below was an attempt at combining all the csv files into one dataframe - but this isn't working yet so you can ignore it
 
