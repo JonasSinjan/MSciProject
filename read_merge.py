@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 def read_files(path, soloA):
     #path - location of folder to concat
     #soloA - set to True if soloA, if soloB False
+
+    #these files will be too big and take too long - should specify which columns we desire first, to only read in data we need to analysis
     all_files = glob.glob(path + "/*.csv")
     li, length_var = [], 0
     for filename in all_files:   
