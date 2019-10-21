@@ -1,4 +1,6 @@
-from read_merge import *
+import matplotlib.pyplot as plt
+from read_merge import soloA, soloB, concatenate
+import pandas as pd
 
 def unpowered_analysis():
     #set this to the directory where the data is kept on your local computer
