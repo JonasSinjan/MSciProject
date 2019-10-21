@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from read_merge import soloA, soloB, concatenate
 import pandas as pd
 
-def powered_analysis():
+def day_two():
 
     jonas = True
 
@@ -31,4 +31,4 @@ def powered_analysis():
     # plt.legend()
     # plt.show()
 
-powered_analysis()
+day_two()

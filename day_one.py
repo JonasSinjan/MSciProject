@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from read_merge import soloA, soloB, concatenate, soloA_concat, soloB_concat
 import pandas as pd
 
-def unpowered_analysis():
+def day_one():
     #set this to the directory where the data is kept on your local computer
     jonas = True
 
