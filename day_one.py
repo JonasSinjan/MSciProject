@@ -19,11 +19,11 @@ def day_one():
         path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20")
 
     soloA = True
-    df = read_files(path_A, soloA)
 
-    #print(df.tail())
-    #print(len(df))
-
+    df = read_files(path_A, soloA, jonas)
+    print(df.head())
+    print(df.tail())
+    print(len(df))
     # df_A = soloA(file_path_A)
     # df_B = soloB(file_path_B)
 
