@@ -7,13 +7,14 @@ import os
 
 def read_files(path, soloA, jonas, collist=None):
     #path - location of folder to concat
-    #soloA - set to True if soloA, if soloB False
+    #soloA - set to True if soloA, if soloB False 
     if jonas: 
         all_files = glob.glob(path + "\*.csv")
     else: 
         all_files = glob.glob(path + "\*.csv")
     li = []
     for filename in all_files:   
+
         df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';', usecols = collist, nrows = 10)
         
         if collist == None:
@@ -28,7 +29,7 @@ def read_files(path, soloA, jonas, collist=None):
         
     df = pd.concat(li, ignore_index = True)
     df = df.sort_values('time', ascending = True, kind = 'mergesort')
-
+    
     return df
     
 def soloA(file_path):
