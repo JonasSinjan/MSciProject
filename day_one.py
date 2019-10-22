@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 from read_merge import soloA, soloB, read_files
 import pandas as pd
+import os
 
 def day_one():
     #set this to the directory where the data is kept on your local computer
-    jonas = True
+    jonas = False
 
     if jonas:
         file_path_A = r'C:\Users\jonas\MSci-Data\day_one\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-21--08-10-10_1.csv'
@@ -12,8 +13,10 @@ def day_one():
         path_A = r'C:\Users\jonas\MSci-Data\day_one\SoloA_2019-06-21--08-10-10_20'
         path_B = r'C:\Users\jonas\MSci-Data\day_one\SoloB_2019-06-21--08-09-10_20'
     else:
-        file_path_A = r'your_location'#insert here
-        file_path_B = r'your_location'#insert here
+        file_path_A = os.path.expanduser("~/Documents/MsciProject/Data/SoloA_2019-06-21--08-10-10_20/SoloA_2019-06-21--08-10-10_1.csv")
+        file_path_B = os.path.expanduser("~/Documents/MsciProject/Data/SoloB_2019-06-21--08-09-10_20/SoloB_2019-06-21--08-09-10_1.csv")
+        path_A = os.path.expanduser("~/Documents/MsciProject/Data/SoloA_2019-06-21--08-10-10_20")
+        path_B = os.path.expanduser("~/Documents/MsciProject/Data/SoloB_2019-06-21--08-09-10_20")
 
     soloA = True
     df = read_files(path_A, soloA)
