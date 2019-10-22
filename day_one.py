@@ -15,15 +15,15 @@ def day_one():
     else:
         file_path_A = os.path.expanduser("~/Documents/MsciProject/Data/SoloA_2019-06-21--08-10-10_20/SoloA_2019-06-21--08-10-10_1.csv")
         file_path_B = os.path.expanduser("~/Documents/MsciProject/Data/SoloB_2019-06-21--08-09-10_20/SoloB_2019-06-21--08-09-10_1.csv")
-        path_A = os.path.expanduser("~/Documents/MsciProject/Data/SoloA_2019-06-21--08-10-10_20")
-        path_B = os.path.expanduser("~/Documents/MsciProject/Data/SoloB_2019-06-21--08-09-10_20")
+        path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_20")
+        path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20")
 
     soloA = True
     df = read_files(path_A, soloA)
+
     #print(df.tail())
     #print(len(df))
-    #yolo
-    
+
     # df_A = soloA(file_path_A)
     # df_B = soloB(file_path_B)
 
