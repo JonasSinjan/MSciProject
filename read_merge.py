@@ -13,10 +13,10 @@ def read_files(path, soloA):
     li, length_var = [], 0
     for filename in all_files:   
         df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';')
-        print(df['time'].iloc[0:round(len(df)/30)].mean())
+        #print(df['time'].iloc[0:round(len(df)/30)].mean())
         #print('og = ', len(df))
-        df = df.groupby(np.arange(len(df))//30).mean()
-        print(df['time'].iloc[0])
+        #df = df.groupby(np.arange(len(df))//30).mean()
+        #print(df['time'].iloc[0])
         #print('compressed = ', len(df))
         cols = df.columns.tolist()
         if soloA:
@@ -24,6 +24,7 @@ def read_files(path, soloA):
         else:
             new_cols = cols[9:13] + cols[1:9] + cols[13:17]
         df = df[new_cols]
+        print(df['time'].iloc[0])
         li.append(df)
         length_var += len(df)
         #print('total len = ', length_var)
