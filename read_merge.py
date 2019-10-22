@@ -15,8 +15,7 @@ def read_files(path, soloA, jonas, collist=None):
     li = []
     for filename in all_files:   
 
-        df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';', usecols = collist, nrows = 10)
-        
+        df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';', usecols = collist)
         if collist == None:
             cols = df.columns.tolist()
             if soloA:
@@ -29,7 +28,7 @@ def read_files(path, soloA, jonas, collist=None):
         
     df = pd.concat(li, ignore_index = True)
     df = df.sort_values('time', ascending = True, kind = 'mergesort')
-    
+    df = df.reset_index(drop=True)
     return df
     
 def soloA(file_path):
