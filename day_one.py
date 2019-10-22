@@ -16,7 +16,7 @@ def day_one():
         file_path_B = r'your_location'#insert here
 
     soloA = True
-    df = read_files(path_A, soloA)
+    df = read_files(path_A, soloA, jonas)
     print(df.head())
     print(df.tail())
     print(len(df))
