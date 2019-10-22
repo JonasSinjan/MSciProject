@@ -20,8 +20,8 @@ def day_one():
 
     soloA = True
     df = read_files(path_A, soloA)
-    print(df.tail())
-    print(len(df))
+    #print(df.tail())
+    #print(len(df))
     #yolo
     
     # df_A = soloA(file_path_A)
