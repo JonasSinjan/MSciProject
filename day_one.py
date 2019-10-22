@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 from read_merge import soloA, soloB, read_files
 import pandas as pd
 import os
+import numpy as np
+import scipy.signal as sp
 
 def day_one():
     #set this to the directory where the data is kept on your local computer
@@ -20,11 +22,10 @@ def day_one():
 
     soloA = True
 
-    collist = ['time', 'Probe07_X'] #'Probe01_||'
+    collist = ['time', 'Probe01_X'] #'Probe01_||'
     df = read_files(path_A, soloA, jonas, collist)
 
-    print(df.head())
-    print(df.tail())
+    print(df)
     print(len(df))
     # df_A = soloA(file_path_A)
     # df_B = soloB(file_path_B)
@@ -49,7 +50,13 @@ def day_one():
         plt.ylabel('B (nT)')
         #plt.legend()
         plt.show()
-
+        
+ 
+    f, Pxx = sp.periodogram(df['Probe01_X'][:1000],1000)
+    plt.figure()
+    plt.plot(f,Pxx)
+    plt.show()
+    
     
 day_one()
 
