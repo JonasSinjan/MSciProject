@@ -9,20 +9,10 @@ def read_files(path, soloA, jonas, collist=None):
     #path - location of folder to concat
     #soloA - set to True if soloA, if soloB False
 
-
-    #these files will be too big and take too long - should specify which columns we desire first, to only read in data we need to analysis
-    #all_files = sorted(glob.glob(path + "\*.csv"), key=os.path.getmtime)
-    all_files = sorted(glob.glob(path + "/*.csv"))
-    print(all_files)
-    li, length_var = [], 0
-    print(li)
-    #while len(li) < 20:
-    for index, filename in enumerate(all_files):   
-
     if jonas: 
         all_files = glob.glob(path + "\*.csv")
     else: 
-        all_files = glob.glob(path + "\*.csv")
+        all_files = glob.glob(path + "/*.csv")
     li = []
     for filename in all_files:   
 
