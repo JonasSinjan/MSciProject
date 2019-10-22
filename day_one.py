@@ -16,7 +16,8 @@ def day_one():
         file_path_B = r'your_location'#insert here
 
     soloA = True
-    df = read_files(path_A, soloA, jonas)
+    collist = ['time', 'Probe07_X'] #'Probe01_||'
+    df = read_files(path_A, soloA, jonas, collist)
     print(df.head())
     print(df.tail())
     print(len(df))
