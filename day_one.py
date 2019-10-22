@@ -19,6 +19,7 @@ def day_one():
     df = read_files(path_A, soloA)
     print(df.tail())
     print(len(df))
+    #yolo
     
     # df_A = soloA(file_path_A)
     # df_B = soloB(file_path_B)
