@@ -10,7 +10,8 @@ def read_files(path, soloA):
     #soloA - set to True if soloA, if soloB False
 
     #these files will be too big and take too long - should specify which columns we desire first, to only read in data we need to analysis
-    all_files = sorted(glob.glob(path + "\*.csv"), key=os.path.getmtime)
+    #all_files = sorted(glob.glob(path + "\*.csv"), key=os.path.getmtime)
+    all_files = sorted(glob.glob(path + "/*.csv"))
     print(all_files)
     li, length_var = [], 0
     print(li)
@@ -73,17 +74,17 @@ def read_files(path, soloA):
         #df = df.groupby(np.arange(len(df))//30).mean()
         #print(df['time'].iloc[0])
         #print('compressed = ', len(df))
-"""
-        cols = df.columns.tolist()
-        if soloA:
-            new_cols = cols[0:5] + cols[-16:-1] + [cols[-1]] + cols[13:17] + cols[9:13] + cols[5:9] #this will reorder the columns into the correct order
-        else:
-            new_cols = cols[9:13] + cols[1:9] + cols[13:17]
-        df = df[new_cols]
-        print(df['time'].iloc[0])
-        li.append(df)
-        length_var += len(df)
-"""
+    """
+    cols = df.columns.tolist()
+    if soloA:
+        new_cols = cols[0:5] + cols[-16:-1] + [cols[-1]] + cols[13:17] + cols[9:13] + cols[5:9] #this will reorder the columns into the correct order
+    else:
+        new_cols = cols[9:13] + cols[1:9] + cols[13:17]
+    df = df[new_cols]
+    print(df['time'].iloc[0])
+    li.append(df)
+    length_var += len(df)
+    """
         #cols = df.columns.tolist()
         #if soloA:
         #    new_cols = cols[0:5] + cols[-16:-1] + [cols[-1]] + cols[13:17] + cols[9:13] + cols[5:9] #this will reorder the columns into the correct order
