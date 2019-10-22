@@ -20,7 +20,9 @@ def day_one():
 
     soloA = True
 
-    df = read_files(path_A, soloA, jonas)
+    collist = ['time', 'Probe07_X'] #'Probe01_||'
+    df = read_files(path_A, soloA, jonas, collist)
+
     print(df.head())
     print(df.tail())
     print(len(df))
