@@ -27,7 +27,6 @@ def read_files(path, soloA, jonas, collist=None):
         li.append(df)
         
     df = pd.concat(li, ignore_index = True)
-    #df.set_index('time')
     df = df.sort_values('time', ascending = True, kind = 'mergesort')
 
     return df
