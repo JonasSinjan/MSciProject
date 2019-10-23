@@ -61,7 +61,7 @@ def day_one():
     #plt.xlim(0,100)
     plt.ylim(10e-2,10e1)
     plt.xlabel('Frequency [Hz]')
-    plt.ylabel('Linear spectrum [V RMS]')
+    plt.ylabel('Linear spectrum')
     plt.title('Power Spectrum')
     plt.show()
     
