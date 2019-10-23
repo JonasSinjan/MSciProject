@@ -3,11 +3,11 @@ from read_merge import soloA, soloB, read_files
 import pandas as pd
 import os
 import numpy as np
-import scipy.signal as sp
+import scipy.signal as sps
 
 def day_one():
     #set this to the directory where the data is kept on your local computer
-    jonas = False
+    jonas = True
 
     if jonas:
         file_path_A = r'C:\Users\jonas\MSci-Data\day_one\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-21--08-10-10_1.csv'
@@ -52,11 +52,27 @@ def day_one():
         plt.show()
         
  
-    f, Pxx = sp.periodogram(df['Probe01_X'][:1000],1000)
+    #power spectral density plot
+    x = df['Probe01_X'][:20000]
+    fs = 500 # sampling rate
+    f, Pxx = sps.periodogram(x,fs)
     plt.figure()
-    plt.plot(f,Pxx)
+    plt.semilogy(f,np.sqrt(Pxx)) #sqrt required for power spectrum, and semi log y axis
+    #plt.xlim(0,100)
+    plt.ylim(10e-2,10e1)
+    plt.xlabel('Frequency [Hz]')
+    plt.ylabel('Linear spectrum [V RMS]')
+    plt.title('Power Spectrum')
     plt.show()
     
+    #spectogram
+    f, t, Sxx = sps.spectrogram(x,fs)
+    plt.figure()
+    plt.pcolormesh(t, f, Sxx)
+    plt.ylabel('Frequency [Hz]')
+    plt.xlabel('Time [sec]')
+    plt.title('Spectogram')
+    plt.show()
     
 day_one()
 
