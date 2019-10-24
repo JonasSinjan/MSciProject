@@ -7,7 +7,7 @@ import scipy.signal as sps
 
 def day_one():
     #set this to the directory where the data is kept on your local computer
-    jonas = True
+    jonas = False
 
     if jonas:
         file_path_A = r'C:\Users\jonas\MSci-Data\day_one\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-21--08-10-10_1.csv'
@@ -15,15 +15,33 @@ def day_one():
         path_A = r'C:\Users\jonas\MSci-Data\day_one\SoloA_2019-06-21--08-10-10_20'
         path_B = r'C:\Users\jonas\MSci-Data\day_one\SoloB_2019-06-21--08-09-10_20'
     else:
-        file_path_A = os.path.expanduser("~/Documents/MsciProject/Data/SoloA_2019-06-21--08-10-10_20/SoloA_2019-06-21--08-10-10_1.csv")
-        file_path_B = os.path.expanduser("~/Documents/MsciProject/Data/SoloB_2019-06-21--08-09-10_20/SoloB_2019-06-21--08-09-10_1.csv")
+        file_path_A = os.path.expanduser("~/Documents/MsciProject/Data/SoloA_2019-06-21--08-10-10_20/SoloA_2019-06-21--08-10-10_01.csv")
+        file_path_B = os.path.expanduser("~/Documents/MsciProject/Data/SoloB_2019-06-21--08-09-10_20/SoloB_2019-06-21--08-09-10_01.csv")
         path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_20")
         path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20")
 
-    soloA = True
+
+    align = False
+    
+    if align == True:
+        
+        df_A = soloA(file_path_A)
+        
+        max_index = []
+        print (df_A.iloc[0])
+        #for col in collist[1:]:
+        #    probe = df[col].tolist()
+        #    max_index.append(probe.index(max(probe, key = abs)))
+        #peak_index = max(max_index, key=max_index.count)
+        #peak_time = df['time'][peak_index]
+        #print(peak_time)
+
+
+
+    soloA_var = True
 
     collist = ['time', 'Probe01_X'] #'Probe01_||'
-    df = read_files(path_A, soloA, jonas, collist)
+    df = read_files(path_A, soloA_var, jonas, collist)
 
     print(df)
     print(len(df))
@@ -35,23 +53,24 @@ def day_one():
 
     #print(df[df['time']==1.00].index) #returns index 20 - proves that this data file is already sampled at 20Hz.
 
+
     plot = False
 
     if plot:
         #plotting the raw probes results
         plt.figure()
-        for col in df.columns.tolist()[1:5]:
-            plt.plot(df['time'], df[col], label=str(col))
+        for col in collist[1:]:
+            plt.plot(df['time'], df[col].tolist(), label=str(col))
             
         # for col in df.columns.tolist()[-4:0]:
         #     plt.plot(df['time'], df[col], label=str(col))
 
         plt.xlabel('Time (s)')
         plt.ylabel('B (nT)')
-        #plt.legend()
+        plt.legend()
         plt.show()
         
- 
+    
     #power spectral density plot
     x = df['Probe01_X'][:20000]
     fs = 500 # sampling rate
@@ -73,6 +92,7 @@ def day_one():
     plt.xlabel('Time [sec]')
     plt.title('Spectogram')
     plt.show()
+    
     
 day_one()
 
