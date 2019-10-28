@@ -34,7 +34,7 @@ def align():
 
         collist = ['Probe01_X','Probe01_Y','Probe01_Z','Probe01_||','Probe10_X','Probe10_Y','Probe10_Z','Probe10_||']
         
-        plt.figure()
+        plt.figure(1)
         for col in collist:
             plt.plot(df['time'], df[col].tolist(), label=str(col))
             
@@ -70,7 +70,27 @@ def align():
         peak_time_B = peak_index_B*sample_rate    #this is the time at which the largest peak occurs in B
         print("B",peak_time_B)
         
+        time_diff = peak_time_A - peak_time_B
+        
+        B_columns = ['Probe10_X','Probe10_Y','Probe10_Z','Probe10_||','Probe11_X','Probe11_Y','Probe11_Z','Probe11_||','Probe09_X','Probe09_Y','Probe09_Z','Probe09_||','Probe12_X','Probe12_Y','Probe12_Z','Probe12_||']
+        
+        for col in B_columns:
+            df[col] = df[col].shift(int(time_diff/sample_rate))
+        
+        
+        plt.figure(2)
+        for col in collist:
+            plt.plot(df['time'], df[col].tolist(), label=str(col))
+            
+        # for col in df.columns.tolist()[-4:0]:
+        #     plt.plot(df['time'], df[col], label=str(col))
 
+        plt.xlabel('Time (s)')
+        plt.ylabel('B (nT)')
+        plt.legend()
+        plt.show()
+        
+        
 
 
 
