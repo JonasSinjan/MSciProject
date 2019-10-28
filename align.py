@@ -75,6 +75,7 @@ def align(file_path_A, file_path_B):
     df_B['time'] = df_B['time'] + time_diff
     #print(df_B.head())
     print(df_B.iloc[217187])
+    print(df_B.iloc[0])
     
     # B_columns = ['Probe10_X','Probe10_Y','Probe10_Z','Probe10_||','Probe11_X','Probe11_Y','Probe11_Z','Probe11_||','Probe09_X','Probe09_Y','Probe09_Z','Probe09_||','Probe12_X','Probe12_Y','Probe12_Z','Probe12_||']
     
