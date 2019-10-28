@@ -43,6 +43,6 @@ def soloB(file_path):
     #skiprows is required as the read_csv function cannot read in the header of the csv files correctly for some reason - might need the header data later - need to fix
     df_B = pd.read_csv(file_path, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';')
     cols = df_B.columns.tolist()
-    new_cols = cols[9:13] + cols[1:9] + cols[13:17]#reorder the columns into the correct order
+    new_cols = [cols[0]] + cols[9:13] + cols[1:9] + cols[13:17]#reorder the columns into the correct order # adding time as first column
     df_B = df_B[new_cols]
     return df_B
