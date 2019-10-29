@@ -8,7 +8,7 @@ import time
 
 
 
-def day_one(collist):
+def day_one(collist, soloA_bool):
     #set this to the directory where the data is kept on your local computer
     jonas = True
 
@@ -24,10 +24,11 @@ def day_one(collist):
         path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20")
 
 
-    soloA_var = True
 
-    #'Probe01_||'
-    df = read_files(path_A, soloA_var, jonas, collist)
+    if soloA_bool:
+        df = read_files(path_A, soloA_bool, jonas, collist)
+    else:
+        df = read_files(path_B, soloA_bool, jonas, collist)
     print(len(df))
     
     # #now read in all soloB files
@@ -54,30 +55,30 @@ def day_one(collist):
     
     #power spectral density plot
     
-    fs = 500 # sampling rate
+    fs = 100 # sampling rate
     probe_x = collist[1]
     probe_y = collist[2]
     probe_z = collist[3]
     probe_m = collist[4]
-    x = df[probe_x][:20000]
+    x = df[probe_x]#[:20000]
     f_x, Pxx_x = sps.periodogram(x,fs, scaling='spectrum')
-    x = df[probe_y][:20000]
+    x = df[probe_y]#[:20000]
     f_y, Pxx_y = sps.periodogram(x,fs, scaling='spectrum')
-    x = df[probe_z][:20000]
+    x = df[probe_z]#[:20000]
     f_z, Pxx_z = sps.periodogram(x,fs, scaling='spectrum')
-    x = df[probe_m][:20000]
+    x = df[probe_m]#[:20000]
     f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
     
     def plot_power(f,Pxx,probe):
         plt.semilogy(f,np.sqrt(Pxx)) #sqrt required for power spectrum, and semi log y axis
-        plt.xlim(0,100)
-        plt.ylim(10e-4,10e1)
+        plt.xlim(0,20)
+        plt.ylim(10e-4,10e-1)
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Log(FFT magnitude)')
         plt.title(f'{probe}')
-        index, dict_p = sps.find_peaks(np.log(np.sqrt(Pxx)), threshold = 5)
-        for i in index:
-            print(np.log(np.sqrt(Pxx))[index])
+        peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 3)
+        print([round(i,1) for i in f[peaks] if i <= 20], len(peaks))
+        plt.semilogy(f[peaks], np.sqrt(Pxx)[peaks], marker = 'x', markersize = 10, color='orange', linestyle = 'None')
     
     plt.figure()
     plt.title('Power Spectrum')
@@ -108,7 +109,8 @@ def day_one(collist):
     
 num = '02'
 collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
-day_one(collist)
+soloA_bool = True
+day_one(collist, soloA_bool)
 
 
 
