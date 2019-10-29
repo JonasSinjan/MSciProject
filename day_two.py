@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from read_merge import soloA, soloB
 import pandas as pd
+import os
 
 def day_two():
 
@@ -16,10 +17,10 @@ def day_two():
     df_A = soloA(file_path_A)
     df_B = soloB(file_path_B)
 
-    df = concatenate(df_A, df_B)
+    # df = concatenate(df_A, df_B)
     # print(df.head())
 
-    print(df[df['time']==1.00].index)
+    #print(df[df['time']==1.00].index)
 
     # #plotting the raw probes results
     # plt.figure()
