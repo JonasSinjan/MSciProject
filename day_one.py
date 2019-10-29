@@ -21,36 +21,7 @@ def day_one():
         path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_20")
         path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20")
 
-    
-    
-    align = False
-    
-    if align:
-        
-        df_A = soloA(file_path_A)
-        df_B = soloB(file_path_B)
-        
-        collist_A = ['Probe01_X','Probe01_Y','Probe01_Z','Probe01_||','Probe02_X','Probe02_Y']
-        max_index_A = []   #empty list for max abs values for each probe
-        for col in collist_A:
-            probe = df_A[col].abs() #creates absolute series
-            max_index_A.append(probe.idxmax()) #returns first index of maximum
-        peak_index_A = max(max_index_A, key=max_index_A.count)   #find the mode of the list - most commonly shared max point between probes in A
-        # sample_rate = df_A['time'][1]-df_A['time'][0]
-        # peak_time_A = peak_index_A*sample_rate
-        peak_time_A = df_A['time'].iloc[peak_index_A] #suggest this instead-means never have to worry about sample rate
-        print("A",peak_time_A)
-        
-        collist_B = ['Probe10_X','Probe10_Y','Probe10_Z','Probe10_||','Probe11_X','Probe11_Y']
-        max_index_B = []   #empty list for max abs values for each probe
-        for col in collist_B:
-            probe = df_B[col].abs()
-            max_index_B.append(probe.idxmax())
-        peak_index_B = max(max_index_B, key=max_index_B.count)   #find the mode of the list - most commonly shared max point between probes in A
-        peak_time_B = df_B['time'].iloc[peak_index_B] #added time column to B files - when merging have to take this into account
-        print("B",peak_time_B)
-    
-    
+
     soloA_var = True
 
     collist = ['time', 'Probe01_X'] #'Probe01_||'
