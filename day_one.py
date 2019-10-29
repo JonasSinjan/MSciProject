@@ -23,7 +23,7 @@ def day_one():
 
     
     
-    align = True
+    align = False
     
     if align:
         
@@ -51,11 +51,18 @@ def day_one():
         print("B",peak_time_B)
     
     
-    soloA_var = False
+    soloA_var = True
 
     collist = ['time', 'Probe01_X'] #'Probe01_||'
     df = read_files(path_A, soloA_var, jonas, collist)
-
+    print(len(df))
+    
+    #now read in all soloB files
+    collist = ['time', 'Probe10_X'] #ALWAYS READ IN TIME
+    soloA_var = False
+    df_2 = read_files(path_B, soloA_var, jonas, collist)
+    print(len(df_2))
+    
     #print(df)
     #print(len(df))
     

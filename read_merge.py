@@ -13,20 +13,28 @@ def read_files(path, soloA, jonas, collist=None):
     else: 
         all_files = glob.glob(path + "/*.csv")
     li = []
-    for filename in all_files:   
-
-        df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';', usecols = collist)
-        if collist == None:
-            cols = df.columns.tolist()
-            if soloA:
+    for filename in all_files:        
+        if soloA:
+            if collist == None:
+                df =  pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';')
+                cols = df.columns.tolist()
                 new_cols = cols[0:5] + cols[-16:-1] + [cols[-1]] + cols[13:17] + cols[9:13] + cols[5:9] #this will reorder the columns into the correct order
+                df = df[new_cols]
             else:
-                new_cols = cols[9:13] + cols[1:9] + cols[13:17]
-            df = df[new_cols]
+                df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';', usecols = collist)
+        else:
+            if collist == None:
+                df =  pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';')
+                cols = df.columns.tolist()
+                new_cols = [cols[0]] + cols[9:13] + cols[1:9] + cols[13:17]
+                df = df[new_cols]
+            else:
+                df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';', usecols = collist)
+            
         #print(df['time'].iloc[0])
         li.append(df)
         
-    df = pd.concat(li, ignore_index = True)
+    df = pd.concat(li, ignore_index = True, sort=True)
     df = df.sort_values('time', ascending = True, kind = 'mergesort')
     df = df.reset_index(drop=True)
     return df
