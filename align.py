@@ -10,6 +10,7 @@ def align(file_path_A, file_path_B):
     
     df_A = soloA(file_path_A)
     df_B = soloB(file_path_B)
+    #df_A = df_A[df_A['time']<=600]
     print(len(df_A), len(df_B))
     #df = df_A.merge(df_B) #if want to merge
     #print(len(df)) #this cuts off the end half of soloB
@@ -17,7 +18,7 @@ def align(file_path_A, file_path_B):
     collist_A = df_A.columns.tolist()
     max_index_A = []   #empty list for max abs values for each probe
     for col in collist_A[1:]:
-        print(col)
+        #print(col)
         probe = df_A[col].abs() #creates absolute series
         max_index_A.append(probe.idxmax()) #returns first index of maximum
     print(max_index_A)
@@ -28,7 +29,7 @@ def align(file_path_A, file_path_B):
     collist_B = df_B.columns.tolist()
     max_index_B = []   #empty list for max abs values for each probe
     for col in collist_B[1:]:
-        print(col)
+        #print(col)
         probe = df_B[col].abs()
         max_index_B.append(probe.idxmax())
     peak_index_B = max(max_index_B, key=max_index_B.count) 
