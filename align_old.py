@@ -21,32 +21,40 @@ def align():
         file_path_A = r'C:\Users\jonas\MSci-Data\powered\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-21--08-10-10_1.csv' #the first couple of files in some of the folders are from earlier days
         file_path_B = r'C:\Users\jonas\MSci-Data\powered\SoloB_2019-06-21--08-09-10_20\SoloB_2019-06-21--08-09-10_1.csv'
     else:
-        file_path_A = os.path.expanduser("~/Documents/MsciProject/Data/SoloA_2019-06-21--08-10-10_20/SoloA_2019-06-21--08-10-10_01.csv")
-        file_path_B = os.path.expanduser("~/Documents/MsciProject/Data/SoloB_2019-06-21--08-09-10_20/SoloB_2019-06-21--08-09-10_01.csv")
+        #file_path_A = os.path.expanduser("~/Documents/MsciProject/Data/SoloA_2019-06-21--08-10-10_20/SoloA_2019-06-21--08-10-10_01.csv")
+        #file_path_B = os.path.expanduser("~/Documents/MsciProject/Data/SoloB_2019-06-21--08-09-10_20/SoloB_2019-06-21--08-09-10_01.csv")
+        file_path_A = os.path.expanduser("~/Documents/MsciProject/Data/SoloA_2019-06-24--08-14-46_9/SoloA_2019-06-24--08-14-46_1.csv")
+        file_path_B = os.path.expanduser("~/Documents/MsciProject/Data/SoloB_2019-06-24--08-14-24_20/SoloB_2019-06-24--08-14-24_1.csv")
 
         
         df_A = soloA(file_path_A)
         df_B = soloB(file_path_B)
         
 
-        df = pd.concat([df_A, df_B], axis = 1)
+        df = df_A.merge(df_B)
+        #df = pd.concat([df_A,df_B],axis=1)
 
 
-        collist = ['Probe01_X','Probe01_Y','Probe01_Z','Probe01_||','Probe10_X','Probe10_Y','Probe10_Z','Probe10_||']
+        #collist = ['Probe01_X','Probe01_Y','Probe01_Z','Probe01_||','Probe10_X','Probe10_Y','Probe10_Z','Probe10_||']
+        collist_A = ['Probe01_Y']
+        collist_B = ['Probe10_Z']
+        
         
         plt.figure(1)
-        for col in collist:
-            plt.plot(df['time'], df[col].tolist(), label=str(col))
+        for col in collist_A:
+            plt.plot(df_A['time'], df_A[col], label=str(col))
+        for col in collist_B:
+            plt.plot(df_B['time'], df_B[col], label=str(col))    
             
         # for col in df.columns.tolist()[-4:0]:
         #     plt.plot(df['time'], df[col], label=str(col))
 
         plt.xlabel('Time (s)')
         plt.ylabel('B (nT)')
-        plt.legend()
+        plt.legend(loc="upper right")
         plt.show()
         
-       
+        """
         
         collist_A = ['Probe01_X','Probe01_Y','Probe01_Z','Probe01_||','Probe02_X','Probe02_Y']
         max_index_A = []   #empty list for max abs values for each probe
@@ -90,7 +98,7 @@ def align():
         plt.legend()
         plt.show()
         
-        
+        """
 
 
 
