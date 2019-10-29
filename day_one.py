@@ -67,7 +67,7 @@ def day_one():
 
     
     #power spectral density plot
-    x = df['Probe01_X'][1070000:1100000]
+    x = df['Probe01_X'][5270000:5310000]
     fs = 1000 # sampling rate
     f, Pxx = sps.periodogram(x,fs)
     plt.figure()
@@ -80,9 +80,9 @@ def day_one():
     plt.show()
     
     #spectogram
-    f, t, Sxx = sps.spectrogram(x,fs,nperseg=1000)
+    f, t, Sxx = sps.spectrogram(x,fs,nperseg=700)
     plt.figure()
-    plt.pcolormesh(t, f, Sxx)
+    plt.pcolormesh(t, f, Sxx,vmin = 0.,vmax = 0.1)
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
     plt.title('Spectogram')
