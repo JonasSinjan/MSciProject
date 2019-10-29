@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from read_merge import soloA, soloB, read_files
+from align import align
 import pandas as pd
 import os
 import numpy as np
@@ -31,11 +32,8 @@ def day_one(collist, soloA_bool):
         df = read_files(path_B, soloA_bool, jonas, collist)
     print(len(df))
     
-    # #now read in all soloB files
-    # collist = ['time', 'Probe10_X'] #ALWAYS READ IN TIME
-    # soloA_var = False
-    # df_2 = read_files(path_B, soloA_var, jonas, collist)
-    # print(len(df_2))
+    time_diff = align(file_path_A, file_path_B)
+    print(time_diff)
     
     plot = False
 
@@ -55,7 +53,7 @@ def day_one(collist, soloA_bool):
     
     #power spectral density plot
     
-    fs = 100 # sampling rate
+    fs = 500 # sampling rate
     probe_x = collist[1]
     probe_y = collist[2]
     probe_z = collist[3]
@@ -71,7 +69,7 @@ def day_one(collist, soloA_bool):
     
     def plot_power(f,Pxx,probe):
         plt.semilogy(f,np.sqrt(Pxx)) #sqrt required for power spectrum, and semi log y axis
-        plt.xlim(0,20)
+        plt.xlim(0,60)
         plt.ylim(10e-4,10e-1)
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Log(FFT magnitude)')
