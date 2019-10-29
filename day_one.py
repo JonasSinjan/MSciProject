@@ -8,7 +8,7 @@ import time
 
 def day_one():
     #set this to the directory where the data is kept on your local computer
-    jonas = True
+    jonas = False
 
     if jonas:
         file_path_A = r'C:\Users\jonas\MSci-Data\day_one\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-21--08-10-10_1.csv'
@@ -24,15 +24,18 @@ def day_one():
 
     soloA_var = True
 
+
     collist = ['time', 'Probe01_X'] #'Probe01_||'
     df = read_files(path_A, soloA_var, jonas, collist)
     print(len(df))
     
+    """
     #now read in all soloB files
     collist = ['time', 'Probe10_X'] #ALWAYS READ IN TIME
     soloA_var = False
     df_2 = read_files(path_B, soloA_var, jonas, collist)
     print(len(df_2))
+    """
     
     #print(df)
     #print(len(df))
@@ -64,8 +67,8 @@ def day_one():
 
     
     #power spectral density plot
-    x = df['Probe01_X'][:20000]
-    fs = 500 # sampling rate
+    x = df['Probe01_X'][1070000:1100000]
+    fs = 1000 # sampling rate
     f, Pxx = sps.periodogram(x,fs)
     plt.figure()
     plt.semilogy(f,np.sqrt(Pxx)) #sqrt required for power spectrum, and semi log y axis
@@ -77,12 +80,15 @@ def day_one():
     plt.show()
     
     #spectogram
-    f, t, Sxx = sps.spectrogram(x,fs)
+    f, t, Sxx = sps.spectrogram(x,fs,nperseg=1000)
     plt.figure()
     plt.pcolormesh(t, f, Sxx)
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
     plt.title('Spectogram')
+    fig = plt.gcf()
+    plt.clim()
+    plt.colorbar()
     plt.show()
     
     
