@@ -5,8 +5,10 @@ import os
 import numpy as np
 import scipy.signal as sps
 import time
+from matplotlib.ticker import NullFormatter
 
-def day_one():
+
+def day_one(collist):
     #set this to the directory where the data is kept on your local computer
     jonas = True
 
@@ -24,29 +26,16 @@ def day_one():
 
     soloA_var = True
 
-    collist = ['time', 'Probe01_X'] #'Probe01_||'
+    #'Probe01_||'
     df = read_files(path_A, soloA_var, jonas, collist)
     print(len(df))
     
-    #now read in all soloB files
-    collist = ['time', 'Probe10_X'] #ALWAYS READ IN TIME
-    soloA_var = False
-    df_2 = read_files(path_B, soloA_var, jonas, collist)
-    print(len(df_2))
+    # #now read in all soloB files
+    # collist = ['time', 'Probe10_X'] #ALWAYS READ IN TIME
+    # soloA_var = False
+    # df_2 = read_files(path_B, soloA_var, jonas, collist)
+    # print(len(df_2))
     
-    #print(df)
-    #print(len(df))
-    
-    
-    #df_A = soloA(file_path_A)
-    #df_B = soloB(file_path_B)
-
-    #df = concatenate(df_A, df_B)
-    #print(df.head())
-
-    #print(df[df['time']==1.00].index) #returns index 20 - proves that this data file is already sampled at 20Hz.
-
-
     plot = False
 
     if plot:
@@ -64,29 +53,66 @@ def day_one():
 
     
     #power spectral density plot
-    x = df['Probe01_X'][:20000]
+    
     fs = 500 # sampling rate
-    f, Pxx = sps.periodogram(x,fs)
+    probe_x = collist[1]
+    probe_y = collist[2]
+    probe_z = collist[3]
+    probe_m = collist[4]
+    x = df[probe_x][:20000]
+    f_x, Pxx_x = sps.periodogram(x,fs, scaling='spectrum')
+    x = df[probe_y][:20000]
+    f_y, Pxx_y = sps.periodogram(x,fs, scaling='spectrum')
+    x = df[probe_z][:20000]
+    f_z, Pxx_z = sps.periodogram(x,fs, scaling='spectrum')
+    x = df[probe_m][:20000]
+    f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
+    
+    def plot_power(f,Pxx,probe):
+        plt.semilogy(f,np.sqrt(Pxx)) #sqrt required for power spectrum, and semi log y axis
+        plt.xlim(0,100)
+        plt.ylim(10e-4,10e1)
+        plt.xlabel('Frequency [Hz]')
+        plt.ylabel('Log(FFT magnitude)')
+        plt.title(f'{probe}')
+        index, dict_p = sps.find_peaks(np.log(np.sqrt(Pxx)), threshold = 5)
+        for i in index:
+            print(np.log(np.sqrt(Pxx))[index])
+    
     plt.figure()
-    plt.semilogy(f,np.sqrt(Pxx)) #sqrt required for power spectrum, and semi log y axis
-    #plt.xlim(0,100)
-    plt.ylim(10e-2,10e1)
-    plt.xlabel('Frequency [Hz]')
-    plt.ylabel('Linear spectrum')
     plt.title('Power Spectrum')
-    plt.show()
+    plt.subplot(221)
+    plot_power(f_x, Pxx_x, probe_x)
+    
+    plt.subplot(222)
+    plot_power(f_y, Pxx_y, probe_y)
+
+    plt.subplot(223)
+    plot_power(f_z, Pxx_z, probe_z)
+    
+    plt.subplot(224)
+    plot_power(f_m, Pxx_m, probe_m)
+    # Format the minor tick labels of the y-axis into empty strings with
+    # `NullFormatter`, to avoid cumbering the axis with too many labels.
+    #plt.gca().yaxis.set_minor_formatter(NullFormatter())
+    # Adjust the subplot layout, because the logit one may take more space
+    # than usual, due to y-tick labels like "1 - 10^{-3}"
+    plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
+    
     
     #spectogram
-    f, t, Sxx = sps.spectrogram(x,fs)
-    plt.figure()
-    plt.pcolormesh(t, f, Sxx)
-    plt.ylabel('Frequency [Hz]')
-    plt.xlabel('Time [sec]')
-    plt.title('Spectogram')
+    # f, t, Sxx = sps.spectrogram(x,fs)
+    # plt.figure()
+    # plt.pcolormesh(t, f, Sxx)
+    # plt.ylabel('Frequency [Hz]')
+    # plt.xlabel('Time [sec]')
+    # plt.title('Spectogram')
+    
     plt.show()
     
-    
-day_one()
+num = '02'
+collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
+day_one(collist)
 
 
 
