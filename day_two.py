@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from read_merge import soloA, soloB, concatenate
+from read_merge import soloA, soloB
 import pandas as pd
 
 def day_two():
