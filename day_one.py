@@ -11,7 +11,7 @@ import time
 
 def day_one(collist, soloA_bool):
     #set this to the directory where the data is kept on your local computer
-    jonas = False
+    jonas = True
 
     if jonas:
         file_path_A = r'C:\Users\jonas\MSci-Data\day_one\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-21--08-10-10_1.csv'
