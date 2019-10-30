@@ -8,7 +8,6 @@ import scipy.signal as sps
 import time
 
 
-
 def day_one(collist, soloA_bool):
     #set this to the directory where the data is kept on your local computer
     jonas = True
@@ -112,11 +111,11 @@ def day_one(collist, soloA_bool):
     plt.colorbar()  
     plt.show()
     
-    
-num = '02'
-collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
-soloA_bool = True
-day_one(collist, soloA_bool)
+if __name__ == "__main__":
+    num = '02'
+    collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
+    soloA_bool = True
+    day_one(collist, soloA_bool)
 
 
 
