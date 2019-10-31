@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
-from read_merge import soloA, soloB, read_files, powerspecplot
+import matplotlib as mpl
+from read_merge import soloA, soloB, read_files
 from align import align
 import pandas as pd
 import os
@@ -50,7 +51,56 @@ def day_one(collist, soloA_bool):
     
     #power spectral density plot
     fs = 500 # sampling rate
-    powerspecplot(df, fs, collist)
+    probe_x = collist[1]
+    probe_y = collist[2]
+    probe_z = collist[3]
+    probe_m = collist[4]
+    x = df[probe_x]#[:20000]
+    f_x, Pxx_x = sps.periodogram(x,fs, scaling='spectrum')
+    x_y = df[probe_y]#[:20000]
+    f_y, Pxx_y = sps.periodogram(x_y,fs, scaling='spectrum')
+    x_z = df[probe_z]#[:20000]
+    f_z, Pxx_z = sps.periodogram(x_z,fs, scaling='spectrum')
+    x_m = df[probe_m]#[:20000]
+    f_m, Pxx_m = sps.periodogram(x_m,fs, scaling='spectrum')
+    x_t = x + x_y + x_z
+    f_t, Pxx_t = sps.periodogram(x_t, fs, scaling = 'spectrum')
+    
+    def plot_power(f,Pxx,probe):
+        plt.semilogy(f,np.sqrt(Pxx)) #sqrt required for power spectrum, and semi log y axis
+        plt.xlim(0,40)
+        plt.ylim(10e-5,10e-1)
+        plt.xlabel('Frequency [Hz]')
+        plt.ylabel('Log(FFT magnitude)')
+        plt.title(f'{probe}')
+        peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 3)
+        print([round(i,1) for i in f[peaks] if i <= 20], len(peaks))
+        plt.semilogy(f[peaks], np.sqrt(Pxx)[peaks], marker = 'x', markersize = 10, color='orange', linestyle = 'None')
+    
+
+    plt.figure()
+    mpl.rcParams['agg.path.chunksize'] = 10000
+    plt.title('Power Spectrum')
+    plt.subplot(221)
+    plot_power(f_x, Pxx_x, probe_x)
+    
+    plt.subplot(222)
+    plot_power(f_y, Pxx_y, probe_y)
+
+    plt.subplot(223)
+    plot_power(f_z, Pxx_z, probe_z)
+    
+    plt.subplot(224)
+    plot_power(f_m, Pxx_m, probe_m)
+    
+    plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
+    
+    plt.figure()
+    Trace = 'Trace'
+   
+    plot_power(f_t, Pxx_t, Trace)
+    
+    
     
     #spectogram
 
@@ -69,9 +119,9 @@ def day_one(collist, soloA_bool):
     plt.show()
     
 if __name__ == "__main__":
-    num = '02'
+    num = '12'
     collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
-    soloA_bool = True #if 9 or above must set to False
+    soloA_bool = False
     day_one(collist, soloA_bool)
 
 
