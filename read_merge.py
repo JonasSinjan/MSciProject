@@ -4,6 +4,7 @@ import scipy as sp
 import glob
 import matplotlib.pyplot as plt
 import os
+import scipy.signal as sps
 
 def read_files(path, soloA, jonas, collist=None):
     #path - location of folder to concat
@@ -54,3 +55,46 @@ def soloB(file_path):
     new_cols = [cols[0]] + cols[9:13] + cols[1:9] + cols[13:17]#reorder the columns into the correct order # adding time as first column
     df_B = df_B[new_cols]
     return df_B
+
+def powerspecplot(df, fs, collist):
+    
+    probe_x = collist[1]
+    probe_y = collist[2]
+    probe_z = collist[3]
+    probe_m = collist[4]
+    x = df[probe_x]#[:20000]
+    f_x, Pxx_x = sps.periodogram(x,fs, scaling='spectrum')
+    x = df[probe_y]#[:20000]
+    f_y, Pxx_y = sps.periodogram(x,fs, scaling='spectrum')
+    x = df[probe_z]#[:20000]
+    f_z, Pxx_z = sps.periodogram(x,fs, scaling='spectrum')
+    x = df[probe_m]#[:20000]
+    f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
+    
+    def plot_power(f,Pxx,probe):
+        plt.semilogy(f,np.sqrt(Pxx)) #sqrt required for power spectrum, and semi log y axis
+        plt.xlim(0,60)
+        plt.ylim(10e-4,10e-1)
+        plt.xlabel('Frequency [Hz]')
+        plt.ylabel('Log(FFT magnitude)')
+        plt.title(f'{probe}')
+        peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 3)
+        print([round(i,1) for i in f[peaks] if i <= 20], len(peaks))
+        plt.semilogy(f[peaks], np.sqrt(Pxx)[peaks], marker = 'x', markersize = 10, color='orange', linestyle = 'None')
+    
+
+    plt.figure()
+    plt.title('Power Spectrum')
+    plt.subplot(221)
+    plot_power(f_x, Pxx_x, probe_x)
+    
+    plt.subplot(222)
+    plot_power(f_y, Pxx_y, probe_y)
+
+    plt.subplot(223)
+    plot_power(f_z, Pxx_z, probe_z)
+    
+    plt.subplot(224)
+    plot_power(f_m, Pxx_m, probe_m)
+    
+    plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
