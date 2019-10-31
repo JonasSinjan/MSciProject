@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 from read_merge import soloA, soloB, read_files
 from align import align
 import pandas as pd
@@ -59,17 +60,19 @@ def day_one(collist, soloA_bool):
     probe_m = collist[4]
     x = df[probe_x]#[:20000]
     f_x, Pxx_x = sps.periodogram(x,fs, scaling='spectrum')
-    x = df[probe_y]#[:20000]
-    f_y, Pxx_y = sps.periodogram(x,fs, scaling='spectrum')
-    x = df[probe_z]#[:20000]
-    f_z, Pxx_z = sps.periodogram(x,fs, scaling='spectrum')
-    x = df[probe_m]#[:20000]
-    f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
+    x_y = df[probe_y]#[:20000]
+    f_y, Pxx_y = sps.periodogram(x_y,fs, scaling='spectrum')
+    x_z = df[probe_z]#[:20000]
+    f_z, Pxx_z = sps.periodogram(x_z,fs, scaling='spectrum')
+    x_m = df[probe_m]#[:20000]
+    f_m, Pxx_m = sps.periodogram(x_m,fs, scaling='spectrum')
+    x_t = x + x_y + x_z
+    f_t, Pxx_t = sps.periodogram(x_t, fs, scaling = 'spectrum')
     
     def plot_power(f,Pxx,probe):
         plt.semilogy(f,np.sqrt(Pxx)) #sqrt required for power spectrum, and semi log y axis
-        plt.xlim(0,60)
-        plt.ylim(10e-4,10e-1)
+        plt.xlim(0,40)
+        plt.ylim(10e-5,10e-1)
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Log(FFT magnitude)')
         plt.title(f'{probe}')
@@ -79,6 +82,7 @@ def day_one(collist, soloA_bool):
     
 
     plt.figure()
+    mpl.rcParams['agg.path.chunksize'] = 10000
     plt.title('Power Spectrum')
     plt.subplot(221)
     plot_power(f_x, Pxx_x, probe_x)
@@ -93,6 +97,12 @@ def day_one(collist, soloA_bool):
     plot_power(f_m, Pxx_m, probe_m)
     
     plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
+    
+    plt.figure()
+    Trace = 'Trace'
+   
+    plot_power(f_t, Pxx_t, Trace)
+    
     
     
     #spectogram
@@ -112,9 +122,9 @@ def day_one(collist, soloA_bool):
     plt.show()
     
 if __name__ == "__main__":
-    num = '02'
+    num = '12'
     collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
-    soloA_bool = True
+    soloA_bool = False
     day_one(collist, soloA_bool)
 
 
