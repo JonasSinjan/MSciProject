@@ -51,18 +51,18 @@ def day_one(collist, soloA_bool):
 
     
     #power spectral density plot
-    fs = 500 # sampling rate
+    fs = 100 # sampling rate
     probe_x = collist[1]
     probe_y = collist[2]
     probe_z = collist[3]
     probe_m = collist[4]
-    x = df[probe_x]#[:20000]
+    x = df[probe_x][:20000]
     f_x, Pxx_x = sps.periodogram(x,fs, scaling='spectrum')
-    x_y = df[probe_y]#[:20000]
+    x_y = df[probe_y][:20000]
     f_y, Pxx_y = sps.periodogram(x_y,fs, scaling='spectrum')
-    x_z = df[probe_z]#[:20000]
+    x_z = df[probe_z][:20000]
     f_z, Pxx_z = sps.periodogram(x_z,fs, scaling='spectrum')
-    x_m = df[probe_m]#[:20000]
+    x_m = df[probe_m][:20000]
     f_m, Pxx_m = sps.periodogram(x_m,fs, scaling='spectrum')
     x_t = x + x_y + x_z
     f_t, Pxx_t = sps.periodogram(x_t, fs, scaling = 'spectrum')
@@ -74,7 +74,7 @@ def day_one(collist, soloA_bool):
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Log(FFT magnitude)')
         plt.title(f'{probe}')
-        peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 3)
+        peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 2)
         print([round(i,1) for i in f[peaks] if i <= 20], len(peaks))
         plt.semilogy(f[peaks], np.sqrt(Pxx)[peaks], marker = 'x', markersize = 10, color='orange', linestyle = 'None')
     
@@ -98,10 +98,7 @@ def day_one(collist, soloA_bool):
     
     plt.figure()
     Trace = 'Trace'
-   
     plot_power(f_t, Pxx_t, Trace)
-    
-    
     
     #spectogram
 
