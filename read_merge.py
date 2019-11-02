@@ -5,6 +5,8 @@ import glob
 import matplotlib.pyplot as plt
 import os
 import scipy.signal as sps
+from datetime import datetime, timedelta
+import time
 
 def read_files(path, soloA, jonas, collist=None):
     #path - location of folder to concat
@@ -14,7 +16,9 @@ def read_files(path, soloA, jonas, collist=None):
     else: 
         all_files = glob.glob(path + "/*.csv")
     li = []
-    for filename in all_files:        
+    for filename in all_files:
+        #time = pd.read_csv(filename, skiprows = 7, nrows = 1, header = None)
+        #start_time = filename.strip('-')        
         if soloA:
             if collist == None:
                 df =  pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';')
@@ -32,12 +36,32 @@ def read_files(path, soloA, jonas, collist=None):
             else:
                 df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';', usecols = collist)
             
-        #print(df['time'].iloc[0])
         li.append(df)
         
     df = pd.concat(li, ignore_index = True, sort=True)
+
+    
+    start = time.process_time()
+    if soloA:
+        if '21' in all_files[0]: #for day_one
+            df['time'] = df['time'] + 10.12
+            df['time'] =  pd.to_datetime(df['time'], unit = 's', origin = '2019-06-21 08:10:00' )
+        elif '24' in all_files[0]: #for day_two
+            df['time'] = df['time'] + 46.93
+            df['time'] =  pd.to_datetime(df['time'], unit = 's', origin = '2019-06-24 08:14:00' )
+    else:
+        if '21' in all_files[0]:
+            df['time'] = df['time'] + 10
+            df['time'] =  pd.to_datetime(df['time'], unit = 's', origin = '2019-06-21 08:09:00' )
+        elif '24' in all_files[0]:
+            df['time'] = df['time'] + 24
+            df['time'] =  pd.to_datetime(df['time'], unit = 's', origin = '2019-06-24 08:14:00' )
+
+    df['time'] = df['time'].dt.round('ms')
     df = df.sort_values('time', ascending = True, kind = 'mergesort')
     df = df.reset_index(drop=True)
+    print(time.process_time() - start)
+    #print(df['time'].head())
     return df
     
 def soloA(file_path):

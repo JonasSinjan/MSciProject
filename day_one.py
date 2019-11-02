@@ -32,6 +32,7 @@ def day_one(collist, soloA_bool):
     
     time_diff = align(file_path_A, file_path_B)
     print(time_diff)
+    #now need to use pd.timedelta to subtract/add this time to the datetime object column 'time' in the df
     
     plot = False
 
@@ -120,8 +121,8 @@ def day_one(collist, soloA_bool):
     
 if __name__ == "__main__":
     num = '12'
-    collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
     soloA_bool = False
+    collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
     day_one(collist, soloA_bool)
 
 
