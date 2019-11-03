@@ -49,7 +49,7 @@ def day_one(collist, soloA_bool):
         plt.legend()
         plt.show()
 
-    
+    """
     #power spectral density plot
     fs = 100 # sampling rate
     probe_x = collist[1]
@@ -115,6 +115,7 @@ def day_one(collist, soloA_bool):
     fig = plt.gcf()
     plt.colorbar()  
     plt.show()
+    """
     
 if __name__ == "__main__":
     num = '12'

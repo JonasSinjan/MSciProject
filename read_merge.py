@@ -59,8 +59,10 @@ def read_files(path, soloA, jonas, collist=None):
 
     df['time'] = df['time'].dt.round('ms')
     df = df.sort_values('time', ascending = True, kind = 'mergesort')
-    df = df.reset_index(drop=True)
+    #df = df.reset_index(drop=True)
     print(time.process_time() - start)
+    df.set_index('time', inplace = True)
+    print(df.head())
     #print(df['time'].head())
     return df
     
