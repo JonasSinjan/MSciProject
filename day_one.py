@@ -21,7 +21,7 @@ def day_one(collist, soloA_bool):
     else:
         file_path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_20/SoloA_2019-06-21--08-10-10_01.csv")
         file_path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20/SoloB_2019-06-21--08-09-10_01.csv")
-        path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_20")
+        path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_50")
         path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20")
 
 
@@ -35,7 +35,7 @@ def day_one(collist, soloA_bool):
     time_diff = align(file_path_A, file_path_B)
     print(time_diff)
     
-    plot = False
+    plot = True
 
     if plot:
         #plotting the raw probes results
@@ -50,7 +50,7 @@ def day_one(collist, soloA_bool):
         plt.legend()
         plt.show()
 
-    
+    """
     #power spectral density plot
     
     fs = 500 # sampling rate
@@ -112,8 +112,8 @@ def day_one(collist, soloA_bool):
     plt.colorbar()  
     plt.show()
     
-    
-num = '02'
+    """
+num = '07'
 collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
 soloA_bool = True
 day_one(collist, soloA_bool)
