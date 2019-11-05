@@ -35,7 +35,7 @@ def day_one(collist, soloA_bool):
     time_diff = align(file_path_A, file_path_B)
     print(time_diff)
     
-    plot = False
+    plot = True
 
     if plot:
         #plotting the raw probes results
@@ -52,8 +52,8 @@ def day_one(collist, soloA_bool):
 
     
     #power spectral density plot
-    
-    fs = 500 # sampling rate
+    """
+    fs = 1000 # sampling rate
     probe_x = collist[1]
     probe_y = collist[2]
     probe_z = collist[3]
@@ -78,7 +78,7 @@ def day_one(collist, soloA_bool):
         plt.title(f'{probe}')
         peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 3)
         print([round(i,1) for i in f[peaks] if i <= 20], len(peaks))
-        plt.semilogy(f[peaks], np.sqrt(Pxx)[peaks], marker = 'x', markersize = 10, color='orange', linestyle = 'None')
+        plt.semilogy(f[peaks], np.sqrt(Pxx)[peaks], marker = 'x', markersize = 7, color='orange', linestyle = 'None')
     
 
     plt.figure()
@@ -108,7 +108,7 @@ def day_one(collist, soloA_bool):
     #spectogram
 
     x = df[collist[1]][5270000:5310000]
-    fs = 1000 # sampling rate
+    fs = 500 # sampling rate
     f, Pxx = sps.periodogram(x,fs)
     f, t, Sxx = sps.spectrogram(x,fs,nperseg=700)
     plt.figure()
@@ -120,11 +120,12 @@ def day_one(collist, soloA_bool):
     plt.clim()
     plt.colorbar()  
     plt.show()
+    """
     
 if __name__ == "__main__":
-    num = '12'
+    num = '07'
     collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
-    soloA_bool = False
+    soloA_bool = True
     day_one(collist, soloA_bool)
 
 
