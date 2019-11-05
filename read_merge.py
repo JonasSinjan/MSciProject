@@ -90,17 +90,19 @@ def powerspecplot(df, fs, collist):
     probe_m = collist[4]
     x = df[probe_x]#[:20000]
     f_x, Pxx_x = sps.periodogram(x,fs, scaling='spectrum')
-    x = df[probe_y]#[:20000]
+    x_y = df[probe_y]#[:20000]
     f_y, Pxx_y = sps.periodogram(x,fs, scaling='spectrum')
-    x = df[probe_z]#[:20000]
+    x_z = df[probe_z]#[:20000]
     f_z, Pxx_z = sps.periodogram(x,fs, scaling='spectrum')
     x = df[probe_m]#[:20000]
     f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
+    x_t = x + x_y + x_z #trace
+    f_t, Pxx_t = sps.periodogram(x_t, fs, scaling ='spectrum')
     
     def plot_power(f,Pxx,probe):
         plt.semilogy(f,np.sqrt(Pxx)) #sqrt required for power spectrum, and semi log y axis
-        plt.xlim(0,60)
-        plt.ylim(10e-4,10e-1)
+        plt.xlim(0,40)
+        plt.ylim(10e-5,10e-1)
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Log(FFT magnitude)')
         plt.title(f'{probe}')
@@ -110,6 +112,7 @@ def powerspecplot(df, fs, collist):
     
 
     plt.figure()
+    mpl.rcParams['agg.path.chunksize'] = 10000
     plt.title('Power Spectrum')
     plt.subplot(221)
     plot_power(f_x, Pxx_x, probe_x)
@@ -124,3 +127,8 @@ def powerspecplot(df, fs, collist):
     plot_power(f_m, Pxx_m, probe_m)
     
     plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
+    
+    plt.figure()
+    Trace = 'Trace'
+    plot_power(f_t, Pxx_t, Trace)
+    plt.show()
