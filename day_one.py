@@ -24,8 +24,6 @@ def day_one(collist, soloA_bool):
         path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_20")
         path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20")
 
-
-
     if soloA_bool:
         df = read_files(path_A, soloA_bool, jonas, collist)
     else:
@@ -34,6 +32,7 @@ def day_one(collist, soloA_bool):
     
     time_diff = align(file_path_A, file_path_B)
     print(time_diff)
+    #now need to use pd.timedelta to subtract/add this time to the datetime object column 'time' in the df
     
     plot = True
 
@@ -52,19 +51,18 @@ def day_one(collist, soloA_bool):
 
     
     #power spectral density plot
-    """
-    fs = 1000 # sampling rate
+    fs = 100 # sampling rate
     probe_x = collist[1]
     probe_y = collist[2]
     probe_z = collist[3]
     probe_m = collist[4]
-    x = df[probe_x]#[:20000]
+    x = df[probe_x][:20000]
     f_x, Pxx_x = sps.periodogram(x,fs, scaling='spectrum')
-    x_y = df[probe_y]#[:20000]
+    x_y = df[probe_y][:20000]
     f_y, Pxx_y = sps.periodogram(x_y,fs, scaling='spectrum')
-    x_z = df[probe_z]#[:20000]
+    x_z = df[probe_z][:20000]
     f_z, Pxx_z = sps.periodogram(x_z,fs, scaling='spectrum')
-    x_m = df[probe_m]#[:20000]
+    x_m = df[probe_m][:20000]
     f_m, Pxx_m = sps.periodogram(x_m,fs, scaling='spectrum')
     x_t = x + x_y + x_z
     f_t, Pxx_t = sps.periodogram(x_t, fs, scaling = 'spectrum')
@@ -76,7 +74,7 @@ def day_one(collist, soloA_bool):
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Log(FFT magnitude)')
         plt.title(f'{probe}')
-        peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 3)
+        peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 2)
         print([round(i,1) for i in f[peaks] if i <= 20], len(peaks))
         plt.semilogy(f[peaks], np.sqrt(Pxx)[peaks], marker = 'x', markersize = 7, color='orange', linestyle = 'None')
     
@@ -100,32 +98,29 @@ def day_one(collist, soloA_bool):
     
     plt.figure()
     Trace = 'Trace'
-   
     plot_power(f_t, Pxx_t, Trace)
-    
-    
     
     #spectogram
 
     x = df[collist[1]][5270000:5310000]
-    fs = 500 # sampling rate
-    f, Pxx = sps.periodogram(x,fs)
-    f, t, Sxx = sps.spectrogram(x,fs,nperseg=700)
+    #fs = 200 # sampling rate
+    #f, Pxx = sps.periodogram(x,fs)
+    f, t, Sxx = sps.spectrogram(x,fs)#,nperseg=700)
     plt.figure()
     plt.pcolormesh(t, f, Sxx,vmin = 0.,vmax = 0.1)
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
     plt.title('Spectogram')
-    fig = plt.gcf()
     plt.clim()
+    fig = plt.gcf()
     plt.colorbar()  
     plt.show()
-    """
+    
     
 if __name__ == "__main__":
-    num = '07'
+    num = '12'
+    soloA_bool = False
     collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
-    soloA_bool = True
     day_one(collist, soloA_bool)
 
 
