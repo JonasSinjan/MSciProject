@@ -40,7 +40,7 @@ def day_one(collist, soloA_bool):
         #plotting the raw probes results
         plt.figure()
         for col in collist[1:]:
-            plt.plot(df['time'], df[col], label=str(col))
+            plt.plot(df.index.to_pydatetime(), df[col], label=str(col))
             
         # for col in df.columns.tolist()[-4:0]:
         #     plt.plot(df['time'], df[col], label=str(col))
