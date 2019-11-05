@@ -21,7 +21,7 @@ def day_one(collist, soloA_bool, num):
     else:
         file_path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_20/SoloA_2019-06-21--08-10-10_01.csv")
         file_path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20/SoloB_2019-06-21--08-09-10_01.csv")
-        path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_20")
+        path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_50")
         path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20")
 
     if soloA_bool:
@@ -70,13 +70,17 @@ def day_one(collist, soloA_bool, num):
     plt.colorbar()  
     plt.show()
     
-    
+# num = '07'
+# collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
+# soloA_bool = True
+# day_one(collist, soloA_bool)
+
+
 if __name__ == "__main__":
     num = 12
     soloA_bool = False
     collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
     day_one(collist, soloA_bool, num)
-
 
 
 
