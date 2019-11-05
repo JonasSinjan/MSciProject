@@ -51,7 +51,7 @@ def day_one(collist, soloA_bool, num):
             #df.plot.line(y=f'{col}')
         plt.xlabel('Time (s)')
         plt.ylabel('B (nT)')
-        plt.title(f'{num} Probe {df.index.date}')
+        plt.title(f'{num} Probe 21-06-2019')
         plt.legend()
         plt.show()
 
