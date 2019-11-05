@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from read_merge import soloA, soloB, read_files, powerspecplot, rotate_21
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
 from align import align
 import pandas as pd
 import os
@@ -30,16 +32,14 @@ def day_one(collist, soloA_bool, num):
     else:
         df = read_files(path_B, soloA_bool, jonas, collist)
         rotate_mat = rotate_21(soloA_bool)[num-9]
-    print(df.head())
-    df.iloc[:,0:3] = np.dot(rotate_mat, df.iloc[:,0:3].values.T).T
-    print(df.head())
+    df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
     print(len(df))
     
     #time_diff = align(file_path_A, file_path_B)
     #print(time_diff)
     #now need to use pd.timedelta to subtract/add this time to the datetime object column 'time' in the df
     
-    plot = True
+    plot = False
 
     if plot: #plotting the raw probes results
         plt.figure()
@@ -52,10 +52,10 @@ def day_one(collist, soloA_bool, num):
         plt.show()
 
     fs = 100
-    powerspecplot(df, fs, collist)
+    #powerspecplot(df, fs, collist)
     
     #spectogram
-
+    """
     x = df[collist[1]][5270000:5310000]
     #fs = 200 # sampling rate
     #f, Pxx = sps.periodogram(x,fs)
@@ -74,7 +74,7 @@ def day_one(collist, soloA_bool, num):
 # collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
 # soloA_bool = True
 # day_one(collist, soloA_bool)
-
+"""
 
 if __name__ == "__main__":
     num = 12
