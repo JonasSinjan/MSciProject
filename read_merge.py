@@ -17,6 +17,7 @@ def read_files(path, soloA, jonas, collist=None):
     else: 
         all_files = glob.glob(path + "/*.csv")
     li = []
+    #print(all_files)
     for filename in all_files:
         #time = pd.read_csv(filename, skiprows = 7, nrows = 1, header = None)
         #start_time = filename.strip('-')        
