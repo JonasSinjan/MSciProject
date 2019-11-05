@@ -9,18 +9,19 @@ import scipy.signal as sps
 from datetime import datetime, timedelta
 import time
 
-def read_files(path, soloA, jonas, collist=None):
+def read_files(path, soloA, jonas, collist=None, day=1, start_dt = None, end_dt = None):
     #path - location of folder to concat
     #soloA - set to True if soloA, if soloB False 
     if jonas: 
-        all_files = glob.glob(path + "\*.csv")
+        all_files = glob.glob(path + "\*.csv") #for Windows
     else: 
-        all_files = glob.glob(path + "/*.csv")
+        all_files = glob.glob(path + "/*.csv") #for MAC
     li = []
-    #print(all_files)
-    for filename in all_files:
-        #time = pd.read_csv(filename, skiprows = 7, nrows = 1, header = None)
-        #start_time = filename.strip('-')        
+    day_one_A_dt = datetime(2019,6,21,8,10,10,12)
+    day_one_B_dt = datetime(2019,6,21,8,9,10)
+    day_two_A_dt = datetime(2019,6,24,8,14,46,93)
+    day_two_B_dt = datetime(2019,6,24,8,14,24)
+    for filename in all_files:   
         if soloA:
             if collist == None:
                 df =  pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';')
@@ -28,7 +29,14 @@ def read_files(path, soloA, jonas, collist=None):
                 new_cols = cols[0:5] + cols[-16:-1] + [cols[-1]] + cols[13:17] + cols[9:13] + cols[5:9] #this will reorder the columns into the correct order
                 df = df[new_cols]
             else:
-                df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';', usecols = collist)
+                # rows = int((end_dt - start_dt).total_seconds()*1000)
+                
+                # if day == 1 or day == 21:
+                #     skip = int((start_dt - day_one_A_dt).total_seconds()*1000)
+                # else:
+                #     skip = int((start_dt - day_two_A_dt).total_seconds()*1000)
+                skip = 0
+                df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351 + skip, sep=';', usecols = collist)#header = 350, nrows = rows)
         else:
             if collist == None:
                 df =  pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';')
@@ -36,15 +44,19 @@ def read_files(path, soloA, jonas, collist=None):
                 new_cols = [cols[0]] + cols[9:13] + cols[1:9] + cols[13:17]
                 df = df[new_cols]
             else:
-                df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';', usecols = collist)
+                # rows = int((end_dt - start_dt).total_seconds()*1000)
+                # if day == 1 or day == 21:
+                #     skip = int((start_dt - day_one_B_dt).total_seconds()*1000)
+                # else:
+                #     skip = int((start_dt - day_two_B_dt).total_seconds()*1000)
+                skip = 0
+                df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170 + skip, sep=';', usecols = collist)#, header = 170, nrows = rows)
             
         li.append(df)
         
     
-        
     df = pd.concat(li, ignore_index = True, sort=True)
 
-    
     start = time.process_time()
     if soloA:
         if '21' in all_files[0]: #for day_one
@@ -69,21 +81,6 @@ def read_files(path, soloA, jonas, collist=None):
     
     return df
     
-def soloA(file_path):
-    #skiprows is required as the read_csv function cannot read in the header of the csv files correctly for some reason - might need the header data later - need to fix
-    df = pd.read_csv(file_path, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';')
-    cols = df.columns.tolist()
-    new_cols = cols[0:5] + cols[-16:-1] + [cols[-1]] + cols[13:17] + cols[9:13] + cols[5:9] #reorder the columns into the correct order
-    df = df[new_cols]
-    return df
-
-def soloB(file_path):
-    #skiprows is required as the read_csv function cannot read in the header of the csv files correctly for some reason - might need the header data later - need to fix
-    df_B = pd.read_csv(file_path, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';')
-    cols = df_B.columns.tolist()
-    new_cols = [cols[0]] + cols[9:13] + cols[1:9] + cols[13:17]#reorder the columns into the correct order # adding time as first column
-    df_B = df_B[new_cols]
-    return df_B
 
 def powerspecplot(df, fs, collist):
     
@@ -200,4 +197,19 @@ def rotate_24(soloA_bool):
         return M_B
             
 #rotate_21(True)
+def soloA(file_path):
+    #skiprows is required as the read_csv function cannot read in the header of the csv files correctly for some reason - might need the header data later - need to fix
+    df = pd.read_csv(file_path, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';')
+    cols = df.columns.tolist()
+    new_cols = cols[0:5] + cols[-16:-1] + [cols[-1]] + cols[13:17] + cols[9:13] + cols[5:9] #reorder the columns into the correct order
+    df = df[new_cols]
+    return df
+
+def soloB(file_path):
+    #skiprows is required as the read_csv function cannot read in the header of the csv files correctly for some reason - might need the header data later - need to fix
+    df_B = pd.read_csv(file_path, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';')
+    cols = df_B.columns.tolist()
+    new_cols = [cols[0]] + cols[9:13] + cols[1:9] + cols[13:17]#reorder the columns into the correct order # adding time as first column
+    df_B = df_B[new_cols]
+    return df_B
 
