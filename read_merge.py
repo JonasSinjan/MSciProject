@@ -3,6 +3,7 @@ import numpy as np
 import scipy as sp
 import glob
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import os
 import scipy.signal as sps
 from datetime import datetime, timedelta
@@ -61,11 +62,10 @@ def read_files(path, soloA, jonas, collist=None):
 
     df['time'] = df['time'].dt.round('ms')
     df = df.sort_values('time', ascending = True, kind = 'mergesort')
-    #df = df.reset_index(drop=True)
     print(time.process_time() - start)
     df.set_index('time', inplace = True)
     print(df.head())
-    #print(df['time'].head())
+    
     return df
     
 def soloA(file_path):
@@ -92,17 +92,19 @@ def powerspecplot(df, fs, collist):
     probe_m = collist[4]
     x = df[probe_x]#[:20000]
     f_x, Pxx_x = sps.periodogram(x,fs, scaling='spectrum')
-    x = df[probe_y]#[:20000]
+    x_y = df[probe_y]#[:20000]
     f_y, Pxx_y = sps.periodogram(x,fs, scaling='spectrum')
-    x = df[probe_z]#[:20000]
+    x_z = df[probe_z]#[:20000]
     f_z, Pxx_z = sps.periodogram(x,fs, scaling='spectrum')
     x = df[probe_m]#[:20000]
     f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
+    x_t = x + x_y + x_z #trace
+    f_t, Pxx_t = sps.periodogram(x_t, fs, scaling ='spectrum')
     
     def plot_power(f,Pxx,probe):
         plt.semilogy(f,np.sqrt(Pxx)) #sqrt required for power spectrum, and semi log y axis
-        plt.xlim(0,60)
-        plt.ylim(10e-4,10e-1)
+        plt.xlim(0,40)
+        plt.ylim(10e-5,10e-1)
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Log(FFT magnitude)')
         plt.title(f'{probe}')
@@ -112,6 +114,7 @@ def powerspecplot(df, fs, collist):
     
 
     plt.figure()
+    mpl.rcParams['agg.path.chunksize'] = 10000
     plt.title('Power Spectrum')
     plt.subplot(221)
     plot_power(f_x, Pxx_x, probe_x)
@@ -127,6 +130,10 @@ def powerspecplot(df, fs, collist):
     
     plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
     
+    plt.figure()
+    Trace = 'Trace'
+    plot_power(f_t, Pxx_t, Trace)
+    plt.show()
 
 def rotate_21(soloA_bool):
     if soloA_bool:
@@ -138,7 +145,6 @@ def rotate_21(soloA_bool):
         M_6 = np.array([-0.00294161,-0.01878043,-0.99875921,-0.99913433,-0.00545105,0.00357126,-0.004815,0.99911992,-0.01849102])
         M_7 = np.array([-0.01694624,0.00893438,-1.00254205,-1.00234939,-0.00859451,0.01676781,-0.00850761,1.0027674,0.00960575])
         M_8 = np.array([-0.01233755,-0.00211036,-1.00689605,-1.00708674,-0.02531075,0.01233301,-0.02576082,1.00706965,-0.00212613])
-
 
         M_A = [M_1,M_2,M_3,M_4,M_5,M_6,M_7,M_8]
         
@@ -172,8 +178,6 @@ def rotate_24(soloA_bool):
         M_7 = np.array([-0.01694624,0.00893438,-1.00254205,-1.00234939,-0.00859451,0.01676781,-0.00850761,1.0027674,0.00960575])
         M_8 = np.array([-0.01233755,-0.00211036,-1.00689605,-1.00708674,-0.02531075,0.01233301,-0.02576082,1.00706965,-0.00212613])
 
-
-
         M_A = [M_1,M_2,M_3,M_4,M_5,M_6,M_7,M_8]
         
         for i, M in enumerate(M_A):
@@ -187,7 +191,6 @@ def rotate_24(soloA_bool):
         M_11 = np.array([0.09562948,-0.99808126,-0.00550316,-0.0083807,0.00490206,-1.00708301,0.99761069,0.10039216,-0.00864757])
         M_12 = np.array([-5.40867212,1.13925683,-3.46278696,-0.72430491,0.7475252,4.3949523,1.28427441,7.06375231,-0.4813982])
 
-
         M_B = [M_9,M_10,M_11,M_12]
         
         for i, M in enumerate(M_B):
@@ -195,10 +198,5 @@ def rotate_24(soloA_bool):
             
         return M_B
             
-
-
-
-
-
-rotate_21(True)
+#rotate_21(True)
 
