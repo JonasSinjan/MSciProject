@@ -11,7 +11,7 @@ import time
 
 def day_one(collist, soloA_bool):
     #set this to the directory where the data is kept on your local computer
-    jonas = True
+    jonas = False
 
     if jonas:
         file_path_A = r'C:\Users\jonas\MSci-Data\day_one\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-21--08-10-10_1.csv'
@@ -117,19 +117,19 @@ def day_one(collist, soloA_bool):
     plt.show()
     """
     
-"""
+
 num = '07'
 collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
 soloA_bool = True
 day_one(collist, soloA_bool)
-"""
 
+"""
 if __name__ == "__main__":
     num = '12'
     soloA_bool = False
     collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
     day_one(collist, soloA_bool)
-
+"""
 
 
 
