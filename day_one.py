@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from read_merge import soloA, soloB, read_files
+from read_merge import soloA, soloB, read_files, powerspecplot, rotate_21
 from align import align
 import pandas as pd
 import os
@@ -9,7 +9,7 @@ import scipy.signal as sps
 import time
 
 
-def day_one(collist, soloA_bool):
+def day_one(collist, soloA_bool, num):
     #set this to the directory where the data is kept on your local computer
     jonas = True
 
@@ -26,79 +26,33 @@ def day_one(collist, soloA_bool):
 
     if soloA_bool:
         df = read_files(path_A, soloA_bool, jonas, collist)
+        rotate_mat = rotate_21(soloA_bool)[num-1]
     else:
         df = read_files(path_B, soloA_bool, jonas, collist)
+        rotate_mat = rotate_21(soloA_bool)[num-9]
+    print(df.head())
+    df.iloc[:,0:3] = np.dot(rotate_mat, df.iloc[:,0:3].values.T).T
+    print(df.head())
     print(len(df))
     
-    time_diff = align(file_path_A, file_path_B)
-    print(time_diff)
+    #time_diff = align(file_path_A, file_path_B)
+    #print(time_diff)
     #now need to use pd.timedelta to subtract/add this time to the datetime object column 'time' in the df
     
     plot = True
 
-    if plot:
-        #plotting the raw probes results
+    if plot: #plotting the raw probes results
         plt.figure()
         for col in collist[1:]:
-            plt.plot(df['time'], df[col], label=str(col))
-            
-        # for col in df.columns.tolist()[-4:0]:
-        #     plt.plot(df['time'], df[col], label=str(col))
+            plt.plot(df.index.to_pydatetime(), df[col], label=str(col))
+            #df.plot.line(y=f'{col}')
         plt.xlabel('Time (s)')
         plt.ylabel('B (nT)')
         plt.legend()
         plt.show()
 
-    
-    #power spectral density plot
-    fs = 100 # sampling rate
-    probe_x = collist[1]
-    probe_y = collist[2]
-    probe_z = collist[3]
-    probe_m = collist[4]
-    x = df[probe_x][:20000]
-    f_x, Pxx_x = sps.periodogram(x,fs, scaling='spectrum')
-    x_y = df[probe_y][:20000]
-    f_y, Pxx_y = sps.periodogram(x_y,fs, scaling='spectrum')
-    x_z = df[probe_z][:20000]
-    f_z, Pxx_z = sps.periodogram(x_z,fs, scaling='spectrum')
-    x_m = df[probe_m][:20000]
-    f_m, Pxx_m = sps.periodogram(x_m,fs, scaling='spectrum')
-    x_t = x + x_y + x_z
-    f_t, Pxx_t = sps.periodogram(x_t, fs, scaling = 'spectrum')
-    
-    def plot_power(f,Pxx,probe):
-        plt.semilogy(f,np.sqrt(Pxx)) #sqrt required for power spectrum, and semi log y axis
-        plt.xlim(0,40)
-        plt.ylim(10e-5,10e-1)
-        plt.xlabel('Frequency [Hz]')
-        plt.ylabel('Log(FFT magnitude)')
-        plt.title(f'{probe}')
-        peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 2)
-        print([round(i,1) for i in f[peaks] if i <= 20], len(peaks))
-        plt.semilogy(f[peaks], np.sqrt(Pxx)[peaks], marker = 'x', markersize = 7, color='orange', linestyle = 'None')
-    
-
-    plt.figure()
-    mpl.rcParams['agg.path.chunksize'] = 10000
-    plt.title('Power Spectrum')
-    plt.subplot(221)
-    plot_power(f_x, Pxx_x, probe_x)
-    
-    plt.subplot(222)
-    plot_power(f_y, Pxx_y, probe_y)
-
-    plt.subplot(223)
-    plot_power(f_z, Pxx_z, probe_z)
-    
-    plt.subplot(224)
-    plot_power(f_m, Pxx_m, probe_m)
-    
-    plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
-    
-    plt.figure()
-    Trace = 'Trace'
-    plot_power(f_t, Pxx_t, Trace)
+    fs = 100
+    powerspecplot(df, fs, collist)
     
     #spectogram
 
@@ -118,10 +72,10 @@ def day_one(collist, soloA_bool):
     
     
 if __name__ == "__main__":
-    num = '12'
+    num = 12
     soloA_bool = False
     collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
-    day_one(collist, soloA_bool)
+    day_one(collist, soloA_bool, num)
 
 
 
