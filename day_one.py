@@ -95,13 +95,13 @@ if __name__ == "__main__":
 
     start_dt = datetime(2019,6,21,10,58)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
     end_dt = datetime(2019,6,21,10,58,50)# this is the end
-
-    start_csv, end_csv = which_csvs(soloA_bool, 1 ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
+    day = 1
+    start_csv, end_csv = which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
     print(start_csv, end_csv)
 
     all_files = [0]*(end_csv + 1 -start_csv)
+
     for index, i in enumerate(range(start_csv, end_csv + 1)): #this will loop through and add the csv files that contain the start and end time set above
-        #print(index)
         if soloA_bool:
             if jonas:
                 all_files[index] = path_fol_A + f'\SoloA_2019-06-21--08-10-10_{i}.csv'
