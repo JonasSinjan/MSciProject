@@ -60,6 +60,7 @@ def read_files(all_files, soloA, jonas, collist=None, day=1, start_dt = None, en
     
     return df
 
+
 def which_csvs(soloA_bool, day, start_dt, end_dt):
     day_one_A_dt = datetime(2019,6,21,8,10,10,12)
     day_one_B_dt = datetime(2019,6,21,8,9,10)
