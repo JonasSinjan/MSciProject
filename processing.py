@@ -8,19 +8,12 @@ import os
 import scipy.signal as sps
 from datetime import datetime, timedelta
 import time
+import math
 
-def read_files(path, soloA, jonas, collist=None, day=1, start_dt = None, end_dt = None):
+def read_files(all_files, soloA, jonas, collist=None, day=1, start_dt = None, end_dt = None):
     #path - location of folder to concat
-    #soloA - set to True if soloA, if soloB False 
-    if jonas: 
-        all_files = glob.glob(path + "\*.csv") #for Windows
-    else: 
-        all_files = glob.glob(path + "/*.csv") #for MAC
-    li = []
-    day_one_A_dt = datetime(2019,6,21,8,10,10,12)
-    day_one_B_dt = datetime(2019,6,21,8,9,10)
-    day_two_A_dt = datetime(2019,6,24,8,14,46,93)
-    day_two_B_dt = datetime(2019,6,24,8,14,24)
+    #soloA - set to True if soloA, if soloB False
+    li = [] 
     for filename in all_files:   
         if soloA:
             if collist == None:
@@ -29,14 +22,7 @@ def read_files(path, soloA, jonas, collist=None, day=1, start_dt = None, end_dt 
                 new_cols = cols[0:5] + cols[-16:-1] + [cols[-1]] + cols[13:17] + cols[9:13] + cols[5:9] #this will reorder the columns into the correct order
                 df = df[new_cols]
             else:
-                # rows = int((end_dt - start_dt).total_seconds()*1000)
-                
-                # if day == 1 or day == 21:
-                #     skip = int((start_dt - day_one_A_dt).total_seconds()*1000)
-                # else:
-                #     skip = int((start_dt - day_two_A_dt).total_seconds()*1000)
-                skip = 0
-                df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351 + skip, sep=';', usecols = collist)#header = 350, nrows = rows)
+                df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';', usecols = collist)#header = 350, nrows = rows)
         else:
             if collist == None:
                 df =  pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';')
@@ -44,17 +30,10 @@ def read_files(path, soloA, jonas, collist=None, day=1, start_dt = None, end_dt 
                 new_cols = [cols[0]] + cols[9:13] + cols[1:9] + cols[13:17]
                 df = df[new_cols]
             else:
-                # rows = int((end_dt - start_dt).total_seconds()*1000)
-                # if day == 1 or day == 21:
-                #     skip = int((start_dt - day_one_B_dt).total_seconds()*1000)
-                # else:
-                #     skip = int((start_dt - day_two_B_dt).total_seconds()*1000)
-                skip = 0
-                df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170 + skip, sep=';', usecols = collist)#, header = 170, nrows = rows)
+                df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';', usecols = collist)#, header = 170, nrows = rows)
             
         li.append(df)
         
-    
     df = pd.concat(li, ignore_index = True, sort=True)
 
     start = time.process_time()
@@ -213,3 +192,41 @@ def soloB(file_path):
     df_B = df_B[new_cols]
     return df_B
 
+def which_csvs(soloA_bool, day, start_dt, end_dt):
+    day_one_A_dt = datetime(2019,6,21,8,10,10,12)
+    day_one_B_dt = datetime(2019,6,21,8,9,10)
+    day_two_A_dt = datetime(2019,6,24,8,14,46,93)
+    day_two_B_dt = datetime(2019,6,24,8,14,24)
+
+    length = (end_dt - start_dt).total_seconds()
+    
+    if soloA_bool:
+        if day == 1 or day == 21:
+            time_delta = (start_dt - day_one_A_dt).total_seconds()
+        else:
+            time_delta = (start_dt - day_two_A_dt).total_seconds()
+        start_csv = math.floor(time_delta / 384) # approx number of csv files
+        end_csv = start_csv + math.ceil(length/384)
+    else:
+        if day == 1 or day == 21:
+            time_delta = (start_dt - day_one_B_dt).total_seconds()
+        else:
+            time_delta = (start_dt - day_two_B_dt).total_seconds()
+        start_csv = math.floor(time_delta / 658) # approx number of csv files
+        end_csv = start_csv + math.ceil(length/658)
+    return start_csv, end_csv
+
+"""
+ all_folders = glob.glob(path_fol_A + "\*")
+        #print(all_folders)
+        li, length = [], []
+        for folder in all_folders:
+            all_files = glob.glob(folder + "\*.csv")
+            for filename in all_files:
+                df =  pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';', usecols = ['time'])
+                length.append(len(df))
+                li.append(df)
+            df = pd.concat(li, ignore_index = True, sort=True)
+            print(folder, ', seconds = ', len(df)/1000, ', mins = ',len(df)/60000, ', hours = ', len(df)/3600000)
+            li = []
+"""
