@@ -59,6 +59,30 @@ def read_files(all_files, soloA, jonas, collist=None, day=1, start_dt = None, en
     print(df.head())
     
     return df
+
+def which_csvs(soloA_bool, day, start_dt, end_dt):
+    day_one_A_dt = datetime(2019,6,21,8,10,10,12)
+    day_one_B_dt = datetime(2019,6,21,8,9,10)
+    day_two_A_dt = datetime(2019,6,24,8,14,46,93)
+    day_two_B_dt = datetime(2019,6,24,8,14,24)
+
+    length = (end_dt - start_dt).total_seconds()
+    
+    if soloA_bool:
+        if day == 1 or day == 21:
+            time_delta = (start_dt - day_one_A_dt).total_seconds()
+        else:
+            time_delta = (start_dt - day_two_A_dt).total_seconds()
+        start_csv = math.floor(time_delta / 384) # approx number of csv files
+        end_csv = start_csv + math.ceil(length/384)
+    else:
+        if day == 1 or day == 21:
+            time_delta = (start_dt - day_one_B_dt).total_seconds()
+        else:
+            time_delta = (start_dt - day_two_B_dt).total_seconds()
+        start_csv = math.floor(time_delta / 658) # approx number of csv files
+        end_csv = start_csv + math.ceil(length/658)
+    return start_csv, end_csv
     
 
 def powerspecplot(df, fs, collist):
@@ -192,29 +216,7 @@ def soloB(file_path):
     df_B = df_B[new_cols]
     return df_B
 
-def which_csvs(soloA_bool, day, start_dt, end_dt):
-    day_one_A_dt = datetime(2019,6,21,8,10,10,12)
-    day_one_B_dt = datetime(2019,6,21,8,9,10)
-    day_two_A_dt = datetime(2019,6,24,8,14,46,93)
-    day_two_B_dt = datetime(2019,6,24,8,14,24)
 
-    length = (end_dt - start_dt).total_seconds()
-    
-    if soloA_bool:
-        if day == 1 or day == 21:
-            time_delta = (start_dt - day_one_A_dt).total_seconds()
-        else:
-            time_delta = (start_dt - day_two_A_dt).total_seconds()
-        start_csv = math.floor(time_delta / 384) # approx number of csv files
-        end_csv = start_csv + math.ceil(length/384)
-    else:
-        if day == 1 or day == 21:
-            time_delta = (start_dt - day_one_B_dt).total_seconds()
-        else:
-            time_delta = (start_dt - day_two_B_dt).total_seconds()
-        start_csv = math.floor(time_delta / 658) # approx number of csv files
-        end_csv = start_csv + math.ceil(length/658)
-    return start_csv, end_csv
 
 """
  all_folders = glob.glob(path_fol_A + "\*")
