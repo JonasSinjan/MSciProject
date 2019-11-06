@@ -105,12 +105,12 @@ if __name__ == "__main__":
             if jonas:
                 all_files[index] = path_fol_A + f'\SoloA_2019-06-21--08-10-10_{i}.csv'
             else:
-                all_files[index] = path_fol_A + os.path.expanduser(f'\SoloA_2019-06-21--08-10-10_{i}.csv')
+                all_files[index] = path_fol_A + os.path.expanduser(f'/SoloA_2019-06-21--08-10-10_{i}.csv')
         else:
             if jonas:
                 all_files[index] = path_fol_B + f'\SoloB_2019-06-21--08-09-10_{i}.csv'
             else:
-                all_files[index] = path_fol_A + os.path.expanduser(f'\SoloB_2019-06-21--08-09-10_{i}.csv')
+                all_files[index] = path_fol_A + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{i}.csv')
     #print(all_files)
     day_one(all_files, collist, soloA_bool, num, start_dt, end_dt)
 
