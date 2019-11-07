@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from read_merge import soloA, soloB, read_files
+from processing import soloA, soloB, read_files
 import pandas as pd
 import os
 import numpy as np
