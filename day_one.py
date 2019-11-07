@@ -54,7 +54,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt):
     #f, Pxx = sps.periodogram(x,fs)
     f, t, Sxx = sps.spectrogram(x,fs)#,nperseg=700)
     plt.figure()
-    plt.pcolormesh(x, f, Sxx,vmin = 0.,vmax = 0.1)
+    plt.pcolormesh(t, f, Sxx,vmin = 0.,vmax = 0.1)
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
     plt.title('Spectogram')
@@ -88,7 +88,7 @@ if __name__ == "__main__":
         path_fol_A = os.path.expanduser("~/Documents/MSciProject/Data/day_one/A")
         path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_one/B")
 
-    num = 4
+    num = 6
     soloA_bool = True
     if num <10:
         num_str = f'0{num}'
@@ -96,8 +96,8 @@ if __name__ == "__main__":
         num_str = num
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
-    start_dt = datetime(2019,6,21,10,55)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,11,00)# this is the end
+    start_dt = datetime(2019,6,21,9,30)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,21,9,40)# this is the end
 
     day = 1
     start_csv, end_csv = which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
