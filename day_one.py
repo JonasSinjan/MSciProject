@@ -45,7 +45,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt):
 
     fs = 100
     #powerspecplot(df, fs, collist)
-    print(len(df2))
+    #print(len(df2))
     #spectogram
 
     x = df2[collist[1]]
@@ -53,7 +53,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt):
     #f, Pxx = sps.periodogram(x,fs)
     f, t, Sxx = sps.spectrogram(x,fs)#,nperseg=700)
     plt.figure()
-    plt.pcolormesh(df2.index.to_pydatetime(), f, Sxx,vmin = 0.,vmax = 0.1)
+    plt.pcolormesh(x, f, Sxx,vmin = 0.,vmax = 0.1)
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
     plt.title('Spectogram')
