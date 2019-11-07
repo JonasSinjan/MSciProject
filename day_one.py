@@ -36,7 +36,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt):
         plt.figure()
         for col in collist[1:]:
             plt.plot(df2.index.to_pydatetime(), df2[col], label=str(col))
-            print(df2[col].idxmax())
+            print(df2[col].abs().idxmax())
         plt.xlabel('Time (s)')
         plt.ylabel('B (nT)')
         plt.title(f'Probe {num}, {start_dt.date()}')
@@ -94,7 +94,7 @@ if __name__ == "__main__":
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
     start_dt = datetime(2019,6,21,10,58)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,10,58,50)# this is the end
+    end_dt = datetime(2019,6,21,10,59)# this is the end
     day = 1
     start_csv, end_csv = which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
     print(start_csv, end_csv)
