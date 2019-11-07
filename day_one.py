@@ -18,13 +18,13 @@ def day_one(collist, soloA_bool, num):
     if jonas:
         file_path_A = r'C:\Users\jonas\MSci-Data\day_one\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-21--08-10-10_1.csv'
         file_path_B = r'C:\Users\jonas\MSci-Data\day_one\SoloB_2019-06-21--08-09-10_20\SoloB_2019-06-21--08-09-10_1.csv'
-        path_A = r'C:\Users\jonas\MSci-Data\day_one\SoloA_2019-06-21--08-10-10_20'
+        path_A = r'C:\Users\jonas\MSci-Data\day_one\SoloA_2019-06-21--08-10-10_50'
         path_B = r'C:\Users\jonas\MSci-Data\day_one\SoloB_2019-06-21--08-09-10_20'
     else:
         file_path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_20/SoloA_2019-06-21--08-10-10_01.csv")
         file_path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20/SoloB_2019-06-21--08-09-10_01.csv")
-        path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_50")
-        path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20")
+        path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_81")
+        path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_47")
 
     if soloA_bool:
         df = read_files(path_A, soloA_bool, jonas, collist)
@@ -42,16 +42,21 @@ def day_one(collist, soloA_bool, num):
     plot = True
 
     if plot: #plotting the raw probes results
+        #df2 = df.copy()
+        df2 = df.between_time('16:03:17', '16:03:19')
         plt.figure()
         for col in collist[1:]:
-            plt.plot(df.index.to_pydatetime(), df[col], label=str(col))
+            plt.plot(df2.index.to_pydatetime(), df2[col], label=str(col))
+            print(df2[col].idxmax())
+            #df.plot.line(y=f'{col}')
 
         plt.xlabel('Time (s)')
         plt.ylabel('B (nT)')
+        plt.title(f'{num} Probe {df.index.date}')
         plt.legend()
         plt.show()
 
-    fs = 100
+    #fs = 100
     #powerspecplot(df, fs, collist)
     
     #spectogram
@@ -77,12 +82,13 @@ def day_one(collist, soloA_bool, num):
 """
 
 if __name__ == "__main__":
-    num = 3
+    num = 2
     soloA_bool = True
     if num<10:
         num_str = f'0{num}'
     else:
         num_str = f'{num}'
+
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z', f'Probe{num_str}_||']
     day_one(collist, soloA_bool, num)
 
