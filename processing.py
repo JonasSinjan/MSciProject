@@ -68,6 +68,7 @@ def which_csvs(soloA_bool, day, start_dt, end_dt):
     day_two_B_dt = datetime(2019,6,24,8,14,24)
 
     length = (end_dt - start_dt).total_seconds()
+    #print(length)
     
     if soloA_bool:
         if day == 1 or day == 21:
@@ -75,14 +76,15 @@ def which_csvs(soloA_bool, day, start_dt, end_dt):
         else:
             time_delta = (start_dt - day_two_A_dt).total_seconds()
         start_csv = math.floor(time_delta / 384) # approx number of csv files
-        end_csv = start_csv + math.ceil(length/384)
+        end_csv = start_csv + math.ceil(length/384) + 3
+        #print(length/384, math.ceil(length/384))
     else:
         if day == 1 or day == 21:
             time_delta = (start_dt - day_one_B_dt).total_seconds()
         else:
             time_delta = (start_dt - day_two_B_dt).total_seconds()
         start_csv = math.floor(time_delta / 658) # approx number of csv files
-        end_csv = start_csv + math.ceil(length/658)
+        end_csv = start_csv + math.ceil(length/658) + 3
     return start_csv, end_csv
     
 
