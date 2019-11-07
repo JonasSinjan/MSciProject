@@ -84,7 +84,7 @@ def which_csvs(soloA_bool, day, start_dt, end_dt):
         else:
             time_delta = (start_dt - day_two_B_dt).total_seconds()
         start_csv = math.floor(time_delta / 658) # approx number of csv files
-        end_csv = start_csv + math.ceil(length/658) + 3
+        end_csv = start_csv + math.ceil(length/658) 
     return start_csv, end_csv
     
 
