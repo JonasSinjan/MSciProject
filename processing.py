@@ -37,6 +37,8 @@ def read_files(all_files, soloA, jonas, collist=None, day=1, start_dt = None, en
     df = pd.concat(li, ignore_index = True, sort=True)
 
     start = time.process_time()
+    #factor = int(1000/freq_max)
+    df = df.groupby(np.arange(len(df))//50).mean()
     if soloA:
         if '21' in all_files[0]: #for day_one
             df['time'] = df['time'] + 10.12
@@ -84,7 +86,7 @@ def which_csvs(soloA_bool, day, start_dt, end_dt):
         else:
             time_delta = (start_dt - day_two_B_dt).total_seconds()
         start_csv = math.floor(time_delta / 658) # approx number of csv files
-        end_csv = start_csv + math.ceil(length/658) + 3
+        end_csv = start_csv + math.ceil(length/658)
     return start_csv, end_csv
     
 
@@ -93,15 +95,15 @@ def powerspecplot(df, fs, collist):
     probe_x = collist[1]
     probe_y = collist[2]
     probe_z = collist[3]
-    probe_m = collist[4]
+    #probe_m = collist[4]
     x = df[probe_x]#[:20000]
     f_x, Pxx_x = sps.periodogram(x,fs, scaling='spectrum')
     x_y = df[probe_y]#[:20000]
     f_y, Pxx_y = sps.periodogram(x,fs, scaling='spectrum')
     x_z = df[probe_z]#[:20000]
     f_z, Pxx_z = sps.periodogram(x,fs, scaling='spectrum')
-    x = df[probe_m]#[:20000]
-    f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
+    #x = df[probe_m]#[:20000]
+    #f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
     x_t = x + x_y + x_z #trace
     f_t, Pxx_t = sps.periodogram(x_t, fs, scaling ='spectrum')
     
@@ -112,7 +114,7 @@ def powerspecplot(df, fs, collist):
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Log(FFT magnitude)')
         plt.title(f'{probe}')
-        peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 3)
+        peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 2.5)
         print([round(i,1) for i in f[peaks] if i <= 20], len(peaks))
         plt.semilogy(f[peaks], np.sqrt(Pxx)[peaks], marker = 'x', markersize = 10, color='orange', linestyle = 'None')
     
@@ -129,8 +131,8 @@ def powerspecplot(df, fs, collist):
     plt.subplot(223)
     plot_power(f_z, Pxx_z, probe_z)
     
-    plt.subplot(224)
-    plot_power(f_m, Pxx_m, probe_m)
+    #plt.subplot(224)
+    #plot_power(f_m, Pxx_m, probe_m)
     
     plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
     
