@@ -95,7 +95,7 @@ def which_csvs(soloA_bool, day, start_dt, end_dt):
     return start_csv, end_csv
     
 
-def powerspecplot(df, fs, collist):
+def powerspecplot(df, fs, collist, alt):
     
     probe_x = collist[1]
     probe_y = collist[2]
@@ -154,20 +154,21 @@ def powerspecplot(df, fs, collist):
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Log(abs(FFT(sig)**2))')
         #plt.ylim(10e1,10e5)
+        
+    if alt:
+        plt.figure()
+        plt.subplot(221)
+        alt_power_spec(x, fs, probe_x)
 
-    plt.figure()
-    plt.subplot(221)
-    alt_power_spec(x, fs, probe_x)
+        plt.subplot(222)
+        alt_power_spec(x_y, fs, probe_y)
 
-    plt.subplot(222)
-    alt_power_spec(x_y, fs, probe_y)
+        plt.subplot(223)
+        alt_power_spec(x_z, fs, probe_z)
 
-    plt.subplot(223)
-    alt_power_spec(x_z, fs, probe_z)
-
-    probe_t = 'Trace'
-    plt.subplot(224)
-    alt_power_spec(x_t, fs, probe_t)
+        probe_t = 'Trace'
+        plt.subplot(224)
+        alt_power_spec(x_t, fs, probe_t)
 
     plt.show()
 

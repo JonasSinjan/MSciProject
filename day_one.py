@@ -12,7 +12,7 @@ from datetime import datetime
 import glob
 
 
-def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq = None):
+def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = None):
     #set this to the directory where the data is kept on your local computer
     if soloA_bool:
         df = read_files(all_files, soloA_bool, jonas, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
@@ -45,7 +45,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq
 
     fs = sampling_freq
 
-    powerspecplot(df, fs, collist)
+    powerspecplot(df, fs, collist, alt)
     #print(len(df2))
     #spectogram
     """
@@ -88,12 +88,13 @@ if __name__ == "__main__":
         path_fol_A = os.path.expanduser("~/Documents/MSciProject/Data/day_one/A")
         path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_one/B")
 
-    num = 7
+    alt = False #set to true if you want to see power spec using the stnadard method - not the inbuilt funciton
+    num = 2
     if num < 9:
         soloA_bool = True
     else:
         soloA_bool = False
-    if num <10:
+    if num < 10:
         num_str = f'0{num}'
     else: 
         num_str = num
@@ -122,7 +123,7 @@ if __name__ == "__main__":
                 all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{i}.csv') #need to change path_fol_B to the path where your B folder is
 
     #print(all_files)
-    day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq = 20) #pass through the list containing the file paths
+    day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 20) #pass through the list containing the file paths
 
 
 
