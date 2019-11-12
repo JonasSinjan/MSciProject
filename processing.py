@@ -42,7 +42,7 @@ def read_files(all_files, soloA, jonas, sampling_freq = None, collist=None, day=
         factor = int(1000/sampling_freq)
         assert type(factor) == int
         print(factor)
-        df = df.groupby(np.arange(len(df))//10).mean()
+        df = df.groupby(np.arange(len(df))//factor).mean()
 
     if soloA:
         if '21' in all_files[0]: #for day_one
