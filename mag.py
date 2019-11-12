@@ -41,10 +41,12 @@ def mag(filepath):
     
 if __name__ == "__main__":
     
-    jonas = True
+    jonas = False
     
     if jonas:
         filepath = r'C:\Users\jonas\MSci-Data\Day2MAGBurst.csv'
+    else:
+        filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/Day2MAGBurst.csv")
         
     #else:
         

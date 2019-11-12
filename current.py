@@ -19,15 +19,20 @@ from datetime import datetime
 import glob
 
 def current():
-
-
-    filename = os.path.expanduser("~/Documents/MSciProject/Data/LCL_Data/Day_1_Payload_LCL_Current_Profiles.xlsx")
+    filename = os.path.expanduser("~/Documents/MSciProject/Data/LCL_Data/Day_2_Payload_LCL_Current_Profiles.xlsx")
 
     df =  pd.read_excel(filename)
     print (df.head())
     
-    for col in df.columns:
-        print(col)
+    
+    plot = True
+    if plot:
+        plt.figure()
+        for col in df.columns[1:]:
+            plt.plot(df['EGSE Time'], df[col], label=str(col))
+            plt.legend()
+
+            
         
         
 current()

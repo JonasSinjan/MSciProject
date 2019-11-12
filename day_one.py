@@ -48,9 +48,9 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     powerspecplot(df, fs, collist, alt)
     #print(len(df2))
     #spectogram
-    """
+    
     x = df2[collist[1]]
-    fs = 20 # sampling rate
+    fs = sampling_freq
     #f, Pxx = sps.periodogram(x,fs)
     f, t, Sxx = sps.spectrogram(x,fs)#,nperseg=700)
     plt.figure()
@@ -62,7 +62,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     fig = plt.gcf()
     plt.colorbar()  
     plt.show()
-    """
+    
 # num = '07'
 # collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
 # soloA_bool = True

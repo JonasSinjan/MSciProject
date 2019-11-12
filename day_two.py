@@ -11,6 +11,7 @@ import time
 from datetime import datetime
 import glob
 
+
 def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq = None):
     #set this to the directory where the data is kept on your local computer
     if soloA_bool:
@@ -43,7 +44,7 @@ def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq
 
 if __name__ == "__main__":
     
-    jonas = True
+    jonas = False
 
     if jonas:
         file_path_A = r'C:\Users\jonas\MSci-Data\powered\SoloA_2019-06-24--08-14-46_9\SoloA_2019-06-24--08-14-46_1.csv' #the first couple of files in some of the folders are from earlier days
@@ -55,6 +56,8 @@ if __name__ == "__main__":
     else:
         file_path_A = os.path.expanduser("~/Documents/MsciProject/Data/SoloA_2019-06-24--08-14-46_9/SoloA_2019-06-24--08-14-46_1.csv")
         file_path_B = os.path.expanduser("~/Documents/MsciProject/Data/SoloB_2019-06-24--08-14-24_20/SoloB_2019-06-24--08-14-24_1.csv")
+        path_fol_A =  os.path.expanduser("~/Documents/MsciProject/Data/day_two/A")
+        path_fol_B =  os.path.expanduser("~/Documents/MsciProject/Data/day_two/B")
     
     num = 7
     if num < 9:
@@ -79,6 +82,7 @@ if __name__ == "__main__":
 
     for index, i in enumerate(range(start_csv, end_csv + 1)): #this will loop through and add the csv files that contain the start and end time set above
 
+
         if soloA_bool:
             if jonas:
                 all_files[index] = path_fol_A + f'\SoloA_2019-06-24--08-14-46_{i}.csv'
@@ -89,6 +93,7 @@ if __name__ == "__main__":
                 all_files[index] = path_fol_B + f'\SoloB_2019-06-24--08-14-24_{i}.csv'
             else:
                 all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-24--08-14-24_{i}.csv') #need to change path_fol_B to the path where your B folder is
-
     #print(all_files)
-    day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq = 40) #pass through the list containing the file paths
+
+    day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq = 20) #pass through the list containing the file paths
+
