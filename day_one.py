@@ -88,29 +88,19 @@ if __name__ == "__main__":
         path_fol_A = os.path.expanduser("~/Documents/MSciProject/Data/day_one/A")
         path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_one/B")
 
-<<<<<<< HEAD
-    num = 1
-    soloA_bool = True
-=======
     num = 7
     if num < 9:
         soloA_bool = True
     else:
         soloA_bool = False
->>>>>>> 65aec67fd051b44aa0557ec40bab4b523e1da0ab
     if num <10:
         num_str = f'0{num}'
     else: 
         num_str = num
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
-<<<<<<< HEAD
     start_dt = datetime(2019,6,21,10,30)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
     end_dt = datetime(2019,6,21,10,50)# this is the end
-=======
-    start_dt = datetime(2019,6,21,11,28)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,11,30)# this is the end
->>>>>>> 65aec67fd051b44aa0557ec40bab4b523e1da0ab
 
     day = 1
     start_csv, end_csv = which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
