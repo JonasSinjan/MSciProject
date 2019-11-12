@@ -17,10 +17,10 @@ def mag(filepath):
     print(df.head())
     print(len(df))
     
-    plot = False
+    plot = True
     if plot:
         plt.figure()
-        df2 = df.iloc[:1000000]
+        df2 = df.iloc[2000000:]
         cols = df.columns.tolist()
         for col in cols:
             plt.plot(df2.index, df2[col], label =f'{col}')
