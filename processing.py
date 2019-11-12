@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import time
 import math
 
-def read_files(all_files, soloA, jonas, collist=None, day=1, start_dt = None, end_dt = None):
+def read_files(all_files, soloA, jonas, sampling_freq = None, collist=None, day=1, start_dt = None, end_dt = None):
     #path - location of folder to concat
     #soloA - set to True if soloA, if soloB False
     li = [] 
@@ -38,7 +38,12 @@ def read_files(all_files, soloA, jonas, collist=None, day=1, start_dt = None, en
 
     start = time.process_time()
     #factor = int(1000/freq_max)
-    df = df.groupby(np.arange(len(df))//50).mean()
+    if sampling_freq != None:
+        factor = int(1000/sampling_freq)
+        assert type(factor) == int
+        print(factor)
+        df = df.groupby(np.arange(len(df))//10).mean()
+
     if soloA:
         if '21' in all_files[0]: #for day_one
             df['time'] = df['time'] + 10.12
@@ -108,20 +113,20 @@ def powerspecplot(df, fs, collist):
     f_t, Pxx_t = sps.periodogram(x_t, fs, scaling ='spectrum')
     
     def plot_power(f,Pxx,probe):
-        plt.semilogy(f,np.sqrt(Pxx)) #sqrt required for power spectrum, and semi log y axis
-        plt.xlim(0,40)
-        plt.ylim(10e-5,10e-1)
+        plt.semilogy(f,Pxx) #sqrt required for power spectrum, and semi log y axis
+        plt.xlim(0,15)
+        plt.ylim(10e-8, 10e-2)
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Log(FFT magnitude)')
         plt.title(f'{probe}')
-        peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 2.5)
-        print([round(i,1) for i in f[peaks] if i <= 20], len(peaks))
-        plt.semilogy(f[peaks], np.sqrt(Pxx)[peaks], marker = 'x', markersize = 10, color='orange', linestyle = 'None')
+        #peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 2)
+        #print([round(i,1) for i in f[peaks] if i <= 20], len(peaks))
+        #plt.semilogy(f[peaks], np.sqrt(Pxx)[peaks], marker = 'x', markersize = 10, color='orange', linestyle = 'None')
     
 
     plt.figure()
     mpl.rcParams['agg.path.chunksize'] = 10000
-    plt.title('Power Spectrum')
+    plt.title('Power Spectrum - Periodogram')
     plt.subplot(221)
     plot_power(f_x, Pxx_x, probe_x)
     
@@ -131,14 +136,39 @@ def powerspecplot(df, fs, collist):
     plt.subplot(223)
     plot_power(f_z, Pxx_z, probe_z)
     
-    #plt.subplot(224)
+    plt.subplot(224)
+    Trace = 'Trace'
+    plot_power(f_t, Pxx_t, Trace)
     #plot_power(f_m, Pxx_m, probe_m)
     
     plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
-    
+
+    def alt_power_spec(data, probe):
+        ps = np.abs(np.fft.fft(data))**2
+        time_step = 1/100
+        freqs = np.fft.fftfreq(len(data), time_step)
+        idx = np.argsort(freqs)
+        plt.semilogy(freqs[idx], ps[idx])
+        plt.xlim(0,15)
+        plt.title(f'{probe}')
+        plt.xlabel('Frequency [Hz]')
+        plt.ylabel('Log(abs(FFT(sig)**2))')
+        #plt.ylim(10e1,10e5)
+
     plt.figure()
-    Trace = 'Trace'
-    plot_power(f_t, Pxx_t, Trace)
+    plt.subplot(221)
+    alt_power_spec(x, probe_x)
+
+    plt.subplot(222)
+    alt_power_spec(x_y, probe_y)
+
+    plt.subplot(223)
+    alt_power_spec(x_z, probe_z)
+
+    probe_t = 'Trace'
+    plt.subplot(224)
+    alt_power_spec(x_t, probe_t)
+
     plt.show()
 
 def rotate_21(soloA_bool):
