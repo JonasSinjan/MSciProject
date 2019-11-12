@@ -42,7 +42,7 @@ def read_files(all_files, soloA, jonas, sampling_freq = None, collist=None, day=
         factor = int(1000/sampling_freq)
         assert type(factor) == int
         print(factor)
-        df = df.groupby(np.arange(len(df))//10).mean()
+        df = df.groupby(np.arange(len(df))//factor).mean()
 
     if soloA:
         if '21' in all_files[0]: #for day_one
@@ -112,9 +112,9 @@ def powerspecplot(df, fs, collist):
     x_t = x + x_y + x_z #trace
     f_t, Pxx_t = sps.periodogram(x_t, fs, scaling ='spectrum')
     
-    def plot_power(f,Pxx,probe):
+    def plot_power(f,fs,Pxx,probe):
         plt.semilogy(f,Pxx) #sqrt required for power spectrum, and semi log y axis
-        plt.xlim(0,15)
+        plt.xlim(0,fs/2)
         plt.ylim(10e-8, 10e-2)
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Log(FFT magnitude)')
@@ -128,28 +128,28 @@ def powerspecplot(df, fs, collist):
     mpl.rcParams['agg.path.chunksize'] = 10000
     plt.title('Power Spectrum - Periodogram')
     plt.subplot(221)
-    plot_power(f_x, Pxx_x, probe_x)
+    plot_power(f_x, fs, Pxx_x, probe_x)
     
     plt.subplot(222)
-    plot_power(f_y, Pxx_y, probe_y)
+    plot_power(f_y, fs, Pxx_y, probe_y)
 
     plt.subplot(223)
-    plot_power(f_z, Pxx_z, probe_z)
+    plot_power(f_z, fs, Pxx_z, probe_z)
     
     plt.subplot(224)
     Trace = 'Trace'
-    plot_power(f_t, Pxx_t, Trace)
+    plot_power(f_t, fs, Pxx_t, Trace)
     #plot_power(f_m, Pxx_m, probe_m)
     
     plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
 
-    def alt_power_spec(data, probe):
+    def alt_power_spec(data, fs, probe):
         ps = np.abs(np.fft.fft(data))**2
-        time_step = 1/100
+        time_step = 1/fs
         freqs = np.fft.fftfreq(len(data), time_step)
         idx = np.argsort(freqs)
         plt.semilogy(freqs[idx], ps[idx])
-        plt.xlim(0,15)
+        plt.xlim(0,fs/2)
         plt.title(f'{probe}')
         plt.xlabel('Frequency [Hz]')
         plt.ylabel('Log(abs(FFT(sig)**2))')
@@ -157,17 +157,17 @@ def powerspecplot(df, fs, collist):
 
     plt.figure()
     plt.subplot(221)
-    alt_power_spec(x, probe_x)
+    alt_power_spec(x, fs, probe_x)
 
     plt.subplot(222)
-    alt_power_spec(x_y, probe_y)
+    alt_power_spec(x_y, fs, probe_y)
 
     plt.subplot(223)
-    alt_power_spec(x_z, probe_z)
+    alt_power_spec(x_z, fs, probe_z)
 
     probe_t = 'Trace'
     plt.subplot(224)
-    alt_power_spec(x_t, probe_t)
+    alt_power_spec(x_t, fs, probe_t)
 
     plt.show()
 

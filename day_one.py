@@ -43,7 +43,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq
         plt.legend(loc="best")
         plt.show()
 
-    fs = 50
+    fs = sampling_freq
 
     powerspecplot(df, fs, collist)
     #print(len(df2))
@@ -71,7 +71,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq
 
 if __name__ == "__main__":
 
-    jonas = False
+    jonas = True
 
     if jonas:
         file_path_A = r'C:\Users\jonas\MSci-Data\day_one\A\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-21--08-10-10_1.csv'
@@ -99,8 +99,8 @@ if __name__ == "__main__":
         num_str = num
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
-    start_dt = datetime(2019,6,21,10,30)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,10,50)# this is the end
+    start_dt = datetime(2019,6,21,14,37)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,21,14,39)# this is the end
 
     day = 1
     start_csv, end_csv = which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
@@ -122,7 +122,7 @@ if __name__ == "__main__":
                 all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{i}.csv') #need to change path_fol_B to the path where your B folder is
 
     #print(all_files)
-    day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq = 50) #pass through the list containing the file paths
+    day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq = 20) #pass through the list containing the file paths
 
 
 
