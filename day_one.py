@@ -3,7 +3,6 @@ import matplotlib as mpl
 from processing import soloA, soloB, read_files, powerspecplot, rotate_21, which_csvs
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
-from align import align
 import pandas as pd
 import os
 import numpy as np
@@ -23,16 +22,17 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt):
         rotate_mat = rotate_21(soloA_bool)[num-9]
     df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
     print(len(df))
-    print(df.tail())
+    #print(df.tail())
     #time_diff = align(file_path_A, file_path_B)
     #print(time_diff)
     #now need to use pd.timedelta to subtract/add this time to the datetime object column 'time' in the df
     
     plot = True
-    print(start_dt.time(), end_dt.time())
+    #print(start_dt.time(), end_dt.time())
+    df2 = df.between_time(start_dt.time(), end_dt.time())
+    #df2 = 
+    #print(df2.head())
     if plot: #plotting the raw probes results
-
-        df2 = df.between_time(start_dt.time(), end_dt.time())
         plt.figure()
         for col in collist[1:]:
             plt.plot(df2.index.to_pydatetime(), df2[col], label=str(col))
@@ -40,15 +40,15 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt):
         plt.xlabel('Time (s)')
         plt.ylabel('B (nT)')
         plt.title(f'Probe {num}, {start_dt.date()}')
-        plt.legend()
+        plt.legend(loc="best")
         plt.show()
 
-    fs = 1000
+    fs = 100
 
-    #powerspecplot(df, fs, collist)
+    powerspecplot(df, fs, collist)
     #print(len(df2))
     #spectogram
-
+    """
     x = df2[collist[1]]
     #fs = 200 # sampling rate
     #f, Pxx = sps.periodogram(x,fs)
@@ -62,7 +62,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt):
     fig = plt.gcf()
     plt.colorbar()  
     plt.show()
-    
+    """
 # num = '07'
 # collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
 # soloA_bool = True
@@ -88,7 +88,7 @@ if __name__ == "__main__":
         path_fol_A = os.path.expanduser("~/Documents/MSciProject/Data/day_one/A")
         path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_one/B")
 
-    num = 6
+    num = 1
     soloA_bool = True
     if num <10:
         num_str = f'0{num}'
@@ -96,16 +96,17 @@ if __name__ == "__main__":
         num_str = num
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
-    start_dt = datetime(2019,6,21,9,30)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,9,40)# this is the end
+    start_dt = datetime(2019,6,21,10,30)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,21,10,50)# this is the end
 
     day = 1
     start_csv, end_csv = which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
     print(start_csv, end_csv)
 
-    all_files = [0]*(end_csv + 1 -start_csv)
+    all_files = [0]*(end_csv + 1 - start_csv)
 
     for index, i in enumerate(range(start_csv, end_csv + 1)): #this will loop through and add the csv files that contain the start and end time set above
+
         if soloA_bool:
             if jonas:
                 all_files[index] = path_fol_A + f'\SoloA_2019-06-21--08-10-10_{i}.csv'
@@ -116,6 +117,7 @@ if __name__ == "__main__":
                 all_files[index] = path_fol_B + f'\SoloB_2019-06-21--08-09-10_{i}.csv'
             else:
                 all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{i}.csv') #need to change path_fol_B to the path where your B folder is
+
     #print(all_files)
     day_one(all_files, collist, soloA_bool, num, start_dt, end_dt) #pass through the list containing the file paths
 
