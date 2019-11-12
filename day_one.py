@@ -43,14 +43,14 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq
         plt.legend(loc="best")
         plt.show()
 
-    fs = 50
+    fs = 30
 
     powerspecplot(df, fs, collist)
     #print(len(df2))
     #spectogram
-    """
+    
     x = df2[collist[1]]
-    fs = 20 # sampling rate
+    fs = sampling_freq
     #f, Pxx = sps.periodogram(x,fs)
     f, t, Sxx = sps.spectrogram(x,fs)#,nperseg=700)
     plt.figure()
@@ -62,7 +62,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq
     fig = plt.gcf()
     plt.colorbar()  
     plt.show()
-    """
+    
 # num = '07'
 # collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
 # soloA_bool = True
@@ -88,29 +88,22 @@ if __name__ == "__main__":
         path_fol_A = os.path.expanduser("~/Documents/MSciProject/Data/day_one/A")
         path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_one/B")
 
-<<<<<<< HEAD
-    num = 1
-    soloA_bool = True
-=======
+
     num = 7
     if num < 9:
         soloA_bool = True
     else:
         soloA_bool = False
->>>>>>> 65aec67fd051b44aa0557ec40bab4b523e1da0ab
+
     if num <10:
         num_str = f'0{num}'
     else: 
         num_str = num
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
-<<<<<<< HEAD
-    start_dt = datetime(2019,6,21,10,30)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,10,50)# this is the end
-=======
-    start_dt = datetime(2019,6,21,11,28)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,11,30)# this is the end
->>>>>>> 65aec67fd051b44aa0557ec40bab4b523e1da0ab
+
+    start_dt = datetime(2019,6,21,13,43)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,21,13,48)# this is the end
 
     day = 1
     start_csv, end_csv = which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
@@ -132,7 +125,7 @@ if __name__ == "__main__":
                 all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{i}.csv') #need to change path_fol_B to the path where your B folder is
 
     #print(all_files)
-    day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq = 50) #pass through the list containing the file paths
+    day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq = 40) #pass through the list containing the file paths
 
 
 
