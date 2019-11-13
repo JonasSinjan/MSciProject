@@ -13,7 +13,16 @@ import glob
 
 
 def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = None):
-    #set this to the directory where the data is kept on your local computer
+    """
+    all_files - set this to the directory where the data is kept on your local computer
+    collist - list of columns desired
+    soloA_bool - set to True if desire sensors in SoloA channel, else False
+    num - set to the number of the probe desired
+    start_dt - start datetime desired
+    end_dt - end datetime desired
+    alt - boolean - set to True if desire the 'brute force' method for power spectrum
+    sampling_freq - set to desired sampling frequency - default = None
+    """
     if soloA_bool:
         df = read_files(all_files, soloA_bool, jonas, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
         rotate_mat = rotate_21(soloA_bool)[num-1]
@@ -22,16 +31,11 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
         rotate_mat = rotate_21(soloA_bool)[num-9]
     df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
     print(len(df))
-    #print(df.tail())
-    #time_diff = align(file_path_A, file_path_B)
-    #print(time_diff)
-    #now need to use pd.timedelta to subtract/add this time to the datetime object column 'time' in the df
     
     plot = True
-    #print(start_dt.time(), end_dt.time())
     df2 = df.between_time(start_dt.time(), end_dt.time())
-    #df2 = 
     #print(df2.head())
+
     if plot: #plotting the raw probes results
         plt.figure()
         for col in collist[1:]:
@@ -43,12 +47,11 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
         plt.legend(loc="best")
         plt.show()
 
+    #power spectrum
     fs = sampling_freq
-
     powerspecplot(df, fs, collist, alt)
-    #print(len(df2))
-    #spectogram
-    
+
+    #spectogram    
     x = df2[collist[1]]
     fs = sampling_freq
     #f, Pxx = sps.periodogram(x,fs)
@@ -62,11 +65,6 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     fig = plt.gcf()
     plt.colorbar()  
     plt.show()
-    
-# num = '07'
-# collist = ['time', f'Probe{num}_X', f'Probe{num}_Y', f'Probe{num}_Z', f'Probe{num}_||']
-# soloA_bool = True
-# day_one(collist, soloA_bool)
 
 
 if __name__ == "__main__":
@@ -122,9 +120,7 @@ if __name__ == "__main__":
             else:
                 all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{i}.csv') #need to change path_fol_B to the path where your B folder is
 
-    #print(all_files)
     day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 20) #pass through the list containing the file paths
-
 
 
 
