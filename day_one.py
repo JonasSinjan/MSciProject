@@ -60,7 +60,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     plt.pcolormesh(t, f, Sxx,vmin = 0.,vmax = 0.1)
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
-    plt.title(f'Spectogram {collist[1]}')
+    plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
     plt.clim()
     fig = plt.gcf()
     plt.colorbar()  
@@ -87,7 +87,7 @@ if __name__ == "__main__":
         path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_one/B")
 
     alt = False #set to true if you want to see power spec using the stnadard method - not the inbuilt funciton
-    num = 2
+    num = 11
     if num < 9:
         soloA_bool = True
     else:
