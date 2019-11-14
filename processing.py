@@ -65,9 +65,14 @@ def read_files(all_files, soloA, jonas, sampling_freq = None, collist=None, day=
     df = df.sort_values('time', ascending = True, kind = 'mergesort')
     df.set_index('time', inplace = True)
     
-    factor = int(1000/sampling_freq)
-    if factor >= 0.001:
-        df = df.resample(f'{factor}ms').mean()
+    if sampling_freq < 1000:
+        factor = int(1000/sampling_freq)
+        if factor >= 0.001:
+            df = df.resample(f'{factor}ms').mean()
+        else:
+            print('The resampling is in the wrong units - must be factor*milliseconds')
+    else:
+        print('The desired sampling frequency is greater than the raw data available - defaulted to 1kHz')
     
     print(time.process_time() - start)
     print(df.head())
