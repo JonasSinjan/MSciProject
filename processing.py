@@ -64,6 +64,7 @@ def read_files(all_files, soloA, jonas, sampling_freq = None, collist=None, day=
     print(time.process_time() - start)
     df.set_index('time', inplace = True)
     print(df.head())
+    #print(type(df.index))
     
     return df
 
