@@ -38,11 +38,13 @@ def read_files(all_files, soloA, jonas, sampling_freq = None, collist=None, day=
 
     start = time.process_time()
     #factor = int(1000/freq_max)
+    """
     if sampling_freq != None:
         factor = int(1000/sampling_freq)
         assert type(factor) == int
         print(factor)
         df = df.groupby(np.arange(len(df))//factor).mean()
+    """    
 
     if soloA:
         if '21' in all_files[0]: #for day_one
@@ -61,8 +63,13 @@ def read_files(all_files, soloA, jonas, sampling_freq = None, collist=None, day=
 
     df['time'] = df['time'].dt.round('ms')
     df = df.sort_values('time', ascending = True, kind = 'mergesort')
-    print(time.process_time() - start)
     df.set_index('time', inplace = True)
+    
+    factor = int(1000/sampling_freq)
+    if factor >= 0.001:
+        df = df.resample(f'{factor}ms').mean()
+    
+    print(time.process_time() - start)
     print(df.head())
     #print(type(df.index))
     
