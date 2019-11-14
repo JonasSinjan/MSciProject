@@ -20,7 +20,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     num - set to the number of the probe desired
     start_dt - start datetime desired
     end_dt - end datetime desired
-    alt - boolean - set to True if desire the 'brute force' method for power spectrum
+    alt - boolean - set to True if desire the 'brute force' method for power spectrum rather than periodogram method
     sampling_freq - set to desired sampling frequency - default = None
     """
     if soloA_bool:
@@ -120,7 +120,7 @@ if __name__ == "__main__":
             else:
                 all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{i}.csv') #need to change path_fol_B to the path where your B folder is
 
-    day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 20) #pass through the list containing the file paths
+    day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 30) #pass through the list containing the file paths
 
 
 
