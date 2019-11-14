@@ -30,7 +30,7 @@ def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, sampling_freq
     if plot: #plotting the raw probes results
         plt.figure()
         for col in collist[1:]:
-            plt.plot(df2.index.to_pydatetime(), df2[col], label=str(col))
+            plt.plot(df2.index.time, df2[col], label=str(col))
             print(df2[col].abs().idxmax())
         plt.xlabel('Time (s)')
         plt.ylabel('B (nT)')

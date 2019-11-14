@@ -23,7 +23,7 @@ def mag(filepath):
         df2 = df.iloc[2000000:]
         cols = df.columns.tolist()
         for col in cols:
-            plt.plot(df2.index, df2[col], label =f'{col}')
+            plt.plot(df2.index.time, df2[col], label =f'{col}')
         plt.xlabel('Index')
         plt.ylabel('B [nT]')
         plt.show()
