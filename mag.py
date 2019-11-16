@@ -12,13 +12,12 @@ import math
 
 def mag(filepath, start_dt=None, end_dt=None):
     
-    origin = datetime(2019,6,24,9)
+    origin = datetime(2019,6,24, hour = 7, minute = 48, second = 19, microsecond=518000)
     if start_dt == None:
         start_dt = origin
         skiprows = 0
-
-    if end_dt == None:
         nrows = 3332096
+        end_dt = None
     
     else:
         assert start_dt >= origin
@@ -30,14 +29,12 @@ def mag(filepath, start_dt=None, end_dt=None):
 
 
     df = pd.read_csv(filepath, header = None, skiprows = skiprows, nrows = nrows)
-    df.columns = ['X', 'Y', 'Z']
-    
-    df.index = df.index*(1/128) #hardcoding 128 vectors/second
-    df.index = pd.to_datetime(df.index, unit = 's', origin = start_dt)
-   
-    print(df.head())
-    print(type(df.index))
-    df.index = df.index.round('ns')
+    df.columns = ['time','X','Y','Z']
+    df['time'] = df['time'] + 0.518
+
+    #df.index = df.index*(1/128) #hardcoding 128 vectors/second
+    df.index = pd.to_datetime(df['time'], unit = 's', origin = start_dt) #microsecond not added because when to_datetime unit must be 's' (due to data format of csv)
+    df = df.loc[:, 'X':]
     print(df.head())
 
     plot = True
@@ -69,11 +66,11 @@ if __name__ == "__main__":
     jonas = True
     
     if jonas:
-        filepath = r'C:\Users\jonas\MSci-Data\Day2MAGBurst.csv'
+        filepath = r'C:\Users\jonas\MSci-Data\PoweredDay2.csv.txt'
     else:
         filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/Day2MAGBurst.csv")
         
     start_dt = datetime(2019,6,24,9,37)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
     end_dt = datetime(2019,6,24,9,39)# this is the end
 
-    mag(filepath, start_dt=None, end_dt=None)
+    mag(filepath, start_dt=start_dt, end_dt=start_dt)
