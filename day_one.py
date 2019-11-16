@@ -20,7 +20,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     num - set to the number of the probe desired
     start_dt - start datetime desired
     end_dt - end datetime desired
-    alt - boolean - set to True if desire the 'brute force' method for power spectrum
+    alt - boolean - set to True if desire the 'brute force' method for power spectrum rather than periodogram method
     sampling_freq - set to desired sampling frequency - default = None
     """
     if soloA_bool:
@@ -39,7 +39,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     if plot: #plotting the raw probes results
         plt.figure()
         for col in collist[1:]:
-            plt.plot(df2.index.to_pydatetime(), df2[col], label=str(col))
+            plt.plot(df2.index.time, df2[col], label=str(col))
             print(df2[col].abs().idxmax())
         plt.xlabel('Time (s)')
         plt.ylabel('B (nT)')
@@ -60,7 +60,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     plt.pcolormesh(t, f, Sxx,vmin = 0.,vmax = 0.1)
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
-    plt.title(f'Spectogram {collist[1]}')
+    plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
     plt.clim()
     fig = plt.gcf()
     plt.colorbar()  
@@ -87,7 +87,7 @@ if __name__ == "__main__":
         path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_one/B")
 
     alt = False #set to true if you want to see power spec using the stnadard method - not the inbuilt funciton
-    num = 2
+    num = 11
     if num < 9:
         soloA_bool = True
     else:
@@ -120,7 +120,7 @@ if __name__ == "__main__":
             else:
                 all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{i}.csv') #need to change path_fol_B to the path where your B folder is
 
-    day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 20) #pass through the list containing the file paths
+    day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 30) #pass through the list containing the file paths
 
 
 

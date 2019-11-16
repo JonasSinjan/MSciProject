@@ -18,10 +18,15 @@ import time
 from datetime import datetime
 import glob
 
-def current():
-    filename = os.path.expanduser("~/Documents/MSciProject/Data/LCL_Data/Day_2_Payload_LCL_Current_Profiles.xlsx")
+def current(jonas):
+    if jonas:
+        filename = r'C:\Users\jonas\MSci-Data\LCL_data\Day 2 Payload LCL Current Profiles.xlsx'
+    else:
+        filename = os.path.expanduser("~/Documents/MSciProject/Data/LCL_Data/Day_2_Payload_LCL_Current_Profiles.xlsx")
 
+    
     df =  pd.read_excel(filename)
+    df.set_index(['EGSE Time'], inplace = True)
     print (df.head())
     
     
@@ -29,10 +34,11 @@ def current():
     if plot:
         plt.figure()
         for col in df.columns[1:]:
-            plt.plot(df['EGSE Time'], df[col], label=str(col))
-            plt.legend()
+            plt.plot(df.index.time, df[col], label=str(col))
+            plt.legend(loc='best')
+            plt.xlabel('Time [H:M:S]')
+            plt.ylabel('Current [A]')
+        plt.show()
 
             
-        
-        
-current()
+current(True)

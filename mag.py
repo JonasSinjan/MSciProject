@@ -43,8 +43,8 @@ def mag(filepath, start_dt=None, end_dt=None):
         #df2 = df#.iloc[2000000:]
         cols = df.columns.tolist()
         for col in cols:
-            plt.plot(df.index.to_pydatetime(), df[col], label = f'{col}')
-        plt.xlabel('Time')
+            plt.plot(df2.index.time, df2[col], label =f'{col}')
+        plt.xlabel('Index')
         plt.ylabel('B [nT]')
         plt.legend(loc="best")
         plt.show()
