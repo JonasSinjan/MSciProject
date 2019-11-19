@@ -112,7 +112,16 @@ def which_csvs(soloA_bool, day, start_dt, end_dt):
             end_csv = 48
             print('The desired time range may run outside the available data - check if so')
     return start_csv, end_csv
-    
+
+
+def shifttime(df, soloAbool):
+    if soloAbool:
+        df.index = df.index - pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)  
+    else:
+        df.index = df.index - pd.Timedelta(days = 0, hours = 1, minutes = 58, seconds = 46, milliseconds = 499)  
+        
+    return df
+
 
 def powerspecplot(df, fs, collist, alt):
     

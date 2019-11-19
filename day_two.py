@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from processing import soloA, soloB, read_files, powerspecplot, rotate_21, which_csvs, rotate_24
+from processing import soloA, soloB, read_files, powerspecplot, rotate_21, which_csvs, rotate_24, shifttime
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 import pandas as pd
@@ -23,8 +23,16 @@ def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
     print(len(df))
     
-    plot = True
+    #change time in MFSA to spacecraft time
+    
     df2 = df.between_time(start_dt.time(), end_dt.time()) 
+    
+    print(df2.head())
+    
+    df2 = shifttime(df2, soloA_bool)
+    
+    plot = True
+    #df2 = df.between_time(start_dt.time(), end_dt.time()) 
     print(df2.head())
     
     if plot: #plotting the raw probes results
@@ -44,7 +52,7 @@ def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
 
 if __name__ == "__main__":
     
-    jonas = False
+    jonas = True
 
     if jonas:
         file_path_A = r'C:\Users\jonas\MSci-Data\powered\SoloA_2019-06-24--08-14-46_9\SoloA_2019-06-24--08-14-46_1.csv' #the first couple of files in some of the folders are from earlier days
@@ -70,8 +78,8 @@ if __name__ == "__main__":
         num_str = num
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
-    start_dt = datetime(2019,6,24,10,30)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,10,50)# this is the end
+    start_dt = datetime(2019,6,24,9,59)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,24,10,2)# this is the end
 
     day = 2
     start_csv, end_csv = which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
@@ -81,8 +89,6 @@ if __name__ == "__main__":
     
 
     for index, i in enumerate(range(start_csv, end_csv + 1)): #this will loop through and add the csv files that contain the start and end time set above
-
-
         if soloA_bool:
             if jonas:
                 all_files[index] = path_fol_A + f'\SoloA_2019-06-24--08-14-46_{i}.csv'
@@ -95,5 +101,5 @@ if __name__ == "__main__":
                 all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-24--08-14-24_{i}.csv') #need to change path_fol_B to the path where your B folder is
     #print(all_files)
     alt = False
-    day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 20) #pass through the list containing the file paths
+    day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 1000) #pass through the list containing the file paths
 
