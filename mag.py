@@ -52,6 +52,7 @@ def mag(filepath, start_dt=None, end_dt=None):
         plt.xlabel('Time [H:M:S]')
         plt.ylabel('B [nT]')
         plt.legend(loc="best")
+        plt.title('MAG Powered Day 2')
         
     
         time_list = []
@@ -73,6 +74,6 @@ if __name__ == "__main__":
         filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/Day2MAGBurst.csv")
         
     start_dt = datetime(2019,6,24,8,2)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,8,3)# this is the end
+    end_dt = datetime(2019,6,24,8,2,30)# this is the end
 
     mag(filepath, start_dt=start_dt, end_dt=end_dt)
