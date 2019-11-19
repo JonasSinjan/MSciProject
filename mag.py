@@ -12,70 +12,67 @@ import math
 
 def mag(filepath, start_dt=None, end_dt=None):
     
-    origin = datetime(2019,6,24,9)
+    origin = datetime(2019,6,24, hour = 7, minute = 48, second = 19)
+
     if start_dt == None:
         start_dt = origin
         skiprows = 0
-
-    if end_dt == None:
-        nrows = 3332096
-    
+        dtime = start_dt - origin
     else:
         assert start_dt >= origin
-        assert (end_dt-origin).total_seconds()*128 <= 3332096 #making sure the end_dt time is within the file
-
         dtime = start_dt - origin
-        skiprows = int(dtime.total_seconds()*128)
-        nrows = int((end_dt-start_dt).total_seconds()*128)
+        skiprows = int(dtime.total_seconds()*128 - 0.518/(1/128))
+    
+    if end_dt != None:
+        assert (end_dt-origin).total_seconds()*128 <= 3332096 #making sure the end_dt time is within the file
+        des_time = end_dt - start_dt
+        nrows = int(des_time.total_seconds()*128 -0.518/(1/128))
+    else:
+        nrows = int(3332096 - int(dtime.total_seconds()*128 - 0.518/(1/128)))
 
 
     df = pd.read_csv(filepath, header = None, skiprows = skiprows, nrows = nrows)
-    df.columns = ['X', 'Y', 'Z']
-    
-    df.index = df.index*(1/128) #hardcoding 128 vectors/second
-    df.index = pd.to_datetime(df.index, unit = 's', origin = start_dt)
-   
+
+    df.columns = ['time','X','Y','Z']
+    df['time'] = df['time'] + 0.518
+
+
+    #df.index = df.index*(1/128) #hardcoding 128 vectors/second
+    df.index = pd.to_datetime(df['time'], unit = 's', origin = origin) #microsecond not added because when to_datetime unit must be 's' (due to data format of csv)
+    df = df.loc[:, 'X':]
     print(df.head())
-    print(type(df.index))
-    df.index = df.index.round('ns')
-    print(df.head())
+    print(df.tail())
 
     plot = True
     if plot:
         plt.figure()
-        #df2 = df#.iloc[2000000:]
         cols = df.columns.tolist()
         for col in cols:
             plt.plot(df.index.time, df[col], label =f'{col}')
-        plt.xlabel('Index')
+        plt.xlabel('Time [H:M:S]')
         plt.ylabel('B [nT]')
         plt.legend(loc="best")
-        plt.show()
-
-    if start_dt == None and end_dt == None:
-        first_peak = df.iloc[38500:38750].abs()
-        second_peak = df.iloc[39800:40000].abs()
-        third_peak = df.iloc[41200:41500].abs()
-        peak_list = [first_peak, second_peak, third_peak]
+        
+    
         time_list = []
-        for i in peak_list:
-            #print(i['X'].idxmax())
-            time_list.append(i['X'].idxmax())
+        df2 = df.abs()
+        for col in cols:
+            time_list.append(df2[col].idxmax())
         print(time_list)
-        print(time_list[1]- time_list[0], time_list[2]-time_list[1])
+        print(time_list[2]- time_list[0], time_list[1]-time_list[2])
+
+        plt.show()
     
 if __name__ == "__main__":
     
     jonas = True
     
     if jonas:
-        filepath = r'C:\Users\jonas\MSci-Data\Day2MAGBurst.csv'
+        filepath = r'C:\Users\jonas\MSci-Data\PoweredDay2.csv.txt'
     else:
         filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/Day2MAGBurst.csv")
         
-    #start_dt = datetime(2019,6,24,9,00)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    #end_dt = datetime(2019,6,24,9,39)# this is the end
+    start_dt = datetime(2019,6,24,8,2)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,24,8,3)# this is the end
 
-    mag(filepath, start_dt=None, end_dt=None)
-    
-    starttime = 2019 - 24 - 6 - 7 - 48 - 19.518 #first data point in MAG file in spacecraft time
+    mag(filepath, start_dt=start_dt, end_dt=end_dt)
