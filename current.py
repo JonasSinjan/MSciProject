@@ -27,8 +27,8 @@ def current(jonas):
     
     df =  pd.read_excel(filename)
     df.set_index(['EGSE Time'], inplace = True)
-    df = df.resample(f'{10}s').mean()
-    print (df.head())
+    df = df.resample(f'{1}s').mean()
+    #print (df.tail())
     
     
     plot = True
@@ -36,7 +36,24 @@ def current(jonas):
         i=1
         plt.figure()
         for col in df.columns:
-            """
+            current_dif = np.array(df[col].diff())
+            print(current_dif)
+
+            plt.figure(i)
+            plt.plot(df.index.time, df[col], label=str(col))
+            plt.legend(loc='best')
+            plt.xlabel('Time [H:M:S]')
+            plt.ylabel('Current [A]')
+            
+            #plt.figure(i+1)
+            plt.plot(df.index.time, current_dif, label='Gradient')
+            #plt.legend(loc='best')
+            #plt.xlabel('Time [H:M:S]')
+            #plt.ylabel('Current [A]')
+            i+=1
+            plt.show()
+
+"""
             plt.figure(i)
             i+=1
             df[col] -= np.average(df[col])
@@ -48,12 +65,6 @@ def current(jonas):
             plt.plot(df[col])
             plt.plot(dary_step/10)
             plt.plot((step_indx, step_indx), (dary_step[step_indx]/10, 0), 'r')
-            """
-            plt.plot(df.index.time, df[col], label=str(col))
-            plt.legend(loc='best')
-            plt.xlabel('Time [H:M:S]')
-            plt.ylabel('Current [A]')
-        plt.show()
-
+"""
             
-current(False)
+current(True)
