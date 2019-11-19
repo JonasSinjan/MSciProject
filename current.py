@@ -18,7 +18,7 @@ import time
 from datetime import datetime
 import glob
 
-def current(jonas):
+def current(jonas, plot = False):
     if jonas:
         filename = r'C:\Users\jonas\MSci-Data\LCL_data\Day 2 Payload LCL Current Profiles.xlsx'
     else:
@@ -31,7 +31,6 @@ def current(jonas):
     #print (df.tail())
     
     
-    plot = True
     if plot:
         i=1
         plt.figure()
@@ -67,4 +66,4 @@ def current(jonas):
             plt.plot((step_indx, step_indx), (dary_step[step_indx]/10, 0), 'r')
 """
             
-current(True)
+current(True, plot = False)
