@@ -24,9 +24,6 @@ def current(jonas, plot = False):
     else:
         filename = os.path.expanduser("~/Documents/MSciProject/Data/LCL_Data/Day_2_Payload_LCL_Current_Profiles.xlsx")
 
-
-    
-    
     df =  pd.read_excel(filename)
     df.set_index(['EGSE Time'], inplace = True)
     df = df.resample(f'{10}s').mean()
