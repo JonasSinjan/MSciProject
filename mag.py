@@ -46,7 +46,7 @@ def mag(filepath, start_dt=None, end_dt=None):
         #df2 = df#.iloc[2000000:]
         cols = df.columns.tolist()
         for col in cols:
-            plt.plot(df2.index.time, df2[col], label =f'{col}')
+            plt.plot(df.index.time, df[col], label =f'{col}')
         plt.xlabel('Index')
         plt.ylabel('B [nT]')
         plt.legend(loc="best")
@@ -73,7 +73,9 @@ if __name__ == "__main__":
     else:
         filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/Day2MAGBurst.csv")
         
-    start_dt = datetime(2019,6,24,9,37)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,9,39)# this is the end
+    #start_dt = datetime(2019,6,24,9,00)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    #end_dt = datetime(2019,6,24,9,39)# this is the end
 
     mag(filepath, start_dt=None, end_dt=None)
+    
+    starttime = 2019 - 24 - 6 - 7 - 48 - 19.518 #first data point in MAG file in spacecraft time
