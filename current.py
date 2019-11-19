@@ -27,8 +27,8 @@ def current(jonas):
     
     df =  pd.read_excel(filename)
     df.set_index(['EGSE Time'], inplace = True)
+    #df = df.resample(f'{2}s').mean()
     print (df.head())
-    
     
     plot = True
     if plot:
@@ -41,4 +41,4 @@ def current(jonas):
         plt.show()
 
             
-current(True)
+current(False)
