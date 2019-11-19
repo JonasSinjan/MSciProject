@@ -287,3 +287,6 @@ def soloB(file_path):
             print(folder, ', seconds = ', len(df)/1000, ', mins = ',len(df)/60000, ', hours = ', len(df)/3600000)
             li = []
 """
+
+
+
