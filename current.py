@@ -24,18 +24,24 @@ def current(jonas):
     else:
         filename = os.path.expanduser("~/Documents/MSciProject/Data/LCL_Data/Day_2_Payload_LCL_Current_Profiles.xlsx")
 
+
+    sample = True
     
     df =  pd.read_excel(filename)
     df.set_index(['EGSE Time'], inplace = True)
-    df = df.resample(f'{10}s').mean()
-    print (df.head())
     
+    if sample:
+        #df = df.resample(f'{10}s').mean()
+        
+        df2 = df.loc[:,'EUI Current [A]':].groupby(np.arange(len(df))//10).mean()
+        
+    print (df2.head())
     
     plot = True
     if plot:
-        i=1
+        #i=1
         plt.figure()
-        for col in df.columns:
+        for col in df2.columns:
             """
             plt.figure(i)
             i+=1
@@ -49,7 +55,7 @@ def current(jonas):
             plt.plot(dary_step/10)
             plt.plot((step_indx, step_indx), (dary_step[step_indx]/10, 0), 'r')
             """
-            plt.plot(df.index.time, df[col], label=str(col))
+            plt.plot(df2.index, df2[col], label=str(col))
             plt.legend(loc='best')
             plt.xlabel('Time [H:M:S]')
             plt.ylabel('Current [A]')
