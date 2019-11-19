@@ -24,21 +24,49 @@ def current(jonas):
     else:
         filename = os.path.expanduser("~/Documents/MSciProject/Data/LCL_Data/Day_2_Payload_LCL_Current_Profiles.xlsx")
 
+
+    sample = True
     
     df =  pd.read_excel(filename)
     df.set_index(['EGSE Time'], inplace = True)
-    print (df.head())
+    df = df.resample(f'{1}s').mean()
+    #print (df.tail())
+
     
+    if sample:
+        #df = df.resample(f'{10}s').mean()
+        
+        df2 = df.loc[:,'EUI Current [A]':].groupby(np.arange(len(df))//10).mean()
+        
+    print (df2.head())
     
     plot = True
     if plot:
+        i=1
         plt.figure()
-        for col in df.columns[1:]:
+
+        for col in df.columns:
+            current_dif = np.array(df[col].diff())
+            current_dif_nona = df[col].diff().dropna()
+            current_dif_std = np.std(current_dif_nona)
+            print("std",current_dif_std)
+            print(current_dif)
+
+            plt.figure(i)
             plt.plot(df.index.time, df[col], label=str(col))
             plt.legend(loc='best')
             plt.xlabel('Time [H:M:S]')
             plt.ylabel('Current [A]')
-        plt.show()
-
             
-current(True)
+            #plt.figure(i+1)
+            plt.plot(df.index.time, current_dif, label='Gradient')
+            #plt.legend(loc='best')
+            #plt.xlabel('Time [H:M:S]')
+            #plt.ylabel('Current [A]')
+            i+=1
+            plt.show()
+
+
+
+
+current(False)

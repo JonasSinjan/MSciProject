@@ -87,7 +87,7 @@ if __name__ == "__main__":
         path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_one/B")
 
     alt = False #set to true if you want to see power spec using the stnadard method - not the inbuilt funciton
-    num = 11
+    num = 12
     if num < 9:
         soloA_bool = True
     else:

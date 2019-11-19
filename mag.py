@@ -26,7 +26,7 @@ def mag(filepath, start_dt=None, end_dt=None):
     if end_dt != None:
         assert (end_dt-origin).total_seconds()*128 <= 3332096 #making sure the end_dt time is within the file
         des_time = end_dt - start_dt
-        nrows = int(des_time.total_seconds()*128 -0.518/(1/128))
+        nrows = int(des_time.total_seconds()*128 - 0.518/(1/128))
     else:
         nrows = int(3332096 - int(dtime.total_seconds()*128 - 0.518/(1/128)))
 
