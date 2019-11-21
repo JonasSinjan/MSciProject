@@ -42,19 +42,34 @@ def current(jonas, plot = False, sample = False):
         current_dif_std = np.std(current_dif_nona)
         index_list, = np.where(abs(current_dif) > 3.3*current_dif_std) #mean is almost zero so ignore
         peak_datetimes = [datetime.combine(datetime.date(day), df.index[i].time()) for i in index_list]
-        
+        print("len = ", len(peak_datetimes))
         #sorting peak times
-        # for j in range(len(peak_times)):
-        #     if peak_times[j+1]-peak_times[j] < datetime.timedelta(minutes = 1): #time between timestamps < 1 minute
-        #         dict_tmp = {'j': abs(current_dif[j]), 'j+1': abs(current_dif[j+1])}
-        #         min_var = dict_tmp.get(min(dict_tmp))
-        #         print('Peak j = ', peak_times[j+1])
-        #         print('Peak j+1 = ', peak_times[j+1])
-        #         print(min_var, peak_times[j])
-        #         if min_var == 'j':
-        #             peak_times.remove(peak_times[j])
-        #         else:
-        #             peak_times.remove(peak_times[j+1])              
+        remove_list = []
+        min_var = "init" #must init
+        for j in range(len(peak_datetimes)-1):
+            if min_var == "j+1":
+                continue #for if j+1 removed, in next loop, j+1 becomes j and if j then removed - will be removed twice
+            elif (peak_datetimes[j+1]-peak_datetimes[j]).total_seconds() < 50: #time between timestamps < 1 minute
+                dict_tmp = {'j': abs(current_dif[index_list[j]]), 'j+1': abs(current_dif[index_list[j+1]])}
+                print(dict_tmp)
+                min_var = min(dict_tmp, key = dict_tmp.get)
+                print('Peak j = ', peak_datetimes[j])
+                print('Peak j+1 = ', peak_datetimes[j+1])
+                print(min_var, peak_datetimes[j])
+                
+                if min_var == 'j':
+                    #peak_datetimes.remove(peak_datetimes[j])
+                    remove_list.append(j)
+                else:
+                    remove_list.append(j+1)
+                print(remove_list)  
+                    #peak_datetimes.remove(peak_datetimes[j+1])  
+             
+        #for index, i in enumerate(remove_list):
+        #    print(i,index, len(peak_datetimes))
+        for index in sorted(remove_list, reverse=True):
+                del peak_datetimes[index]
+        index_list = np.delete(index_list, remove_list)
             
         #print(peak_times)
         print("size = ", index_list.size)
@@ -71,9 +86,13 @@ def current(jonas, plot = False, sample = False):
             plt.ylabel('Current [A]')
             
             plt.plot(df.index.time, current_dif, label='Gradient')
-
+            print(peak_datetimes)
             peak_times = [i.time() for i in peak_datetimes]
+            print("len(peak_times) = ", len(peak_times))
+            print("len(index_list) = ", len(index_list))
             plt.scatter(peak_times, current_dif[index_list])
+            #else:
+            #   print("no peaks detected")
             plt.show()
             
         return dict, i
