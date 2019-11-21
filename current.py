@@ -50,15 +50,16 @@ def current(jonas, plot = False, sample = False):
         min_var_old = "init" #must init
         for j in range(len(peak_datetimes)-1):
             min_var_old = min_var
+
             if (peak_datetimes[j+1]-peak_datetimes[j]).total_seconds() < 50: #time between timestamps < 1 minute
                 dict_tmp = {'j': abs(current_dif[index_list[j]]), 'j+1': abs(current_dif[index_list[j+1]])}
                 print(dict_tmp)
                 min_var = min(dict_tmp, key = dict_tmp.get)
                 if min_var == "j" and min_var_old == "j+1":
                     continue #for if j+1 removed, in next loop, j+1 becomes j and if j then removed - will be removed twice
-                print('Peak j = ', peak_datetimes[j])
-                print('Peak j+1 = ', peak_datetimes[j+1])
-                print(min_var, peak_datetimes[j])
+                #print('Peak j = ', peak_datetimes[j])
+                #print('Peak j+1 = ', peak_datetimes[j+1])
+                #print(min_var, peak_datetimes[j])
                 
                 if min_var == 'j':
                     #peak_datetimes.remove(peak_datetimes[j])
@@ -125,5 +126,5 @@ def current(jonas, plot = False, sample = False):
     return dict
 
 
-dict = current(True, plot = True)
+dict = current(False, plot = True)
 #print(dict['MAG Current [A]'])
