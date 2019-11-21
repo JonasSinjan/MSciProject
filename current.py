@@ -36,22 +36,32 @@ def current(jonas, plot = False, sample = False):
         print (df2.head())
 
     def find_peak_times(dict, df, plot = False, i = 1):
+        day = datetime(2019,6,24,0,0,0)
         current_dif = np.array(df[col].diff())
         current_dif_nona = df[col].diff().dropna()
         current_dif_std = np.std(current_dif_nona)
         index_list, = np.where(abs(current_dif) > 3.3*current_dif_std) #mean is almost zero so ignore
-        peak_times = [df.index[i].time() for i in index_list]
+        peak_datetimes = [datetime.combine(datetime.date(day), df.index[i].time()) for i in index_list]
         
         #sorting peak times
-        for j in range(len(peak_times)):
-            if peak_times[j+1]-peak_times[j] < datetime.timedelta(minutes = 1): #time between timestamps < 30 seconds
-                
+        # for j in range(len(peak_times)):
+        #     if peak_times[j+1]-peak_times[j] < datetime.timedelta(minutes = 1): #time between timestamps < 1 minute
+        #         dict_tmp = {'j': abs(current_dif[j]), 'j+1': abs(current_dif[j+1])}
+        #         min_var = dict_tmp.get(min(dict_tmp))
+        #         print('Peak j = ', peak_times[j+1])
+        #         print('Peak j+1 = ', peak_times[j+1])
+        #         print(min_var, peak_times[j])
+        #         if min_var == 'j':
+        #             peak_times.remove(peak_times[j])
+        #         else:
+        #             peak_times.remove(peak_times[j+1])              
+            
         #print(peak_times)
         print("size = ", index_list.size)
         print("std = ",current_dif_std)
-        print(type(peak_times[0]))
+        print(type(peak_datetimes[0]))
         if str(col) not in dict.keys():
-            dict[str(col)] = peak_times
+            dict[str(col)] = peak_datetimes
             
         if plot:
             plt.figure(i)
@@ -62,7 +72,7 @@ def current(jonas, plot = False, sample = False):
             
             plt.plot(df.index.time, current_dif, label='Gradient')
 
-            #print(t)
+            peak_times = [i.time() for i in peak_datetimes]
             plt.scatter(peak_times, current_dif[index_list])
             plt.show()
             
