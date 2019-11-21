@@ -18,7 +18,7 @@ import time
 from datetime import datetime
 import glob
 
-def current(jonas, plot = False):
+def current(jonas, plot = False, sample = False):
     if jonas:
         filename = r'C:\Users\jonas\MSci-Data\LCL_data\Day 2 Payload LCL Current Profiles.xlsx'
     else:
@@ -35,65 +35,60 @@ def current(jonas, plot = False):
         df2 = df.loc[:,'EUI Current [A]':].groupby(np.arange(len(df))//10).mean()
         print (df2.head())
 
-    dict = {}
-    if plot != True:
-    for col in df.columns:
-            current_dif = np.array(df[col].diff())
-            current_dif_nona = df[col].diff().dropna()
-            current_dif_std = np.std(current_dif_nona)
-            index_list, = np.where(current_dif > 3*current_dif_std) #mean is almost zero so ignore
-            peak_times = [df.index[i] for i in index_list]
-            print(peak_times)
-            print(index_list.size)
-            print("std = ",current_dif_std)
-            if str(col) not in dict.keys():
-                dict[str(col)] = peak_times
-
-
-    if plot:
-        i=1
-<<<<<<< HEAD
-        plt.figure()
-        
-        
-        
-        
-=======
->>>>>>> 95239221e6126c5ab0efee1b713cce62e3565156
-        for col in df.columns:
+    def find_peak_times(dict, df, plot = False, i = 1):
+        current_dif = np.array(df[col].diff())
+        current_dif_nona = df[col].diff().dropna()
+        current_dif_std = np.std(current_dif_nona)
+        index_list, = np.where(abs(current_dif) > 3.3*current_dif_std) #mean is almost zero so ignore
+        peak_times = [df.index[i].time() for i in index_list]
+        #sorting peak times
+        #for j in range(len(peak_times)):
+            #if peak_times[j+1]-peak_times[j] < datetime.timedelta(minutes = 1): #time between timestamps < 30 seconds
+            #if peak_times[j+1]-peak_times[j] < datetime.timedelta(seconds = 30):
+            #    if peak_times[j+1]<peak_times[j]:
+            #        peak_times.remove(peak_times[j+1])
+            #    else:
+            #        peak_times.remove(peak_times[j])
+            #print(peak_times[j+1]-peak_times[j])
+                
+        #print(peak_times)
+        print("size = ", index_list.size)
+        print("std = ",current_dif_std)
+        print(type(peak_times[0]))
+        if str(col) not in dict.keys():
+            dict[str(col)] = peak_times
             
-            current_dif = np.array(df[col].diff())
-            current_dif_nona = df[col].diff().dropna()
-            current_dif_std = np.std(current_dif_nona)
-<<<<<<< HEAD
-            current_dif_mean = np.mean(current_dif_nona)
-            
-            print(current_dif)
-=======
-            #current_dif_mean = np.mean(current_dif_nona)
-            index_list, = np.where(current_dif > 3*current_dif_std) #mean is almost zero
-            peak_times = [df.index[i] for i in index_list]
-            print(peak_times)
-            print(index_list.size)
-            print("std = ",current_dif_std)
-            if str(col) not in dict.keys():
-                dict[str(col)] = peak_times
->>>>>>> 95239221e6126c5ab0efee1b713cce62e3565156
-
+        if plot:
             plt.figure(i)
             plt.plot(df.index.time, df[col], label=str(col))
             plt.legend(loc='best')
             plt.xlabel('Time [H:M:S]')
             plt.ylabel('Current [A]')
             
-            print(type(peak_times[0]))
             plt.plot(df.index.time, current_dif, label='Gradient')
-            #t = [elem.to_datetime() for elem in peak_times]
+
             #print(t)
-            #plt.scatter(t, current_dif[index_list])
-            i+=1
+            plt.scatter(peak_times, current_dif[index_list])
             plt.show()
+            
+        return dict, i
+        
+    dict = {}
+    
+    if plot != True:
+        for col in df.columns:
+            dict = find_peak_times(dict, df)
+
+
+    if plot:
+        i=1
+        for col in df.columns:
+            dict  = find_peak_times(dict, df, i)
+            i += 1
+
 
     return dict
 
-current(True)
+
+dict = current(False, plot = True)
+#print(dict['MAG Current [A]'])
