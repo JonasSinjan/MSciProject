@@ -26,7 +26,7 @@ def current(jonas, plot = False, sample = False):
 
     df =  pd.read_excel(filename)
     df.set_index(['EGSE Time'], inplace = True)
-    df = df.resample(f'{10}s').mean()
+    df = df.resample(f'{5}s').mean()
     #print (df.tail())
 
     sample = False
@@ -40,7 +40,7 @@ def current(jonas, plot = False, sample = False):
         current_dif = np.array(df[col].diff())
         current_dif_nona = df[col].diff().dropna()
         current_dif_std = np.std(current_dif_nona)
-        index_list, = np.where(abs(current_dif) > 3.3*current_dif_std) #mean is almost zero so ignore
+        index_list, = np.where(abs(current_dif) > 4*current_dif_std) #mean is almost zero so ignore
 
         peak_datetimes = [datetime.combine(datetime.date(day), df.index[i].time()) for i in index_list]
         print("len = ", len(peak_datetimes))
@@ -63,7 +63,7 @@ def current(jonas, plot = False, sample = False):
                     remove_list.append(j)
                 else:
                     remove_list.append(j+1)
-                print(remove_list)  
+                #print(remove_list)  
                     #peak_datetimes.remove(peak_datetimes[j+1])  
              
         #for index, i in enumerate(remove_list):
