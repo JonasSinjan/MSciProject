@@ -46,17 +46,14 @@ def current(jonas, plot = False, sample = False):
         print("len = ", len(peak_datetimes))
         #sorting peak times
         remove_list = []
-        min_var = "init" #must init
-        min_var_old = "init" #must init
         for j in range(len(peak_datetimes)-1):
-            min_var_old = min_var
-
             if (peak_datetimes[j+1]-peak_datetimes[j]).total_seconds() < 50: #time between timestamps < 1 minute
                 dict_tmp = {'j': abs(current_dif[index_list[j]]), 'j+1': abs(current_dif[index_list[j+1]])}
-                print(dict_tmp)
+                #print(dict_tmp)
                 min_var = min(dict_tmp, key = dict_tmp.get)
-                if min_var == "j" and min_var_old == "j+1":
-                    continue #for if j+1 removed, in next loop, j+1 becomes j and if j then removed - will be removed twice
+                if len(remove_list) != 0:
+                    if j == remove_list[-1]:
+                        continue #for if j+1 removed, in next loop, j+1 becomes j and if j then removed - will be removed twice
                 #print('Peak j = ', peak_datetimes[j])
                 #print('Peak j+1 = ', peak_datetimes[j+1])
                 #print(min_var, peak_datetimes[j])
@@ -98,7 +95,7 @@ def current(jonas, plot = False, sample = False):
             plt.ylabel('Current [A]')
             
             plt.plot(df.index.time, current_dif, label='Gradient')
-            print(peak_datetimes)
+            #print(peak_datetimes)
             peak_times = [i.time() for i in peak_datetimes]
             print("len(peak_times) = ", len(peak_times))
             print("len(index_list) = ", len(index_list))
