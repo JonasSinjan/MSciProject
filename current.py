@@ -41,6 +41,7 @@ def current(jonas, plot = False, sample = False):
         current_dif_nona = df[col].diff().dropna()
         current_dif_std = np.std(current_dif_nona)
         index_list, = np.where(abs(current_dif) > 3.3*current_dif_std) #mean is almost zero so ignore
+
         peak_datetimes = [datetime.combine(datetime.date(day), df.index[i].time()) for i in index_list]
         print("len = ", len(peak_datetimes))
         #sorting peak times
@@ -101,18 +102,18 @@ def current(jonas, plot = False, sample = False):
     
     if plot != True:
         for col in df.columns:
-                dict, = find_peak_times(dict, df)
+            dict, = find_peak_times(dict, df)
 
 
     if plot:
         i=1
         for col in df.columns:
-            dict, i = find_peak_times(dict, df, i)
-            i += 1 
+            dict, i  = find_peak_times(dict, df, i)
+            i += 1
 
 
     return dict
 
 
 dict = current(True, plot = True)
-print(dict['MAG Current [A]'])
+#print(dict['MAG Current [A]'])
