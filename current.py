@@ -44,12 +44,17 @@ def current(jonas):
     if plot:
         i=1
         plt.figure()
-
+        
+        
+        
+        
         for col in df.columns:
+            
             current_dif = np.array(df[col].diff())
             current_dif_nona = df[col].diff().dropna()
             current_dif_std = np.std(current_dif_nona)
-            print("std",current_dif_std)
+            current_dif_mean = np.mean(current_dif_nona)
+            
             print(current_dif)
 
             plt.figure(i)
