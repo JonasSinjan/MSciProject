@@ -71,6 +71,14 @@ def current(jonas, plot = False, sample = False):
         for index in sorted(remove_list, reverse=True):
                 del peak_datetimes[index]
         index_list = np.delete(index_list, remove_list)
+
+                #if peak_times[j+1]-peak_times[j] < datetime.timedelta(minutes = 1): #time between timestamps < 30 seconds
+                    #if peak_times[j+1]-peak_times[j] < datetime.timedelta(seconds = 30):
+                    #    if peak_times[j+1]<peak_times[j]:
+                    #        peak_times.remove(peak_times[j+1])
+                    #    else:
+                    #        peak_times.remove(peak_times[j])
+                    #print(peak_times[j+1]-peak_times[j])              
             
         #print(peak_times)
         print("size = ", index_list.size)
