@@ -35,7 +35,7 @@ def current(jonas, plot = False, sample = False):
         df2 = df.loc[:,'EUI Current [A]':].groupby(np.arange(len(df))//10).mean()
         print (df2.head())
 
-    def find_peak_times(dict, df, col, plot = False, i = 1):
+    def find_peak_times(dict, df, plot = False, i = 1):
         day = datetime(2019,6,24,0,0,0)
         current_dif = np.array(df[col].diff())
         current_dif_nona = df[col].diff().dropna()
@@ -114,16 +114,25 @@ def current(jonas, plot = False, sample = False):
         
     dict = {}
     
+
+    #def delta(dict,df,col):
+        
+
+
+
     if plot != True:
         for col in df.columns:
-            dict, i = find_peak_times(dict, df, col)
+            dict, i = find_peak_times(dict, df)
 
 
     if plot:
         i=1
         for col in df.columns:
-            dict, i  = find_peak_times(dict, df, col, i)
+            dict, i  = find_peak_times(dict, df, i)
             i += 1
+            print(dict)
+
+
 
 
     return dict
