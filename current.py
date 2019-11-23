@@ -23,7 +23,7 @@ def current(jonas, plot = False, sample = False):
         filename = r'C:\Users\jonas\MSci-Data\LCL_data\Day 2 Payload LCL Current Profiles.xlsx'
     else:
         filename = os.path.expanduser("~/Documents/MSciProject/Data/LCL_Data/Day_2_Payload_LCL_Current_Profiles.xlsx")
-
+    
     df =  pd.read_excel(filename)
     df.set_index(['EGSE Time'], inplace = True)
     df = df.resample(f'{5}s').mean()
@@ -35,21 +35,23 @@ def current(jonas, plot = False, sample = False):
         df2 = df.loc[:,'EUI Current [A]':].groupby(np.arange(len(df))//10).mean()
         print (df2.head())
 
-    def find_peak_times(dict, df, plot = False, i = 1):
+    def find_peak_times(dict, df, col, plot = False, i = 1):
         day = datetime(2019,6,24,0,0,0)
         current_dif = np.array(df[col].diff())
         current_dif_nona = df[col].diff().dropna()
         current_dif_std = np.std(current_dif_nona)
-        index_list, = np.where(abs(current_dif) > 4.5*current_dif_std) #mean is almost zero so ignore
+        index_list, = np.where(abs(current_dif) > 4*current_dif_std) #mean is almost zero so ignore
 
         peak_datetimes = [datetime.combine(datetime.date(day), df.index[i].time()) for i in index_list]
+        print(col)
         print("len = ", len(peak_datetimes))
-        #sorting peak times
+
+        #removing unwanted peaks
         remove_list = []
         for j in range(len(peak_datetimes)-1):
-            if (peak_datetimes[j+1]-peak_datetimes[j]).total_seconds() < 50: #time between timestamps < 1 minute
+            if (peak_datetimes[j+1]-peak_datetimes[j]).total_seconds() < 50:
                 dict_tmp = {'j': abs(current_dif[index_list[j]]), 'j+1': abs(current_dif[index_list[j+1]])}
-                #print(dict_tmp)
+
                 min_var = min(dict_tmp, key = dict_tmp.get)
                 if len(remove_list) != 0:
                     if j == remove_list[-1]:
@@ -59,12 +61,9 @@ def current(jonas, plot = False, sample = False):
                 #print(min_var, peak_datetimes[j])
                 
                 if min_var == 'j':
-                    #peak_datetimes.remove(peak_datetimes[j])
                     remove_list.append(j)
                 else:
-                    remove_list.append(j+1)
-                print(remove_list)  
-                    #peak_datetimes.remove(peak_datetimes[j+1])  
+                    remove_list.append(j+1) 
              
         #for index, i in enumerate(remove_list):
         #    print(i,index, len(peak_datetimes))
@@ -72,18 +71,25 @@ def current(jonas, plot = False, sample = False):
                 del peak_datetimes[index]
         index_list = np.delete(index_list, remove_list)
 
-                #if peak_times[j+1]-peak_times[j] < datetime.timedelta(minutes = 1): #time between timestamps < 30 seconds
-                    #if peak_times[j+1]-peak_times[j] < datetime.timedelta(seconds = 30):
-                    #    if peak_times[j+1]<peak_times[j]:
-                    #        peak_times.remove(peak_times[j+1])
-                    #    else:
-                    #        peak_times.remove(peak_times[j])
-                    #print(peak_times[j+1]-peak_times[j])              
-            
+        noise = []
+
+        if col == "SoloHI Current [A]":
+            noise = [1,7]
+        elif col == "PHI Current [A]":
+            noise = [10]
+        elif col == "SPICE Current [A]":
+            noise = [0,1,2,3,4,8,10]
+        elif col == "METIS Current [A]":
+            noise = list(range(3,23))
+        
+        for index in sorted(noise, reverse=True):
+                del peak_datetimes[index]
+        index_list = np.delete(index_list, noise)
+        
         #print(peak_times)
         print("size = ", index_list.size)
         print("std = ",current_dif_std)
-        print(type(peak_datetimes[0]))
+        #print(type(peak_datetimes[0]))
         if str(col) not in dict.keys():
             dict[str(col)] = peak_datetimes
             
@@ -110,13 +116,13 @@ def current(jonas, plot = False, sample = False):
     
     if plot != True:
         for col in df.columns:
-            dict, = find_peak_times(dict, df)
+            dict, i = find_peak_times(dict, df, col)
 
 
     if plot:
         i=1
         for col in df.columns:
-            dict, i  = find_peak_times(dict, df, i)
+            dict, i  = find_peak_times(dict, df, col, i)
             i += 1
 
 
