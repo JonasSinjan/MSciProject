@@ -113,11 +113,6 @@ def current(jonas, plot = False, sample = False):
         return dict, i
         
     dict = {}
-    
-
-    #def delta(dict,df,col):
-        
-
 
 
     if plot != True:
@@ -130,8 +125,6 @@ def current(jonas, plot = False, sample = False):
         for col in df.columns:
             dict, i  = find_peak_times(dict, df, i)
             i += 1
-            print(dict)
-
 
 
 
