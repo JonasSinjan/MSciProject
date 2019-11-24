@@ -37,8 +37,10 @@ def current(jonas, plot = False, sample = False):
 
     def find_peak_times(dict, df, plot = False, i = 1):
         day = datetime(2019,6,24,0,0,0)
-        current_dif = np.array(df[col].diff())
-        current_dif_nona = df[col].diff().dropna()
+        diff = df[col].diff()
+        df['Current Dif'] = diff
+        current_dif = np.array(diff)
+        current_dif_nona = diff.dropna()
         current_dif_std = np.std(current_dif_nona)
         index_list, = np.where(abs(current_dif) > 4*current_dif_std) #mean is almost zero so ignore
 
@@ -76,9 +78,11 @@ def current(jonas, plot = False, sample = False):
         if col == "SoloHI Current [A]":
             noise = [1,7]
         elif col == "PHI Current [A]":
-            noise = [10]
+            noise = [4,5,10]
+        elif col == "STIX Current [A]":
+            noise = [1]
         elif col == "SPICE Current [A]":
-            noise = [0,1,2,3,4,8,10]
+            noise = [0,1,2,3,4,8,10] #removing the first time it was turned on into a bad operating mode
         elif col == "METIS Current [A]":
             noise = list(range(3,23))
         
@@ -95,17 +99,20 @@ def current(jonas, plot = False, sample = False):
             
         if plot:
             plt.figure(i)
-            plt.plot(df.index.time, df[col], label=str(col))
-            plt.legend(loc='best')
-            plt.xlabel('Time [H:M:S]')
-            plt.ylabel('Current [A]')
-            
-            plt.plot(df.index.time, current_dif, label='Gradient')
+         
             #print(peak_datetimes)
             peak_times = [i.time() for i in peak_datetimes]
             print("len(peak_times) = ", len(peak_times))
             print("len(index_list) = ", len(index_list))
             plt.scatter(peak_times, current_dif[index_list])
+
+            df2 = df.between_time((peak_datetimes[0]-pd.Timedelta(minutes = 1)).time(), (peak_datetimes[-1]+pd.Timedelta(minutes = 1)).time())
+            plt.plot(df2.index.time, df2[col], label=str(col))
+            plt.legend(loc='best')
+            plt.xlabel('Time [H:M:S]')
+            plt.ylabel('Current [A]')
+            
+            plt.plot(df2.index.time, df2['Current Dif'], label='Gradient')
             #else:
             #   print("no peaks detected")
             plt.show()
@@ -131,5 +138,5 @@ def current(jonas, plot = False, sample = False):
     return dict
 
 
-dict = current(False, plot = True)
+dict = current(True, plot = True)
 #print(dict['MAG Current [A]'])
