@@ -23,7 +23,7 @@ def current(jonas, plot = False, sample = False):
         filename = r'C:\Users\jonas\MSci-Data\LCL_data\Day 2 Payload LCL Current Profiles.xlsx'
     else:
         filename = os.path.expanduser("~/Documents/MSciProject/Data/LCL_Data/Day_2_Payload_LCL_Current_Profiles.xlsx")
-
+    
     df =  pd.read_excel(filename)
     df.set_index(['EGSE Time'], inplace = True)
     df = df.resample(f'{5}s').mean()
@@ -43,6 +43,7 @@ def current(jonas, plot = False, sample = False):
         index_list, = np.where(abs(current_dif) > 4*current_dif_std) #mean is almost zero so ignore
 
         peak_datetimes = [datetime.combine(datetime.date(day), df.index[i].time()) for i in index_list]
+        print(col)
         print("len = ", len(peak_datetimes))
 
         #removing unwanted peaks
@@ -63,14 +64,6 @@ def current(jonas, plot = False, sample = False):
                     remove_list.append(j)
                 else:
                     remove_list.append(j+1) 
-
-             #if peak_times[j+1]-peak_times[j] < datetime.timedelta(minutes = 1): #time between timestamps < 30 seconds
-                    #if peak_times[j+1]-peak_times[j] < datetime.timedelta(seconds = 30):
-                    #    if peak_times[j+1]<peak_times[j]:
-                    #        peak_times.remove(peak_times[j+1])
-                    #    else:
-                    #        peak_times.remove(peak_times[j])
-                    #print(peak_times[j+1]-peak_times[j]) 
              
         #for index, i in enumerate(remove_list):
         #    print(i,index, len(peak_datetimes))
@@ -78,7 +71,21 @@ def current(jonas, plot = False, sample = False):
                 del peak_datetimes[index]
         index_list = np.delete(index_list, remove_list)
 
-                            
+        noise = []
+
+        if col == "SoloHI Current [A]":
+            noise = [1,7]
+        elif col == "PHI Current [A]":
+            noise = [10]
+        elif col == "SPICE Current [A]":
+            noise = [0,1,2,3,4,8,10]
+        elif col == "METIS Current [A]":
+            noise = list(range(3,23))
+        
+        for index in sorted(noise, reverse=True):
+                del peak_datetimes[index]
+        index_list = np.delete(index_list, noise)
+        
         #print(peak_times)
         print("size = ", index_list.size)
         print("std = ",current_dif_std)
@@ -106,7 +113,8 @@ def current(jonas, plot = False, sample = False):
         return dict, i
         
     dict = {}
-    
+
+
     if plot != True:
         for col in df.columns:
             dict, i = find_peak_times(dict, df)
@@ -119,8 +127,9 @@ def current(jonas, plot = False, sample = False):
             i += 1
 
 
+
     return dict
 
 
-dict = current(True, plot = True)
+dict = current(False, plot = True)
 #print(dict['MAG Current [A]'])
