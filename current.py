@@ -11,7 +11,7 @@ import time
 from datetime import datetime
 import glob
 
-def current(jonas, plot = False, sample = False):
+def current_peaks(jonas, plot = False, sample = False):
     if jonas:
         filename = r'C:\Users\jonas\MSci-Data\LCL_data\Day 2 Payload LCL Current Profiles.xlsx'
     else:
@@ -39,7 +39,7 @@ def current(jonas, plot = False, sample = False):
 
         peak_datetimes = [datetime.combine(datetime.date(day), df.index[i].time()) for i in index_list]
         print(col)
-        print("len = ", len(peak_datetimes))
+        #print("len = ", len(peak_datetimes))
 
         #removing unwanted peaks
         remove_list = []
@@ -96,8 +96,8 @@ def current(jonas, plot = False, sample = False):
          
             #print(peak_datetimes)
             peak_times = [i.time() for i in peak_datetimes]
-            print("len(peak_times) = ", len(peak_times))
-            print("len(index_list) = ", len(index_list))
+            #print("len(peak_times) = ", len(peak_times))
+            #print("len(index_list) = ", len(index_list))
             plt.scatter(peak_times, current_dif[index_list])
 
             df2 = df.between_time((peak_datetimes[0]-pd.Timedelta(minutes = 1)).time(), (peak_datetimes[-1]+pd.Timedelta(minutes = 1)).time())
@@ -124,13 +124,13 @@ def current(jonas, plot = False, sample = False):
     if plot:
         i=1
         for col in df.columns:
-            dict, i  = find_peak_times(dict, df, i, plot = True)
+            dict, i  = find_peak_times(dict, df, True, i)
             i += 1
 
 
 
     return dict
 
-
-#dict = current(True, plot = True)
-#print(dict['MAG Current [A]'])
+if __name__ == "__main__":
+    dict = current_peaks(True, plot = True)
+    #print(dict['MAG Current [A]'])
