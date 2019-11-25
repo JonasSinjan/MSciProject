@@ -89,6 +89,7 @@ def current(jonas, plot = False, sample = False):
         #print(type(peak_datetimes[0]))
         if str(col) not in dict.keys():
             dict[str(col)] = peak_datetimes
+            dict[str(col) + ' dI'] = current_dif[index_list]
             
         if plot:
             plt.figure(i)
@@ -123,7 +124,7 @@ def current(jonas, plot = False, sample = False):
     if plot:
         i=1
         for col in df.columns:
-            dict, i  = find_peak_times(dict, df, i)
+            dict, i  = find_peak_times(dict, df, i, plot = True)
             i += 1
 
 
@@ -131,5 +132,5 @@ def current(jonas, plot = False, sample = False):
     return dict
 
 
-dict = current(True, plot = True)
+#dict = current(True, plot = True)
 #print(dict['MAG Current [A]'])

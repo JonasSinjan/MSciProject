@@ -81,11 +81,15 @@ def read_files(all_files, soloA, jonas, sampling_freq = None, collist=None, day=
     return df
 
 
-def which_csvs(soloA_bool, day, start_dt, end_dt):
-    day_one_A_dt = datetime(2019,6,21,8,10,10,12)
-    day_one_B_dt = datetime(2019,6,21,8,9,10)
-    day_two_A_dt = datetime(2019,6,24,8,14,46,93)
-    day_two_B_dt = datetime(2019,6,24,8,14,24)
+def which_csvs(soloA_bool, day, start_dt, end_dt, tz_MAG = False):
+    if tz_MAG:
+        day_two_A_dt = datetime(2019,6,24,8,14,46,93) - pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283) 
+        day_two_B_dt = datetime(2019,6,24,8,14,24) - pd.Timedelta(days = 0, hours = 1, minutes = 58, seconds = 46, milliseconds = 499)
+    else:
+        day_one_A_dt = datetime(2019,6,21,8,10,10,12)
+        day_one_B_dt = datetime(2019,6,21,8,9,10)
+        day_two_A_dt = datetime(2019,6,24,8,14,46,93)
+        day_two_B_dt = datetime(2019,6,24,8,14,24)
 
     length = (end_dt - start_dt).total_seconds()
     #print(length)
@@ -111,6 +115,9 @@ def which_csvs(soloA_bool, day, start_dt, end_dt):
         if end_csv > 48:
             end_csv = 48
             print('The desired time range may run outside the available data - check if so')
+    
+    #if start_csv == 0:
+    #    start_csv = 1
     return start_csv, end_csv
 
 
