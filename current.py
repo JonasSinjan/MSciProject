@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Nov 12 12:35:24 2019
-
-@author: katiesimkins
-"""
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from processing import soloA, soloB, read_files, powerspecplot, rotate_21, which_csvs
