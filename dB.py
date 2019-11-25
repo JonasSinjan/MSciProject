@@ -24,7 +24,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas = True): #for only one ins
     end_dt = peak_datetimes[-1]+pd.Timedelta(minutes = 1)
     
     day = 2 #second day
-    sampling_freq = 20 #do we want to remove the high freq noise?
+    sampling_freq = 1000 #do we want to remove the high freq noise?
     
     start_csv_A, end_csv_A = which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
     start_csv_B, end_csv_B = which_csvs(False, day ,start_dt, end_dt, tz_MAG = True)
@@ -60,10 +60,10 @@ def dB(peak_datetimes, instrument, current_dif, jonas = True): #for only one ins
             
         if soloA_bool:
             df = read_files(all_files, soloA_bool, jonas, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
-            rotate_mat = rotate_24(soloA_bool)[i-1]
+            rotate_mat = rotate_24(soloA_bool)[i]
         else:
             df = read_files(all_files, soloA_bool, jonas, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
-            rotate_mat = rotate_24(soloA_bool)[i-9]
+            rotate_mat = rotate_24(soloA_bool)[i-8]
         df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
         print(len(df))
     
@@ -98,19 +98,22 @@ def dB(peak_datetimes, instrument, current_dif, jonas = True): #for only one ins
             step_dict[str(k)] = tmp_step_list
         
         plt.figure()
-        plt.plot(current_dif, step_dict.get(f'Probe{num_str}_X'), label = 'X') #also need to save the change in current
-        plt.plot(current_dif, step_dict.get(f'Probe{num_str}_Y'), label = 'Y')
-        plt.plot(current_dif, step_dict.get(f'Probe{num_str}_Z'), label = 'Z')
+        plt.scatter(current_dif, step_dict.get(f'Probe{num_str}_X'), label = 'X') #also need to save the change in current
+        plt.scatter(current_dif, step_dict.get(f'Probe{num_str}_Y'), label = 'Y')
+        plt.scatter(current_dif, step_dict.get(f'Probe{num_str}_Z'), label = 'Z')
         plt.legend(loc="best")
         plt.title(f'{instrument} - Probe {num_str}')
+        plt.xlabel('dI [A]')
+        plt.ylabel('dB [nT]')
         plt.show()
                 
         #each sensor will have 3 lines for X, Y, Z
         
 dict_current = current_peaks(True, plot=False)
-peak_datetimes_EUI = dict_current.get('EUI Current [A]')
-print(peak_datetimes_EUI[0], peak_datetimes_EUI[-1])
-current_dif_EUI = dict_current.get('EUI Current [A] dI')
-dB(peak_datetimes_EUI, 'EUI', current_dif_EUI, True)
+instrument = 'SoloHI'
+peak_datetimes = dict_current.get(f'{instrument} Current [A]')
+print(peak_datetimes[0], peak_datetimes[-1])
+current_dif = dict_current.get(f'{instrument} Current [A] dI')
+dB(peak_datetimes, 'STIX', current_dif, True)
 
 #atm get start_csv which is -8, because the MFSA data has not been shifted
