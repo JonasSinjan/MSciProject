@@ -74,8 +74,8 @@ def read_files(all_files, soloA, jonas, sampling_freq = None, collist=None, day=
     else:
         print('The desired sampling frequency is greater than the raw data available - defaulted to 1kHz')
     
-    print(time.process_time() - start)
-    print(df.head())
+    #print(time.process_time() - start)
+    #print(df.head())
     #print(type(df.index))
     
     return df
