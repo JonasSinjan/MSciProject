@@ -10,6 +10,7 @@ import numpy as np
 import scipy.signal as sps
 import time
 from datetime import datetime
+import scipy.stats as spstats
 
 def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
 
@@ -72,8 +73,16 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
     
     plt.figure()
     plt.scatter(current_dif, step_dict.get('X'), label = 'X') #also need to save the change in current
+    X = spstats.linregress(current_dif, step_dict.get('X'))
     plt.scatter(current_dif, step_dict.get('Y'), label = 'Y')
+    Y = spstats.linregress(current_dif, step_dict.get('Y'))
     plt.scatter(current_dif, step_dict.get('Z'), label = 'Z')
+    Z = spstats.linregress(current_dif, step_dict.get('Z'))
+
+    plt.plot(current_dif, X.intercept + X.slope*current_dif, label = X.rvalue)
+    plt.plot(current_dif, Y.intercept + Y.slope*current_dif, label = Y.rvalue)
+    plt.plot(current_dif, Z.intercept + Z.slope*current_dif, label = Z.rvalue)
+
     plt.legend(loc="best")
     plt.title(f'{instrument}')
     plt.xlabel('dI [A]')
@@ -86,7 +95,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
 jonas = False
 
 dict_current = current_peaks(jonas, plot=False)
-instrument = 'EPD'
+instrument = 'EUI'
 peak_datetimes = dict_current.get(f'{instrument} Current [A]')
 print(peak_datetimes[0], peak_datetimes[-1])
 current_dif = dict_current.get(f'{instrument} Current [A] dI')
