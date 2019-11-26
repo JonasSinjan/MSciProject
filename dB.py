@@ -11,7 +11,7 @@ import scipy.signal as sps
 import time
 from datetime import datetime
 
-def dB(peak_datetimes, instrument, current_dif, jonas = True): #for only one instrument
+def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
 
     if jonas:
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_two\A'
@@ -32,14 +32,14 @@ def dB(peak_datetimes, instrument, current_dif, jonas = True): #for only one ins
     all_files_A = [0]*(end_csv_A + 1 - start_csv_A)
     for index, j in enumerate(range(start_csv_A, end_csv_A + 1)): #this will loop through and add the csv files that contain the start and end time set above
         if jonas:
-            all_files_A[index] = path_fol_A + f'\SoloA_2019-06-24--08-14-46_{j}.csv'
+            all_files_A[index] = path_fol_A + r'\SoloA_2019-06-24--08-14-46_{j}.csv'
         else:
             all_files_A[index] = path_fol_A + os.path.expanduser(f'/SoloA_2019-06-24--08-14-46_{j}.csv') #need to change path_fol_A  to the path where your A folder is
     
     all_files_B = [0]*(end_csv_B + 1 - start_csv_B)
     for index, j in enumerate(range(start_csv_B, end_csv_B + 1)): 
         if jonas:
-            all_files_B[index] = path_fol_B + f'\SoloB_2019-06-24--08-14-24_{j}.csv'
+            all_files_B[index] = path_fol_B + r'\SoloB_2019-06-24--08-14-24_{j}.csv'
         else:
             all_files_B[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-24--08-14-24_{j}.csv') #need to change path_f
 
@@ -84,10 +84,10 @@ def dB(peak_datetimes, instrument, current_dif, jonas = True): #for only one ins
             
             for l, time in enumerate(peak_datetimes): #looping through the peaks datetimes
                 
-                time_before_left = time - pd.Timedelta(seconds = 7)
+                time_before_left = time - pd.Timedelta(seconds = 5)
                 time_before_right = time - pd.Timedelta(seconds = 2) #buffer time since sampling at 5sec, must be integers
                 time_after_left = time + pd.Timedelta(seconds = 2)
-                time_after_right = time + pd.Timedelta(seconds = 7)
+                time_after_right = time + pd.Timedelta(seconds = 5)
                 
                 avg_tmp = df[k][time_before_left: time_before_right].mean()
                 #print(df[k][time_before_left: time_before_right].head())
@@ -109,12 +109,13 @@ def dB(peak_datetimes, instrument, current_dif, jonas = True): #for only one ins
         plt.show()
                 
         #each sensor will have 3 lines for X, Y, Z
-        
-dict_current = current_peaks(True, plot=False)
-instrument = 'STIX'
+jonas = True
+
+dict_current = current_peaks(jonas, plot=False)
+instrument = 'SoloHI'
 peak_datetimes = dict_current.get(f'{instrument} Current [A]')
 print(peak_datetimes[0], peak_datetimes[-1])
 current_dif = dict_current.get(f'{instrument} Current [A] dI')
-dB(peak_datetimes, instrument , current_dif, True)
+dB(peak_datetimes, instrument, current_dif, jonas = True)
 
 #atm get start_csv which is -8, because the MFSA data has not been shifted

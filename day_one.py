@@ -69,7 +69,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
 
 if __name__ == "__main__":
 
-    jonas = True
+    jonas = False
 
     if jonas:
         file_path_A = r'C:\Users\jonas\MSci-Data\day_one\A\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-21--08-10-10_1.csv'

@@ -47,7 +47,7 @@ def mag(filepath, start_dt=None, end_dt=None):
     if plot:
         plt.figure()
         cols = df.columns.tolist()
-        for col in cols:
+        for col in cols[1]:
             plt.plot(df.index.time, df[col], label =f'{col}')
         plt.xlabel('Time [H:M:S]')
         plt.ylabel('B [nT]')
@@ -66,14 +66,14 @@ def mag(filepath, start_dt=None, end_dt=None):
     
 if __name__ == "__main__":
     
-    jonas = True
+    jonas = False
     
     if jonas:
         filepath = r'C:\Users\jonas\MSci-Data\PoweredDay2.csv.txt'
     else:
-        filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/Day2MAGBurst.csv")
+        filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay2.csv.txt")
         
-    start_dt = datetime(2019,6,24,8,2)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,8,2,30)# this is the end
+    start_dt = datetime(2019,6,24,9,24)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,24,10,10)# this is the end
 
     mag(filepath, start_dt=start_dt, end_dt=end_dt)

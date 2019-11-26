@@ -70,12 +70,14 @@ def current_peaks(jonas, plot = False, sample = False):
 
         if col == "SoloHI Current [A]":
             noise = [1,7]
+        elif col == "EUI Current [A]":
+            noise = [3,4]
         elif col == "PHI Current [A]":
-            noise = [4,5,10]
+            noise = [4,5,8,10]
         elif col == "STIX Current [A]":
             noise = [1]
         elif col == "SPICE Current [A]":
-            noise = [0,1,2,3,4,8,10] #removing the first time it was turned on into a bad operating mode
+            noise = [0,1,2,3,4,8,9,10,11] #removing the first time it was turned on into a bad operating mode
         elif col == "METIS Current [A]":
             noise = list(range(3,23))
         
