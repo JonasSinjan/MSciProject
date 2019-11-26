@@ -83,13 +83,13 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
     #each sensor will have 3 lines for X, Y, Z
     
 
-jonas = False
+jonas = True
 
 dict_current = current_peaks(jonas, plot=False)
 instrument = 'EPD'
 peak_datetimes = dict_current.get(f'{instrument} Current [A]')
 print(peak_datetimes[0], peak_datetimes[-1])
 current_dif = dict_current.get(f'{instrument} Current [A] dI')
-dB(peak_datetimes, instrument, current_dif, jonas = False)
+dB(peak_datetimes, instrument, current_dif, jonas)
 
 #atm get start_csv which is -8, because the MFSA data has not been shifted
