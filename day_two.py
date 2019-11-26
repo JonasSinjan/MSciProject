@@ -39,7 +39,7 @@ def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
         plt.figure()
         for col in collist[1:]:
             plt.plot(df2.index.time, df2[col], label=str(col))
-            print(df2[col].abs().idxmax())
+            #print(df2[col].abs().idxmax())
         plt.xlabel('Time (s)')
         plt.ylabel('B (nT)')
         plt.title(f'Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
@@ -52,7 +52,7 @@ def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
 
 if __name__ == "__main__":
     
-    jonas = True
+    jonas = False
 
     if jonas:
         file_path_A = r'C:\Users\jonas\MSci-Data\powered\SoloA_2019-06-24--08-14-46_9\SoloA_2019-06-24--08-14-46_1.csv' #the first couple of files in some of the folders are from earlier days
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         path_fol_A =  os.path.expanduser("~/Documents/MsciProject/Data/day_two/A")
         path_fol_B =  os.path.expanduser("~/Documents/MsciProject/Data/day_two/B")
     
-    num = 7
+    num = 3
     if num < 9:
         soloA_bool = True
     else:
@@ -78,11 +78,11 @@ if __name__ == "__main__":
         num_str = num
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
-    start_dt = datetime(2019,6,24,9,59)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,10,2)# this is the end
+    start_dt = datetime(2019,6,24,9,28) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,24,10,10) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
 
     day = 2
-    start_csv, end_csv = which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
+    start_csv, end_csv = which_csvs(soloA_bool, day ,start_dt, end_dt, tz_MAG=False) #this function (in processing.py) finds the number at the end of the csv files we want
     print(start_csv, end_csv)
 
     all_files = [0]*(end_csv + 1 - start_csv)
@@ -101,5 +101,5 @@ if __name__ == "__main__":
                 all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-24--08-14-24_{i}.csv') #need to change path_fol_B to the path where your B folder is
     #print(all_files)
     alt = False
-    day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 1000) #pass through the list containing the file paths
+    day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 1) #pass through the list containing the file paths
 
