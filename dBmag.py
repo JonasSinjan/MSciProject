@@ -84,7 +84,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
     plt.plot(current_dif, Z.intercept + Z.slope*current_dif, label = Z.rvalue)
 
     plt.legend(loc="best")
-    plt.title(f'{instrument}')
+    plt.title(f'{instrument} - MAG')
     plt.xlabel('dI [A]')
     plt.ylabel('dB [nT]')
     plt.show()
