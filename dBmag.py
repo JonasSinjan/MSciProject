@@ -44,7 +44,9 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
     df = df.between_time(start_dt.time(), end_dt.time())
 
     collist = ['time','X','Y','Z']
-        
+
+    powerspecplot(df, sampling_freq, collist, alt, inst = instrument)
+
     #now have a df that only spans when the instrument is on
     #now need to loop through all the peak datetimes and average either side and then calculate the step change
     #then save that value to a list/array/dict
@@ -67,6 +69,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
             avg_after_tmp = df[k][time_after_left:time_after_right].mean()
             
             step_tmp = avg_after_tmp - avg_tmp
+
             tmp_step_list[l] = step_tmp
             print("dB = ", step_tmp, "dI = ", current_dif[l], "time = ", time)
         step_dict[str(k)] = tmp_step_list
@@ -92,7 +95,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
     #each sensor will have 3 lines for X, Y, Z
     
 
-jonas = True
+jonas = False
 
 dict_current = current_peaks(jonas, plot=False)
 instrument = 'EUI'
