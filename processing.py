@@ -205,7 +205,7 @@ def powerspecplot(df, fs, collist, alt, inst = " "):
         plt.subplot(224)
         alt_power_spec(x_t, fs, probe_t)
 
-    plt.savefig('(%d)_powerspec_mag' % inst)
+    plt.savefig('(%s)_powerspec_mag' % inst)
     plt.show()
 
 def rotate_21(soloA_bool):
