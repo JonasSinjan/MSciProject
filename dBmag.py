@@ -54,6 +54,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
             step_dict[str(k)] = 0
                 
         tmp_step_list = [0]*len(peak_datetimes)
+        tmp_step_err_list = [0]*len(peak_datetimes)
             
         for l, time in enumerate(peak_datetimes): #looping through the peaks datetimes
                 
@@ -63,12 +64,19 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
             time_after_right = time + pd.Timedelta(seconds = 5)
             
             avg_tmp = df[k][time_before_left: time_before_right].mean()
+            avg_tmp_std = df[k][time_before_left: time_before_right].std()
             avg_after_tmp = df[k][time_after_left:time_after_right].mean()
+            avg_after_tmp_std = df[k][time_after_left:time_after_right].std()
             
             step_tmp = avg_after_tmp - avg_tmp
+            step_tmp_err = np.sqrt(avg_tmp_std**2 + avg_after_tmp_std**2)
+            
             tmp_step_list[l] = step_tmp
+            tmp_step_err_list[l] = step_tmp_err
+            
             print("dB = ", step_tmp, "dI = ", current_dif[l], "time = ", time)
         step_dict[str(k)] = tmp_step_list
+        step_dict[str(k) + ' err'] = tmp_step_err_list
     
     plt.figure()
     plt.scatter(current_dif, step_dict.get('X'), label = 'X') #also need to save the change in current
