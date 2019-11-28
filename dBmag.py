@@ -32,7 +32,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
     nrows = int(des_time.total_seconds()*128 - 0.518/(1/128))
     
     day = 2 #second day
-    sampling_freq = 1000 #do we want to remove the high freq noise?
+    sampling_freq = 128 #do we want to remove the high freq noise?
 
     df = pd.read_csv(mag_filepath, header = None, skiprows = skiprows, nrows = nrows)
     df.columns = ['time','X','Y','Z']
@@ -103,7 +103,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
 jonas = True
 
 dict_current = current_peaks(jonas, plot=False)
-instrument = 'SoloHI'
+instrument = 'SWA'
 peak_datetimes = dict_current.get(f'{instrument} Current [A]')
 print(peak_datetimes[0], peak_datetimes[-1])
 current_dif = dict_current.get(f'{instrument} Current [A] dI')
