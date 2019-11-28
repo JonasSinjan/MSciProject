@@ -130,7 +130,7 @@ def shifttime(df, soloAbool):
     return df
 
 
-def powerspecplot(df, fs, collist, alt):
+def powerspecplot(df, fs, collist, alt, inst = " "):
     
     probe_x = collist[1]
     probe_y = collist[2]
@@ -205,6 +205,7 @@ def powerspecplot(df, fs, collist, alt):
         plt.subplot(224)
         alt_power_spec(x_t, fs, probe_t)
 
+    plt.savefig('(%s)_powerspec_mag' % inst)
     plt.show()
 
 def rotate_21(soloA_bool):
