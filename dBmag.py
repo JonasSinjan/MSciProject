@@ -57,6 +57,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
             step_dict[str(k)] = 0
                 
         tmp_step_list = [0]*len(peak_datetimes)
+        tmp_step_err_list = [0]*len(peak_datetimes)
             
         for l, time in enumerate(peak_datetimes): #looping through the peaks datetimes
                 
@@ -66,25 +67,31 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
             time_after_right = time + pd.Timedelta(seconds = 5)
             
             avg_tmp = df[k][time_before_left: time_before_right].mean()
+            avg_tmp_std = df[k][time_before_left: time_before_right].std()
             avg_after_tmp = df[k][time_after_left:time_after_right].mean()
+            avg_after_tmp_std = df[k][time_after_left:time_after_right].std()
             
             step_tmp = avg_after_tmp - avg_tmp
-
+            step_tmp_err = np.sqrt(avg_tmp_std**2 + avg_after_tmp_std**2)
+            
             tmp_step_list[l] = step_tmp
+            tmp_step_err_list[l] = step_tmp_err
+            
             print("dB = ", step_tmp, "dI = ", current_dif[l], "time = ", time)
         step_dict[str(k)] = tmp_step_list
+        step_dict[str(k) + ' err'] = tmp_step_err_list
     
     plt.figure()
-    plt.scatter(current_dif, step_dict.get('X'), label = 'X') #also need to save the change in current
+    plt.errorbar(current_dif, step_dict.get('X'), yerr = step_dict.get('X err'), fmt = 'b*',label = 'X') #also need to save the change in current
     X = spstats.linregress(current_dif, step_dict.get('X'))
-    plt.scatter(current_dif, step_dict.get('Y'), label = 'Y')
+    plt.errorbar(current_dif, step_dict.get('Y'), yerr = step_dict.get('Y err'), fmt = 'r*', label = 'Y')
     Y = spstats.linregress(current_dif, step_dict.get('Y'))
-    plt.scatter(current_dif, step_dict.get('Z'), label = 'Z')
+    plt.errorbar(current_dif, step_dict.get('Z'), yerr = step_dict.get('Z err'), fmt = 'g*', label = 'Z')
     Z = spstats.linregress(current_dif, step_dict.get('Z'))
 
-    plt.plot(current_dif, X.intercept + X.slope*current_dif, label = X.rvalue)
-    plt.plot(current_dif, Y.intercept + Y.slope*current_dif, label = Y.rvalue)
-    plt.plot(current_dif, Z.intercept + Z.slope*current_dif, label = Z.rvalue)
+    plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-', label = X.rvalue)
+    plt.plot(current_dif, Y.intercept + Y.slope*current_dif, 'r-', label = Y.rvalue)
+    plt.plot(current_dif, Z.intercept + Z.slope*current_dif, 'g-', label = Z.rvalue)
 
     plt.legend(loc="best")
     plt.title(f'{instrument} - MAG')
@@ -98,7 +105,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
 jonas = False
 
 dict_current = current_peaks(jonas, plot=False)
-instrument = 'EUI'
+instrument = 'SoloHI'
 peak_datetimes = dict_current.get(f'{instrument} Current [A]')
 print(peak_datetimes[0], peak_datetimes[-1])
 current_dif = dict_current.get(f'{instrument} Current [A] dI')

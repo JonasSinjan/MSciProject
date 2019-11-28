@@ -24,7 +24,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
     end_dt = peak_datetimes[-1]+pd.Timedelta(minutes = 1)
     
     day = 2 #second day
-    sampling_freq = 1000 #do we want to remove the high freq noise?
+    sampling_freq = 20 #do we want to remove the high freq noise?
     
     start_csv_A, end_csv_A = which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
     start_csv_B, end_csv_B = which_csvs(False, day ,start_dt, end_dt, tz_MAG = True)
@@ -65,18 +65,18 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
             df = read_files(all_files, soloA_bool, jonas, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
             rotate_mat = rotate_24(soloA_bool)[i-8]
         df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
-        print(len(df))
+        #print(len(df))
     
         df = shifttime(df, soloA_bool) # must shift MFSA data to MAG/spacecraft time
         
         df = df.between_time(start_dt.time(), end_dt.time())
-        
+        df.head()
         #now have a df that only spans when the instrument is on
         #now need to loop through all the peak datetimes and average either side and then calculate the step change
         #then save that value to a list/array/dict
         step_dict = {}
         for k in collist[1:]: #looping through x, y, z
-            
+            print(k)
             if str(k) not in step_dict.keys():
                 step_dict[str(k)] = 0
                 
@@ -90,6 +90,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
                 time_after_right = time + pd.Timedelta(seconds = 5)
                 
                 avg_tmp = df[k][time_before_left: time_before_right].mean()
+                #print(df[k][time_before_left: time_before_right].head())
                 avg_after_tmp = df[k][time_after_left:time_after_right].mean()
                 
                 step_tmp = avg_after_tmp - avg_tmp
