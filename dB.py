@@ -32,14 +32,14 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
     all_files_A = [0]*(end_csv_A + 1 - start_csv_A)
     for index, j in enumerate(range(start_csv_A, end_csv_A + 1)): #this will loop through and add the csv files that contain the start and end time set above
         if jonas:
-            all_files_A[index] = path_fol_A + r'\SoloA_2019-06-24--08-14-46_{j}.csv'
+            all_files_A[index] = path_fol_A + f'\SoloA_2019-06-24--08-14-46_{j}.csv'
         else:
             all_files_A[index] = path_fol_A + os.path.expanduser(f'/SoloA_2019-06-24--08-14-46_{j}.csv') #need to change path_fol_A  to the path where your A folder is
     
     all_files_B = [0]*(end_csv_B + 1 - start_csv_B)
     for index, j in enumerate(range(start_csv_B, end_csv_B + 1)): 
         if jonas:
-            all_files_B[index] = path_fol_B + r'\SoloB_2019-06-24--08-14-24_{j}.csv'
+            all_files_B[index] = path_fol_B + f'\SoloB_2019-06-24--08-14-24_{j}.csv'
         else:
             all_files_B[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-24--08-14-24_{j}.csv') #need to change path_f
 
@@ -103,19 +103,20 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
         plt.plot(current_dif, step_dict.get(f'Probe{num_str}_Y'), label = 'Y')
         plt.plot(current_dif, step_dict.get(f'Probe{num_str}_Z'), label = 'Z')
         plt.legend(loc="best")
-        plt.title(f'{instrument} - Probe {num_str}')
+        plt.title(f'{instrument} - Probe {num_str} - MFSA')
         plt.xlabel('dI [A]')
         plt.ylabel('dB [nT]')
         plt.show()
                 
         #each sensor will have 3 lines for X, Y, Z
+        
+
 jonas = True
 
 dict_current = current_peaks(jonas, plot=False)
-instrument = 'SoloHI'
+instrument = 'EUI'
 peak_datetimes = dict_current.get(f'{instrument} Current [A]')
 print(peak_datetimes[0], peak_datetimes[-1])
 current_dif = dict_current.get(f'{instrument} Current [A] dI')
-dB(peak_datetimes, instrument, current_dif, jonas = True)
-
+dB(peak_datetimes, instrument, current_dif, jonas)
 #atm get start_csv which is -8, because the MFSA data has not been shifted
