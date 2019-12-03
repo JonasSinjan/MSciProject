@@ -11,6 +11,9 @@ import scipy.signal as sps
 import time
 from datetime import datetime
 import scipy.stats as spstats
+from scipy.signal import butter, lfilter, freqz
+import matplotlib.pyplot as plt
+
 
 def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
 
@@ -25,7 +28,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
     end_dt = peak_datetimes[-1]+pd.Timedelta(minutes = 1)
     
     day = 2 #second day
-    sampling_freq = 20 #do we want to remove the high freq noise?
+    sampling_freq = 100 #do we want to remove the high freq noise?
     
     start_csv_A, end_csv_A = which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
     start_csv_B, end_csv_B = which_csvs(False, day ,start_dt, end_dt, tz_MAG = True)
@@ -71,6 +74,28 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
         df = shifttime(df, soloA_bool) # must shift MFSA data to MAG/spacecraft time
         
         df = df.between_time(start_dt.time(), end_dt.time())
+
+        lowpass = True
+        
+        if lowpass:
+            def butter_lowpass(cutoff, fs, order=5):
+                nyq = 0.5 * fs
+                normal_cutoff = cutoff / nyq
+                b, a = butter(order, normal_cutoff, btype='low', analog=False)
+                return b, a
+            
+            def butter_lowpass_filter(data, cutoff, fs, order=5):
+                b, a = butter_lowpass(cutoff, fs, order=order)
+                y = lfilter(b, a, data)
+                return y
+
+            cutoff = 15
+            fs = sampling_freq
+
+            for axis in ['X','Y','Z']:
+                df[f'Probe{num_str}_{axis}'] = butter_lowpass_filter(df[f'Probe{num_str}_{axis}'], cutoff, fs)
+
+
         df.head()
         #now have a df that only spans when the instrument is on
         #now need to loop through all the peak datetimes and average either side and then calculate the step change
@@ -117,7 +142,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
         
         plt.figure()
         X = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_X'))
-        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = f'X grad: {round(X.slope,3)} ± {roun(X.stderr,3)}', markeredgewidth = 2) #also need to save the change in current
+        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = f'X grad: {round(X.slope,3)} ± {round(X.stderr,3)}', markeredgewidth = 2) #also need to save the change in current
         Y = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Y'))
         plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Y'), yerr = step_dict.get(f'Probe{num_str}_Y err'), fmt = 'rs', label = f'Y grad: {round(Y.slope,3)} ± {round(Y.stderr,3)}', markeredgewidth = 2)
         Z = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Z'))
