@@ -81,9 +81,10 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
                 step_dict[str(k)] = 0
                 
             tmp_step_list = [0]*len(peak_datetimes)
-            
+            tmp_step_err_list = [0]*len(peak_datetimes)
+            print(len(peak_datetimes))
             for l, time in enumerate(peak_datetimes): #looping through the peaks datetimes
-                
+                print(l)
                 if l == 0:
                     time_before_left = start_dt
                 else:
@@ -92,24 +93,31 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
                 time_before_right = time - pd.Timedelta(seconds = 2) #buffer time since sampling at 5sec, must be integers
                 time_after_left = time + pd.Timedelta(seconds = 2)
                 
-                if l == len(peak_datetimes):
+                if l == len(peak_datetimes)-1:
                     time_after_right = end_dt
                 else:
                     time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2)
                 
                 avg_tmp = df[k][time_before_left: time_before_right].mean()
-                #print(df[k][time_before_left: time_before_right].head())
+                std_before = df[k][time_before_left: time_before_right].std()
+                
                 avg_after_tmp = df[k][time_after_left:time_after_right].mean()
+                std_after = df[k][time_after_left: time_after_right].std()
                 
                 step_tmp = avg_after_tmp - avg_tmp
+                step_tmp_err = np.sqrt(std_before**2 + std_after**2)
+                
                 tmp_step_list[l] = step_tmp
+                tmp_step_err_list[l] = step_tmp_err
+                
                 print("dB = ", step_tmp, "dI = ", current_dif[l], "time = ", time)
             step_dict[str(k)] = tmp_step_list
+            step_dict[str(k) + ' err'] = tmp_step_err_list
         
         plt.figure()
-        plt.plot(current_dif, step_dict.get(f'Probe{num_str}_X'), label = 'X') #also need to save the change in current
-        plt.plot(current_dif, step_dict.get(f'Probe{num_str}_Y'), label = 'Y')
-        plt.plot(current_dif, step_dict.get(f'Probe{num_str}_Z'), label = 'Z')
+        plt.scatter(current_dif, step_dict.get(f'Probe{num_str}_X'), label = 'X') #also need to save the change in current
+        plt.scatter(current_dif, step_dict.get(f'Probe{num_str}_Y'), label = 'Y')
+        plt.scatter(current_dif, step_dict.get(f'Probe{num_str}_Z'), label = 'Z')
         plt.legend(loc="best")
         plt.title(f'{instrument} - Probe {num_str} - MFSA')
         plt.xlabel('dI [A]')
