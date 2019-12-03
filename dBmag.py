@@ -61,11 +61,19 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
         tmp_step_err_list = [0]*len(peak_datetimes)
             
         for l, time in enumerate(peak_datetimes): #looping through the peaks datetimes
+            
+            if l == 0:
+                time_before_left = start_dt
+            else:    
+                time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = 2)
                 
-            time_before_left = time - pd.Timedelta(seconds = 5)
             time_before_right = time - pd.Timedelta(seconds = 2) #buffer time since sampling at 5sec, must be integers
             time_after_left = time + pd.Timedelta(seconds = 2)
-            time_after_right = time + pd.Timedelta(seconds = 5)
+            
+            if l == len(peak_datetimes) - 1:
+                time_after_right = end_dt
+            else:
+                time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds=2)
             
             avg_tmp = df[k][time_before_left: time_before_right].mean()
             avg_tmp_std = df[k][time_before_left: time_before_right].std()
@@ -83,11 +91,11 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
         step_dict[str(k) + ' err'] = tmp_step_err_list
     
     plt.figure()
-    plt.errorbar(current_dif, step_dict.get('X'), yerr = step_dict.get('X err'), fmt = 'b*',label = 'X') #also need to save the change in current
+    plt.errorbar(current_dif, step_dict.get('X'), yerr = step_dict.get('X err'), fmt = 'bs',label = 'X', markeredgewidth = 2) #also need to save the change in current
     X = spstats.linregress(current_dif, step_dict.get('X'))
-    plt.errorbar(current_dif, step_dict.get('Y'), yerr = step_dict.get('Y err'), fmt = 'r*', label = 'Y')
+    plt.errorbar(current_dif, step_dict.get('Y'), yerr = step_dict.get('Y err'), fmt = 'rs', label = 'Y', markeredgewidth = 2)
     Y = spstats.linregress(current_dif, step_dict.get('Y'))
-    plt.errorbar(current_dif, step_dict.get('Z'), yerr = step_dict.get('Z err'), fmt = 'g*', label = 'Z')
+    plt.errorbar(current_dif, step_dict.get('Z'), yerr = step_dict.get('Z err'), fmt = 'gs', label = 'Z', markeredgewidth = 2)
     Z = spstats.linregress(current_dif, step_dict.get('Z'))
 
     plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-', label = X.rvalue)

@@ -85,7 +85,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
             tmp_step_err_list = [0]*len(peak_datetimes)
             print(len(peak_datetimes))
             for l, time in enumerate(peak_datetimes): #looping through the peaks datetimes
-                print(l)
+                
                 if l == 0:
                     time_before_left = start_dt
                 else:
