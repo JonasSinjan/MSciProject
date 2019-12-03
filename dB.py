@@ -123,9 +123,9 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
         plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Z'), yerr = step_dict.get(f'Probe{num_str}_Z err'), fmt = 'gs', label = 'Z')
         Z = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Z'))
 
-        plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-', label = X.rvalue)
-        plt.plot(current_dif, Y.intercept + Y.slope*current_dif, 'r-', label = Y.rvalue)
-        plt.plot(current_dif, Z.intercept + Z.slope*current_dif, 'g-', label = Z.rvalue)
+        plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-', label = round(X.rvalue,3))
+        plt.plot(current_dif, Y.intercept + Y.slope*current_dif, 'r-', label = round(Y.rvalue,3))
+        plt.plot(current_dif, Z.intercept + Z.slope*current_dif, 'g-', label = round(Z.rvalue,3))
 
         plt.legend(loc="best")
         plt.title(f'{instrument} - Probe {num_str} - MFSA')
