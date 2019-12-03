@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from processing import soloA, soloB, read_files, powerspecplot, rotate_21, which_csvs, rotate_24, shifttime
+from processing import *
 from pandas.plotting import register_matplotlib_converters
 from current import current_peaks
 register_matplotlib_converters()
@@ -96,50 +96,8 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
                 df[f'Probe{num_str}_{axis}'] = butter_lowpass_filter(df[f'Probe{num_str}_{axis}'], cutoff, fs)
 
 
-        df.head()
-        #now have a df that only spans when the instrument is on
-        #now need to loop through all the peak datetimes and average either side and then calculate the step change
-        #then save that value to a list/array/dict
-        step_dict = {}
-        for k in collist[1:]: #looping through x, y, z
-            print(k)
-            if str(k) not in step_dict.keys():
-                step_dict[str(k)] = 0
-                
-            tmp_step_list = [0]*len(peak_datetimes)
-            tmp_step_err_list = [0]*len(peak_datetimes)
-            print(len(peak_datetimes))
-            for l, time in enumerate(peak_datetimes): #looping through the peaks datetimes
-                
-                if l == 0:
-                    time_before_left = start_dt
-                else:
-                    time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = 2)
-                    
-                time_before_right = time - pd.Timedelta(seconds = 2) #buffer time since sampling at 5sec, must be integers
-                time_after_left = time + pd.Timedelta(seconds = 2)
-                
-                if l == len(peak_datetimes)-1:
-                    time_after_right = end_dt
-                else:
-                    time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2)
-                
-                avg_tmp = df[k][time_before_left: time_before_right].mean()
-                std_before = df[k][time_before_left: time_before_right].std()
-                
-                avg_after_tmp = df[k][time_after_left:time_after_right].mean()
-                std_after = df[k][time_after_left: time_after_right].std()
-                
-                step_tmp = avg_after_tmp - avg_tmp
-                step_tmp_err = np.sqrt(std_before**2 + std_after**2)
-                
-                tmp_step_list[l] = step_tmp
-                tmp_step_err_list[l] = step_tmp_err
-                
-                print("dB = ", step_tmp, "dI = ", current_dif[l], "time = ", time)
-            step_dict[str(k)] = tmp_step_list
-            step_dict[str(k) + ' err'] = tmp_step_err_list
-        
+        step_dict = calculate_dB_plot(df, collist, peak_datetimes, start_dt, end_dt)
+
         plt.figure()
         X = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_X'))
         plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = f'X grad: {round(X.slope,3)} ± {round(X.stderr,3)}', markeredgewidth = 2) #also need to save the change in current
@@ -157,11 +115,9 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
         plt.xlabel('dI [A]')
         plt.ylabel('dB [nT]')
         plt.show()
-                
-        #each sensor will have 3 lines for X, Y, Z
-        
+  
 
-jonas = False
+jonas = True
 
 dict_current = current_peaks(jonas, plot=False)
 instrument = 'EUI'
