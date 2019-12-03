@@ -85,7 +85,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
             tmp_step_err_list = [0]*len(peak_datetimes)
             print(len(peak_datetimes))
             for l, time in enumerate(peak_datetimes): #looping through the peaks datetimes
-                print(l)
+                
                 if l == 0:
                     time_before_left = start_dt
                 else:
@@ -116,16 +116,16 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
             step_dict[str(k) + ' err'] = tmp_step_err_list
         
         plt.figure()
-        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = 'X') #also need to save the change in current
         X = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_X'))
-        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Y'), yerr = step_dict.get(f'Probe{num_str}_Y err'), fmt = 'rs', label = 'Y')
+        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = f'X grad: {round(X.slope,3)} ± {roun(X.stderr,3)}', markeredgewidth = 2) #also need to save the change in current
         Y = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Y'))
-        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Z'), yerr = step_dict.get(f'Probe{num_str}_Z err'), fmt = 'gs', label = 'Z')
+        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Y'), yerr = step_dict.get(f'Probe{num_str}_Y err'), fmt = 'rs', label = f'Y grad: {round(Y.slope,3)} ± {round(Y.stderr,3)}', markeredgewidth = 2)
         Z = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Z'))
-
-        plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-', label = round(X.rvalue,3))
-        plt.plot(current_dif, Y.intercept + Y.slope*current_dif, 'r-', label = round(Y.rvalue,3))
-        plt.plot(current_dif, Z.intercept + Z.slope*current_dif, 'g-', label = round(Z.rvalue,3))
+        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Z'), yerr = step_dict.get(f'Probe{num_str}_Z err'), fmt = 'gs', label = f'Z grad: {round(Z.slope,3)} ± {round(Z.stderr,3)}', markeredgewidth = 2)
+        
+        plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-')
+        plt.plot(current_dif, Y.intercept + Y.slope*current_dif, 'r-')
+        plt.plot(current_dif, Z.intercept + Z.slope*current_dif, 'g-')
 
         plt.legend(loc="best")
         plt.title(f'{instrument} - Probe {num_str} - MFSA')
