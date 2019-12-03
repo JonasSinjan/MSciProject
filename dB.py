@@ -91,7 +91,11 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
                     
                 time_before_right = time - pd.Timedelta(seconds = 2) #buffer time since sampling at 5sec, must be integers
                 time_after_left = time + pd.Timedelta(seconds = 2)
-                time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2)
+                
+                if l == len(peak_datetimes):
+                    time_after_right = end_dt
+                else:
+                    time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2)
                 
                 avg_tmp = df[k][time_before_left: time_before_right].mean()
                 #print(df[k][time_before_left: time_before_right].head())
