@@ -116,11 +116,11 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
             step_dict[str(k) + ' err'] = tmp_step_err_list
         
         plt.figure()
-        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = 'X') #also need to save the change in current
+        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = 'X', markeredgewidth = 2) #also need to save the change in current
         X = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_X'))
-        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Y'), yerr = step_dict.get(f'Probe{num_str}_Y err'), fmt = 'rs', label = 'Y')
+        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Y'), yerr = step_dict.get(f'Probe{num_str}_Y err'), fmt = 'rs', label = 'Y', markeredgewidth = 2)
         Y = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Y'))
-        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Z'), yerr = step_dict.get(f'Probe{num_str}_Z err'), fmt = 'gs', label = 'Z')
+        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Z'), yerr = step_dict.get(f'Probe{num_str}_Z err'), fmt = 'gs', label = 'Z', markeredgewidth = 2)
         Z = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Z'))
 
         plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-', label = round(X.rvalue,3))
