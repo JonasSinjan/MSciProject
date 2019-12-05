@@ -117,7 +117,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
         plt.show()
   
 
-jonas = True
+jonas = False
 
 dict_current = current_peaks(jonas, plot=False)
 instrument = 'EUI'
