@@ -117,7 +117,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
         
         plt.figure()
         X = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_X'))
-        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = f'X grad: {round(X.slope,3)} ± {roun(X.stderr,3)}', markeredgewidth = 2) #also need to save the change in current
+        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = f'X grad: {round(X.slope,3)} ± {round(X.stderr,3)}', markeredgewidth = 2) #also need to save the change in current
         Y = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Y'))
         plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Y'), yerr = step_dict.get(f'Probe{num_str}_Y err'), fmt = 'rs', label = f'Y grad: {round(Y.slope,3)} ± {round(Y.stderr,3)}', markeredgewidth = 2)
         Z = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Z'))
