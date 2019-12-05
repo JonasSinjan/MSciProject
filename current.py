@@ -35,7 +35,7 @@ def current_peaks(jonas, plot = False, sample = False):
         current_dif = np.array(diff)
         current_dif_nona = diff.dropna()
         current_dif_std = np.std(current_dif_nona)
-        index_list, = np.where(abs(current_dif) > 4*current_dif_std) #mean is almost zero so ignore
+        index_list, = np.where(abs(current_dif) > 1.5*current_dif_std) #mean is almost zero so ignore
 
         peak_datetimes = [datetime.combine(datetime.date(day), df.index[i].time()) for i in index_list]
         print(col)
@@ -67,19 +67,29 @@ def current_peaks(jonas, plot = False, sample = False):
         index_list = np.delete(index_list, remove_list)
 
         noise = []
-
+        
         if col == "SoloHI Current [A]":
-            noise = [1,7]
+            #noise = [1,7] for 5 resample and 4 std
+            noise = [1,2,3,4,5,6,7,8,9,12,16,17,18,19,20,21]
         elif col == "EUI Current [A]":
-            noise = [3,4]
+            #noise = [3,4]
+            noise = [3,4,10,11,12,13,14,15,16]
         elif col == "PHI Current [A]":
-            noise = [4,5,8,10]
+            #noise = [4,5,8,10]
+            noise = [4,7,8,10,13,14,15,17,18,19,20,21,22,23,24]
         elif col == "STIX Current [A]":
-            noise = [1]
+            #noise = [1]
+            noise = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,50,51,52,53,54,55,56,57,58,59]
         elif col == "SPICE Current [A]":
-            noise = [0,1,2,3,4,8,9,10,11] #removing the first time it was turned on into a bad operating mode
+            #noise = [0,1,2,3,4,8,9,10,11] #removing the first time it was turned on into a bad operating mode
+            noise = [0,1,2,3,4,5,8,11,12,13,14]
         elif col == "METIS Current [A]":
-            noise = list(range(3,23))
+            #noise = list(range(3,23))
+            noise = list(range(3,65))
+        elif col == "MAG Current [A]":
+            noise = [3,5,6,7,8]
+        elif col == "SWA Current [A]":
+            noise = [0,1,2,3,4,5,6,7,10,11,13,14,15,16,17,18,19,20,21,22,24,26,27,28,29,30,31,32,33,34,35,36,37,40]
         
         for index in sorted(noise, reverse=True):
                 del peak_datetimes[index]
