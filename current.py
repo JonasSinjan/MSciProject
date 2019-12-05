@@ -68,6 +68,7 @@ def current_peaks(jonas, plot = False, sample = False):
 
         noise = []
 
+        
         if col == "SoloHI Current [A]":
             noise = [1,7]
         elif col == "EUI Current [A]":
@@ -85,6 +86,8 @@ def current_peaks(jonas, plot = False, sample = False):
                 del peak_datetimes[index]
         index_list = np.delete(index_list, noise)
         
+
+
         #print(peak_times)
         print("size = ", index_list.size)
         print("std = ",current_dif_std)
@@ -134,5 +137,5 @@ def current_peaks(jonas, plot = False, sample = False):
     return dict
 
 if __name__ == "__main__":
-    dict = current_peaks(True, plot = True)
+    dict = current_peaks(False, plot = True)
     print(dict['MAG Current [A]'])
