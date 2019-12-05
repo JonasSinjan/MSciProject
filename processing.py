@@ -130,7 +130,7 @@ def shifttime(df, soloAbool):
         
     return df
 
-def calculate_dB_plot(df, collist, peak_datetimes, start_dt, end_dt):
+def calculate_dB(df, collist, peak_datetimes, start_dt, end_dt):
     step_dict = {}
     for k in collist[1:]: #looping through x, y, z
         print(k)

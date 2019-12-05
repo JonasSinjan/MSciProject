@@ -96,7 +96,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
                 df[f'Probe{num_str}_{axis}'] = butter_lowpass_filter(df[f'Probe{num_str}_{axis}'], cutoff, fs)
 
 
-        step_dict = calculate_dB_plot(df, collist, peak_datetimes, start_dt, end_dt)
+        step_dict = calculate_dB(df, collist, peak_datetimes, start_dt, end_dt)
 
         plt.figure()
         X = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_X'))
@@ -119,7 +119,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
 
 jonas = False
 
-dict_current = current_peaks(jonas, plot=False)
+dict_current = current_peaks(jonas, plot=True)
 instrument = 'EUI'
 peak_datetimes = dict_current.get(f'{instrument} Current [A]')
 print(peak_datetimes[0], peak_datetimes[-1])
