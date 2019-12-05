@@ -47,7 +47,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
         else:
             all_files_B[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-24--08-14-24_{j}.csv') #need to change path_f
 
-    for i in [8]:
+    for i in [2,7,8]:
         #looping through each sensor
         if i < 8:
             soloA_bool = True
@@ -120,7 +120,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
 jonas = True
 
 dict_current = current_peaks(jonas, plot=False)
-instrument = 'EUI'
+instrument = 'PHI'
 peak_datetimes = dict_current.get(f'{instrument} Current [A]')
 print(peak_datetimes[0], peak_datetimes[-1])
 current_dif = dict_current.get(f'{instrument} Current [A] dI')
