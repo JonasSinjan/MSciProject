@@ -18,9 +18,13 @@ def dist(probe):
         tmp += i**2
     return tmp**(1/2), 1/(tmp**(3/2))
 
-probe_list = [probe_1, probe_2,probe_3,probe_4,probe_5,probe_6,probe_7,probe_8,probe_9,probe_10, probe_11, probe_12]
-j = 0
-for i in probe_list:
-    tmp_dist, tmp_factor = dist(i)
-    print('Probe no.', j+1, 'dist = ', round(tmp_dist,3), 'factor = ', round(tmp_factor,5))
-    j += 1
+def probe_loc():
+    return [probe_1, probe_2,probe_3,probe_4,probe_5,probe_6,probe_7,probe_8,probe_9,probe_10, probe_11, probe_12]
+
+if __name__ == "__main__":
+    probe_list = probe_loc()
+    j = 0
+    for i in probe_list:
+        tmp_dist, tmp_factor = dist(i)
+        print('Probe no.', j+1, 'dist = ', round(tmp_dist,3), 'factor = ', round(tmp_factor,5))
+        j += 1

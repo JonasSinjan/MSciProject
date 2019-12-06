@@ -15,7 +15,7 @@ from scipy.signal import butter, lfilter, freqz
 import matplotlib.pyplot as plt
 
 
-def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
+def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): #for only one instrument
 
     if jonas:
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_two\A'
@@ -47,7 +47,8 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
         else:
             all_files_B[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-24--08-14-24_{j}.csv') #need to change path_f
 
-    for i in [2,7,8]:
+    vect_dict = {}
+    for i in probe_list:
         #looping through each sensor
         if i < 8:
             soloA_bool = True
@@ -98,31 +99,37 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
 
         step_dict = calculate_dB(df, collist, peak_datetimes, start_dt, end_dt)
 
-        plt.figure()
         X = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_X'))
-        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = f'X grad: {round(X.slope,3)} ± {round(X.stderr,3)}', markeredgewidth = 2) #also need to save the change in current
         Y = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Y'))
-        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Y'), yerr = step_dict.get(f'Probe{num_str}_Y err'), fmt = 'rs', label = f'Y grad: {round(Y.slope,3)} ± {round(Y.stderr,3)}', markeredgewidth = 2)
         Z = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Z'))
-        plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Z'), yerr = step_dict.get(f'Probe{num_str}_Z err'), fmt = 'gs', label = f'Z grad: {round(Z.slope,3)} ± {round(Z.stderr,3)}', markeredgewidth = 2)
         
-        plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-')
-        plt.plot(current_dif, Y.intercept + Y.slope*current_dif, 'r-')
-        plt.plot(current_dif, Z.intercept + Z.slope*current_dif, 'g-')
+        if plot:
+            plt.figure()
+            plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = f'X grad: {round(X.slope,3)} ± {round(X.stderr,3)}', markeredgewidth = 2)
+            plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Y'), yerr = step_dict.get(f'Probe{num_str}_Y err'), fmt = 'rs', label = f'Y grad: {round(Y.slope,3)} ± {round(Y.stderr,3)}', markeredgewidth = 2)
+            plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Z'), yerr = step_dict.get(f'Probe{num_str}_Z err'), fmt = 'gs', label = f'Z grad: {round(Z.slope,3)} ± {round(Z.stderr,3)}', markeredgewidth = 2)
 
-        plt.legend(loc="best")
-        plt.title(f'{instrument} - Probe {num_str} - MFSA')
-        plt.xlabel('dI [A]')
-        plt.ylabel('dB [nT]')
-        plt.show()
+            plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-')
+            plt.plot(current_dif, Y.intercept + Y.slope*current_dif, 'r-')
+            plt.plot(current_dif, Z.intercept + Z.slope*current_dif, 'g-')
+
+            plt.legend(loc="best")
+            plt.title(f'{instrument} - Probe {num_str} - MFSA')
+            plt.xlabel('dI [A]')
+            plt.ylabel('dB [nT]')
+            plt.show()
   
+        vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope]
 
-jonas = True
+    return vect_dict
 
-dict_current = current_peaks(jonas, plot=False)
-instrument = 'PHI'
-peak_datetimes = dict_current.get(f'{instrument} Current [A]')
-print(peak_datetimes[0], peak_datetimes[-1])
-current_dif = dict_current.get(f'{instrument} Current [A] dI')
-dB(peak_datetimes, instrument, current_dif, jonas)
-#atm get start_csv which is -8, because the MFSA data has not been shifted
+if __name__ == "__main__":
+    jonas = True
+
+    dict_current = current_peaks(jonas, plot=False)
+    instrument = 'PHI'
+    peak_datetimes = dict_current.get(f'{instrument} Current [A]')
+    print(peak_datetimes[0], peak_datetimes[-1])
+    current_dif = dict_current.get(f'{instrument} Current [A] dI')
+    probes = [2,7,8]
+    dB(peak_datetimes, instrument, current_dif, jonas, probes, plot=True)
