@@ -67,7 +67,7 @@ if __name__ == "__main__":
         path_fol_A =  os.path.expanduser("~/Documents/MsciProject/Data/day_two/A")
         path_fol_B =  os.path.expanduser("~/Documents/MsciProject/Data/day_two/B")
     
-    num = 9
+    num = 12
     if num < 9:
         soloA_bool = True
     else:
@@ -78,8 +78,8 @@ if __name__ == "__main__":
         num_str = num
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
-    start_dt = datetime(2019,6,24,9,23) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,9,25) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
+    start_dt = datetime(2019,6,24,9,25) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,24,10,9) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
 
     day = 2
     start_csv, end_csv = which_csvs(soloA_bool, day ,start_dt, end_dt, tz_MAG=False) #this function (in processing.py) finds the number at the end of the csv files we want

@@ -127,9 +127,9 @@ if __name__ == "__main__":
     jonas = True
 
     dict_current = current_peaks(jonas, plot=False)
-    instrument = 'PHI'
+    instrument = 'EUI'
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
     print(peak_datetimes[0], peak_datetimes[-1])
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
-    probes = [2,7,8]
+    probes = [11]
     dB(peak_datetimes, instrument, current_dif, jonas, probes, plot=True)

@@ -22,9 +22,9 @@ def vector_map(vect_dict, instrument):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
     qq = ax.quiver(X, Y, Z, U, V, W)
-    ax.set_xlim([-4, 10])
-    ax.set_ylim([-5, 15])
-    ax.set_zlim([-8, 8])
+    ax.set_xlim([-2, 2])
+    ax.set_ylim([-3, 3])
+    ax.set_zlim([-8, 5])
     ax.set_title(f'3D vector map {instrument}')
     ax.set_xlabel('X [m]')
     ax.set_ylabel('Y [m]')
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     instrument = 'EUI'
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
-    probes = range(12)
+    probes = range(11)
     vect_dict = dB(peak_datetimes, instrument, current_dif, jonas, probes, plot=False)
     vector_map(vect_dict, instrument)
 
