@@ -12,6 +12,7 @@ import time
 from datetime import datetime
 import scipy.stats as spstats
 from scipy.signal import butter, lfilter, freqz
+import scipy.optimize as spo
 import matplotlib.pyplot as plt
 
 
@@ -103,6 +104,28 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
         Y = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Y'))
         Z = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Z'))
         
+        def line(x,a,b):
+            return a*x + b
+
+        params_x,cov_x = spo.curve_fit(line, current_dif, step_dict.get(f'Probe{num_str}_X'), sigma = step_dict.get(f'Probe{num_str}_X err'), absolute_sigma = True)
+        params_y,cov_y = spo.curve_fit(line, current_dif, step_dict.get(f'Probe{num_str}_Y'), sigma = step_dict.get(f'Probe{num_str}_Y err'), absolute_sigma = True)
+        params_z,cov_z = spo.curve_fit(line, current_dif, step_dict.get(f'Probe{num_str}_Z'), sigma = step_dict.get(f'Probe{num_str}_Z err'), absolute_sigma = True)
+
+        perr_x = np.sqrt(np.diag(cov_x))
+        perr_y = np.sqrt(np.diag(cov_y))
+        perr_z = np.sqrt(np.diag(cov_z))
+
+        print('sps.linregress')
+        print('Slope = ', X.slope, '+/-', X.stderr, ' Intercept = ', X.intercept)
+        print('Slope = ', Y.slope, '+/-', Y.stderr, ' Intercept = ', Y.intercept)
+        print('Slope = ', Z.slope, '+/-', Z.stderr, ' Intercept = ', Z.intercept)
+
+        print('~')
+        print('spo.curve_fit')
+        print('Slope & Intercept = ', params_x, '+/-', perr_x)
+        print('Slope & Intercept = ', params_y, '+/-', perr_y)
+        print('Slope & Intercept = ', params_z, '+/-', perr_z)
+
         if plot:
             plt.figure()
             plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = f'X grad: {round(X.slope,3)} ± {round(X.stderr,3)}', markeredgewidth = 2)
@@ -112,6 +135,10 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
             plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-')
             plt.plot(current_dif, Y.intercept + Y.slope*current_dif, 'r-')
             plt.plot(current_dif, Z.intercept + Z.slope*current_dif, 'g-')
+
+            plt.plot(current_dif, params_x[1] + params_x[0]*current_dif, 'b:', label = f'curve_fit - X grad: {round(params_x[0],3)} ± {round(perr_x[0],3)}')
+            plt.plot(current_dif, params_y[1] + params_y[0]*current_dif, 'r:', label = f'curve_fit - Y grad: {round(params_y[0],3)} ± {round(perr_y[0],3)}')
+            plt.plot(current_dif, params_z[1] + params_z[0]*current_dif, 'g:', label = f'curve_fit - Z grad: {round(params_z[0],3)} ± {round(perr_z[0],3)}')
 
             plt.legend(loc="best")
             plt.title(f'{instrument} - Probe {num_str} - MFSA')
@@ -125,11 +152,11 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
 
 if __name__ == "__main__":
     jonas = True
-
+    
     dict_current = current_peaks(jonas, plot=False)
     instrument = 'EUI'
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
     print(peak_datetimes[0], peak_datetimes[-1])
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
-    probes = [11]
-    dB(peak_datetimes, instrument, current_dif, jonas, probes, plot=True)
+    probes = range(12)
+    vect_dict = dB(peak_datetimes, instrument, current_dif, jonas, probes, plot=True)
