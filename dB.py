@@ -100,16 +100,36 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
 
         step_dict = calculate_dB(df, collist, peak_datetimes, start_dt, end_dt)
 
-        X = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_X'))
-        Y = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Y'))
-        Z = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Z'))
+        #adding bonus point of origin
+        xdata = list(current_dif)
+        #xdata.append(0.0)
         
-        def line(x,a,b):
-            return a*x + b
+        probe_x_tmp = step_dict.get(f'Probe{num_str}_X')
+        probe_y_tmp = step_dict.get(f'Probe{num_str}_Y')
+        probe_z_tmp = step_dict.get(f'Probe{num_str}_Z')
 
-        params_x,cov_x = spo.curve_fit(line, current_dif, step_dict.get(f'Probe{num_str}_X'), sigma = step_dict.get(f'Probe{num_str}_X err'), absolute_sigma = True)
-        params_y,cov_y = spo.curve_fit(line, current_dif, step_dict.get(f'Probe{num_str}_Y'), sigma = step_dict.get(f'Probe{num_str}_Y err'), absolute_sigma = True)
-        params_z,cov_z = spo.curve_fit(line, current_dif, step_dict.get(f'Probe{num_str}_Z'), sigma = step_dict.get(f'Probe{num_str}_Z err'), absolute_sigma = True)
+        #probe_x_tmp.append(0.0)
+        #probe_y_tmp.append(0.0)
+        #probe_z_tmp.append(0.0)
+
+        probe_x_tmp_err = step_dict.get(f'Probe{num_str}_X err')
+        probe_y_tmp_err = step_dict.get(f'Probe{num_str}_Y err')
+        probe_z_tmp_err = step_dict.get(f'Probe{num_str}_Z err')
+
+        #probe_x_tmp_err.append(0.00001) #error on bonus point should be zero, but curve_fit requires finite error - and this forces the line through the origin anyway
+        #probe_y_tmp_err.append(0.00001)
+        #probe_z_tmp_err.append(0.00001)
+
+        X = spstats.linregress(xdata, probe_x_tmp) #adding bonus point has little effect on grad - only changes intercept
+        Y = spstats.linregress(xdata, probe_y_tmp)
+        Z = spstats.linregress(xdata, probe_z_tmp)
+        
+        def line(x,a):
+            return a*x #forcing the line through the origin - same as adding bonus point at origin - as curve_fit requires error on origin point - which must be set to ~0 physically
+
+        params_x,cov_x = spo.curve_fit(line, xdata, probe_x_tmp, sigma = probe_x_tmp_err, absolute_sigma = True)
+        params_y,cov_y = spo.curve_fit(line, xdata, probe_y_tmp, sigma = probe_y_tmp_err, absolute_sigma = True)
+        params_z,cov_z = spo.curve_fit(line, xdata, probe_z_tmp, sigma = probe_z_tmp_err, absolute_sigma = True)
 
         perr_x = np.sqrt(np.diag(cov_x))
         perr_y = np.sqrt(np.diag(cov_y))
@@ -128,17 +148,17 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
 
         if plot:
             plt.figure()
-            plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = f'X grad: {round(X.slope,3)} ± {round(X.stderr,3)}', markeredgewidth = 2)
-            plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Y'), yerr = step_dict.get(f'Probe{num_str}_Y err'), fmt = 'rs', label = f'Y grad: {round(Y.slope,3)} ± {round(Y.stderr,3)}', markeredgewidth = 2)
-            plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Z'), yerr = step_dict.get(f'Probe{num_str}_Z err'), fmt = 'gs', label = f'Z grad: {round(Z.slope,3)} ± {round(Z.stderr,3)}', markeredgewidth = 2)
+            plt.errorbar(xdata, probe_x_tmp, yerr = probe_x_tmp_err, fmt = 'bs',label = f'X grad: {round(X.slope,3)} ± {round(X.stderr,3)}', markeredgewidth = 2)
+            plt.errorbar(xdata, probe_y_tmp, yerr = probe_y_tmp_err, fmt = 'rs', label = f'Y grad: {round(Y.slope,3)} ± {round(Y.stderr,3)}', markeredgewidth = 2)
+            plt.errorbar(xdata, probe_z_tmp, yerr = probe_z_tmp_err, fmt = 'gs', label = f'Z grad: {round(Z.slope,3)} ± {round(Z.stderr,3)}', markeredgewidth = 2)
 
-            plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-')
-            plt.plot(current_dif, Y.intercept + Y.slope*current_dif, 'r-')
-            plt.plot(current_dif, Z.intercept + Z.slope*current_dif, 'g-')
+            plt.plot(xdata, X.intercept + X.slope*np.array(xdata), 'b-')
+            plt.plot(xdata, Y.intercept + Y.slope*np.array(xdata), 'r-')
+            plt.plot(xdata, Z.intercept + Z.slope*np.array(xdata), 'g-')
 
-            plt.plot(current_dif, params_x[1] + params_x[0]*current_dif, 'b:', label = f'curve_fit - X grad: {round(params_x[0],3)} ± {round(perr_x[0],3)}')
-            plt.plot(current_dif, params_y[1] + params_y[0]*current_dif, 'r:', label = f'curve_fit - Y grad: {round(params_y[0],3)} ± {round(perr_y[0],3)}')
-            plt.plot(current_dif, params_z[1] + params_z[0]*current_dif, 'g:', label = f'curve_fit - Z grad: {round(params_z[0],3)} ± {round(perr_z[0],3)}')
+            plt.plot(xdata, params_x[0]*np.array(xdata), 'b:', label = f'curve_fit - X grad: {round(params_x[0],3)} ± {round(perr_x[0],3)}')
+            plt.plot(xdata, params_y[0]*np.array(xdata), 'r:', label = f'curve_fit - Y grad: {round(params_y[0],3)} ± {round(perr_y[0],3)}')
+            plt.plot(xdata, params_z[0]*np.array(xdata), 'g:', label = f'curve_fit - Z grad: {round(params_z[0],3)} ± {round(perr_z[0],3)}')
 
             plt.legend(loc="best")
             plt.title(f'{instrument} - Probe {num_str} - MFSA')
