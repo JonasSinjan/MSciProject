@@ -102,23 +102,23 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
 
         #adding bonus point of origin
         xdata = list(current_dif)
-        #xdata.append(0.0)
+        xdata.append(0.0)
         
         probe_x_tmp = step_dict.get(f'Probe{num_str}_X')
         probe_y_tmp = step_dict.get(f'Probe{num_str}_Y')
         probe_z_tmp = step_dict.get(f'Probe{num_str}_Z')
 
-        #probe_x_tmp.append(0.0)
-        #probe_y_tmp.append(0.0)
-        #probe_z_tmp.append(0.0)
+        probe_x_tmp.append(0.0)
+        probe_y_tmp.append(0.0)
+        probe_z_tmp.append(0.0)
 
         probe_x_tmp_err = step_dict.get(f'Probe{num_str}_X err')
         probe_y_tmp_err = step_dict.get(f'Probe{num_str}_Y err')
         probe_z_tmp_err = step_dict.get(f'Probe{num_str}_Z err')
 
-        #probe_x_tmp_err.append(0.00001) #error on bonus point should be zero, but curve_fit requires finite error - and this forces the line through the origin anyway
-        #probe_y_tmp_err.append(0.00001)
-        #probe_z_tmp_err.append(0.00001)
+        probe_x_tmp_err.append(0.0) #error on bonus point should be zero, but curve_fit requires finite error - and this forces the line through the origin anyway
+        probe_y_tmp_err.append(0.0)
+        probe_z_tmp_err.append(0.0)
 
         X = spstats.linregress(xdata, probe_x_tmp) #adding bonus point has little effect on grad - only changes intercept
         Y = spstats.linregress(xdata, probe_y_tmp)
@@ -127,9 +127,9 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
         def line(x,a):
             return a*x #forcing the line through the origin - same as adding bonus point at origin - as curve_fit requires error on origin point - which must be set to ~0 physically
 
-        params_x,cov_x = spo.curve_fit(line, xdata, probe_x_tmp, sigma = probe_x_tmp_err, absolute_sigma = True)
-        params_y,cov_y = spo.curve_fit(line, xdata, probe_y_tmp, sigma = probe_y_tmp_err, absolute_sigma = True)
-        params_z,cov_z = spo.curve_fit(line, xdata, probe_z_tmp, sigma = probe_z_tmp_err, absolute_sigma = True)
+        params_x,cov_x = spo.curve_fit(line, current_dif, probe_x_tmp[:-1], sigma = probe_x_tmp_err[:-1], absolute_sigma = True)
+        params_y,cov_y = spo.curve_fit(line, current_dif, probe_y_tmp[:-1], sigma = probe_y_tmp_err[:-1], absolute_sigma = True)
+        params_z,cov_z = spo.curve_fit(line, current_dif, probe_z_tmp[:-1], sigma = probe_z_tmp_err[:-1], absolute_sigma = True)
 
         perr_x = np.sqrt(np.diag(cov_x))
         perr_y = np.sqrt(np.diag(cov_y))
@@ -156,9 +156,9 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
             plt.plot(xdata, Y.intercept + Y.slope*np.array(xdata), 'r-')
             plt.plot(xdata, Z.intercept + Z.slope*np.array(xdata), 'g-')
 
-            plt.plot(xdata, params_x[0]*np.array(xdata), 'b:', label = f'curve_fit - X grad: {round(params_x[0],3)} ± {round(perr_x[0],3)}')
-            plt.plot(xdata, params_y[0]*np.array(xdata), 'r:', label = f'curve_fit - Y grad: {round(params_y[0],3)} ± {round(perr_y[0],3)}')
-            plt.plot(xdata, params_z[0]*np.array(xdata), 'g:', label = f'curve_fit - Z grad: {round(params_z[0],3)} ± {round(perr_z[0],3)}')
+            plt.plot(current_dif, params_x[0]*current_dif, 'b:', label = f'curve_fit - X grad: {round(params_x[0],3)} ± {round(perr_x[0],3)}')
+            plt.plot(current_dif, params_y[0]*current_dif, 'r:', label = f'curve_fit - Y grad: {round(params_y[0],3)} ± {round(perr_y[0],3)}')
+            plt.plot(current_dif, params_z[0]*current_dif, 'g:', label = f'curve_fit - Z grad: {round(params_z[0],3)} ± {round(perr_z[0],3)}')
 
             plt.legend(loc="best")
             plt.title(f'{instrument} - Probe {num_str} - MFSA')
@@ -166,7 +166,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
             plt.ylabel('dB [nT]')
             plt.show()
   
-        vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope]
+        vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope] #atm linear regression gradient - or should it be curve_fit?
 
     return vect_dict
 
