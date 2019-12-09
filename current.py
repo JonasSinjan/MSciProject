@@ -125,25 +125,25 @@ def current_peaks(jonas, plot = False, sample = False):
             #   print("no peaks detected")
             plt.show()
             
-        return dict, i
+        return dict_cur, i
         
-    dict = {}
+    dict_cur = {}
 
 
     if plot != True:
         for col in df.columns:
-            dict, i = find_peak_times(dict, df)
+            dict_cur, i = find_peak_times(dict_cur, df)
 
 
     if plot:
         i=1
         for col in df.columns:
-            dict, i  = find_peak_times(dict, df, True, i)
+            dict_cur, i  = find_peak_times(dict_cur, df, True, i)
             i += 1
 
 
 
-    return dict
+    return dict_cur
 
 if __name__ == "__main__":
     dict = current_peaks(False, plot = True)
