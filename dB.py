@@ -179,8 +179,8 @@ if __name__ == "__main__":
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
     print(peak_datetimes[0], peak_datetimes[-1])
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
-    probes = [0,1] #range(12)
-    vect_dict = dB(peak_datetimes, instrument, current_dif, jonas, probes, plot=True)
+    probes = range(12)
+    vect_dict = dB(peak_datetimes, instrument, current_dif, jonas, probes, plot=False)
     w = csv.writer(open(f"{instrument}_vect_dict.csv", "w"))
     w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
     for key, val in vect_dict.items():
