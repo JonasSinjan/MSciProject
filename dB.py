@@ -12,7 +12,9 @@ import time
 from datetime import datetime
 import scipy.stats as spstats
 from scipy.signal import butter, lfilter, freqz
+import scipy.optimize as spo
 import matplotlib.pyplot as plt
+import csv 
 
 
 def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): #for only one instrument
@@ -99,19 +101,65 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
 
         step_dict = calculate_dB(df, collist, peak_datetimes, start_dt, end_dt)
 
-        X = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_X'))
-        Y = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Y'))
-        Z = spstats.linregress(current_dif, step_dict.get(f'Probe{num_str}_Z'))
+        #adding bonus point of origin
+        xdata = list(current_dif)
+        xdata.append(0.0)
         
+        probe_x_tmp = step_dict.get(f'Probe{num_str}_X')
+        probe_y_tmp = step_dict.get(f'Probe{num_str}_Y')
+        probe_z_tmp = step_dict.get(f'Probe{num_str}_Z')
+
+        probe_x_tmp.append(0.0)
+        probe_y_tmp.append(0.0)
+        probe_z_tmp.append(0.0)
+
+        probe_x_tmp_err = step_dict.get(f'Probe{num_str}_X err')
+        probe_y_tmp_err = step_dict.get(f'Probe{num_str}_Y err')
+        probe_z_tmp_err = step_dict.get(f'Probe{num_str}_Z err')
+
+        probe_x_tmp_err.append(0.0) #error on bonus point should be zero, but curve_fit requires finite error - and this forces the line through the origin anyway
+        probe_y_tmp_err.append(0.0)
+        probe_z_tmp_err.append(0.0)
+
+        X = spstats.linregress(xdata, probe_x_tmp) #adding bonus point has little effect on grad - only changes intercept
+        Y = spstats.linregress(xdata, probe_y_tmp)
+        Z = spstats.linregress(xdata, probe_z_tmp)
+        
+        def line(x,a):
+            return a*x #forcing the line through the origin - same as adding bonus point at origin - as curve_fit requires error on origin point - which must be set to ~0 physically
+
+        params_x,cov_x = spo.curve_fit(line, current_dif, probe_x_tmp[:-1], sigma = probe_x_tmp_err[:-1], absolute_sigma = True)
+        params_y,cov_y = spo.curve_fit(line, current_dif, probe_y_tmp[:-1], sigma = probe_y_tmp_err[:-1], absolute_sigma = True)
+        params_z,cov_z = spo.curve_fit(line, current_dif, probe_z_tmp[:-1], sigma = probe_z_tmp_err[:-1], absolute_sigma = True)
+
+        perr_x = np.sqrt(np.diag(cov_x))
+        perr_y = np.sqrt(np.diag(cov_y))
+        perr_z = np.sqrt(np.diag(cov_z))
+
+        print('sps.linregress')
+        print('Slope = ', X.slope, '+/-', X.stderr, ' Intercept = ', X.intercept)
+        print('Slope = ', Y.slope, '+/-', Y.stderr, ' Intercept = ', Y.intercept)
+        print('Slope = ', Z.slope, '+/-', Z.stderr, ' Intercept = ', Z.intercept)
+
+        print('~')
+        print('spo.curve_fit')
+        print('Slope & Intercept = ', params_x, '+/-', perr_x)
+        print('Slope & Intercept = ', params_y, '+/-', perr_y)
+        print('Slope & Intercept = ', params_z, '+/-', perr_z)
+
         if plot:
             plt.figure()
-            plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_X'), yerr = step_dict.get(f'Probe{num_str}_X err'), fmt = 'bs',label = f'X grad: {round(X.slope,3)} ± {round(X.stderr,3)}', markeredgewidth = 2)
-            plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Y'), yerr = step_dict.get(f'Probe{num_str}_Y err'), fmt = 'rs', label = f'Y grad: {round(Y.slope,3)} ± {round(Y.stderr,3)}', markeredgewidth = 2)
-            plt.errorbar(current_dif, step_dict.get(f'Probe{num_str}_Z'), yerr = step_dict.get(f'Probe{num_str}_Z err'), fmt = 'gs', label = f'Z grad: {round(Z.slope,3)} ± {round(Z.stderr,3)}', markeredgewidth = 2)
+            plt.errorbar(xdata, probe_x_tmp, yerr = probe_x_tmp_err, fmt = 'bs',label = f'X grad: {round(X.slope,3)} ± {round(X.stderr,3)}', markeredgewidth = 2)
+            plt.errorbar(xdata, probe_y_tmp, yerr = probe_y_tmp_err, fmt = 'rs', label = f'Y grad: {round(Y.slope,3)} ± {round(Y.stderr,3)}', markeredgewidth = 2)
+            plt.errorbar(xdata, probe_z_tmp, yerr = probe_z_tmp_err, fmt = 'gs', label = f'Z grad: {round(Z.slope,3)} ± {round(Z.stderr,3)}', markeredgewidth = 2)
 
-            plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-')
-            plt.plot(current_dif, Y.intercept + Y.slope*current_dif, 'r-')
-            plt.plot(current_dif, Z.intercept + Z.slope*current_dif, 'g-')
+            plt.plot(xdata, X.intercept + X.slope*np.array(xdata), 'b-')
+            plt.plot(xdata, Y.intercept + Y.slope*np.array(xdata), 'r-')
+            plt.plot(xdata, Z.intercept + Z.slope*np.array(xdata), 'g-')
+
+            plt.plot(current_dif, params_x[0]*current_dif, 'b:', label = f'curve_fit - X grad: {round(params_x[0],3)} ± {round(perr_x[0],3)}')
+            plt.plot(current_dif, params_y[0]*current_dif, 'r:', label = f'curve_fit - Y grad: {round(params_y[0],3)} ± {round(perr_y[0],3)}')
+            plt.plot(current_dif, params_z[0]*current_dif, 'g:', label = f'curve_fit - Z grad: {round(params_z[0],3)} ± {round(perr_z[0],3)}')
 
             plt.legend(loc="best")
             plt.title(f'{instrument} - Probe {num_str} - MFSA')
@@ -119,16 +167,21 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
             plt.ylabel('dB [nT]')
             plt.show()
   
-        vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope]
+        vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope] #atm linear regression gradient - or should it be curve_fit?
+
+    w = csv.writer(open(f"{instrument}_vect_dict.csv", "w"))
+    w.writerow(["Probe","[X.slope, Y.slope, Z.slope]"])
+    for key, val in vect_dict.items():
+        w.writerow([key, val])
 
     return vect_dict
 
-jonas = False
-
+if __name__ == "__main__":
+    jonas = False
     dict_current = current_peaks(jonas, plot=False)
     instrument = 'EUI'
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
     print(peak_datetimes[0], peak_datetimes[-1])
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
-    probes = [11]
-    dB(peak_datetimes, instrument, current_dif, jonas, probes, plot=True)
+    probes = [0,1] #range(12)
+    vect_dict = dB(peak_datetimes, instrument, current_dif, jonas, probes, plot=True)

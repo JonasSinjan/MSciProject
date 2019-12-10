@@ -145,7 +145,12 @@ def calculate_dB(df, collist, peak_datetimes, start_dt, end_dt):
             if l == 0:
                 time_before_left = start_dt
             else:
-                time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = 2)
+                #time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = 2) #old method to average over maximum possible time
+                tmp = time - pd.Timedelta(seconds = 62)
+                if tmp > peak_datetimes[l-1]: #checking to see which is later, if time distance between two peaks less than a minute
+                    time_before_left = tmp
+                else:
+                    time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = 2)
                 
             time_before_right = time - pd.Timedelta(seconds = 2) #buffer time since sampling at 5sec, must be integers
             time_after_left = time + pd.Timedelta(seconds = 2)
@@ -153,13 +158,20 @@ def calculate_dB(df, collist, peak_datetimes, start_dt, end_dt):
             if l == len(peak_datetimes)-1:
                 time_after_right = end_dt
             else:
-                time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2)
+                #time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2) # old method to average over maximum possible time
+                tmp = time + pd.Timedelta(seconds = 62)
+                if tmp < peak_datetimes[l-1]:
+                    time_after_right = tmp
+                else:
+                    time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2)
+                
+            df_before = df[k][time_before_left: time_before_right]
+            avg_tmp = df_before.mean()
+            std_before = df_before.std()/np.sqrt(len(df_before))
             
-            avg_tmp = df[k][time_before_left: time_before_right].mean()
-            std_before = df[k][time_before_left: time_before_right].std()
-            
-            avg_after_tmp = df[k][time_after_left:time_after_right].mean()
-            std_after = df[k][time_after_left: time_after_right].std()
+            df_after = df[k][time_after_left:time_after_right]
+            avg_after_tmp = df_after.mean()
+            std_after = df_after.std()/np.sqrt(len(df_after))
             
             step_tmp = avg_after_tmp - avg_tmp
             step_tmp_err = np.sqrt(std_before**2 + std_after**2)
