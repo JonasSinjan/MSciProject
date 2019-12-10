@@ -30,7 +30,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
     end_dt = peak_datetimes[-1] + pd.Timedelta(minutes = 2)
     
     day = 2 #second day
-    sampling_freq = 1 #do we want to remove the high freq noise?
+    sampling_freq = 1000 #do we want to remove the high freq noise?
     
     start_csv_A, end_csv_A = which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
     start_csv_B, end_csv_B = which_csvs(False, day ,start_dt, end_dt, tz_MAG = True)
@@ -175,7 +175,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
 if __name__ == "__main__":
     jonas = True
     dict_current = current_peaks(jonas, plot=False)
-    instrument = 'SPICE'
+    instrument = 'METIS'
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
     print(peak_datetimes[0], peak_datetimes[-1])
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
