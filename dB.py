@@ -167,7 +167,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
             plt.ylabel('dB [nT]')
             plt.show()
   
-        vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope] #atm linear regression gradient - or should it be curve_fit?
+        vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope,X.stderr,Y.stderr,Z.stderr,params_x[0],params_y[0],params_z[0],perr_x[0],perr_y[0],perr_z[0]] #atm linear regression gradient - or should it be curve_fit?
 
 
     return vect_dict
@@ -183,6 +183,6 @@ if __name__ == "__main__":
     vect_dict = dB(peak_datetimes, instrument, current_dif, jonas, probes, plot=True)
     
     w = csv.writer(open(f"{instrument}_vect_dict.csv", "w"))
-    w.writerow(["Probe","X.slope", "Y.slope", "Z.slope"])
+    w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
     for key, val in vect_dict.items():
-        w.writerow([key,val[0],val[1],val[2]])
+        w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9],val[10],val[11]])
