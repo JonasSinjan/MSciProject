@@ -169,10 +169,6 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
   
         vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope] #atm linear regression gradient - or should it be curve_fit?
 
-    w = csv.writer(open(f"{instrument}_vect_dict.csv", "w"))
-    w.writerow(["Probe","[X.slope, Y.slope, Z.slope]"])
-    for key, val in vect_dict.items():
-        w.writerow([key, val])
 
     return vect_dict
 
@@ -185,3 +181,7 @@ if __name__ == "__main__":
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
     probes = [0,1] #range(12)
     vect_dict = dB(peak_datetimes, instrument, current_dif, jonas, probes, plot=True)
+    w = csv.writer(open(f"{instrument}_vect_dict.csv", "w"))
+    w.writerow(["Probe","X.slope", "Y.slope", "Z.slope"])
+    for key, val in vect_dict.items():
+        w.writerow([key,val[0],val[1],val[2]])
