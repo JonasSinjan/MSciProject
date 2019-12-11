@@ -143,11 +143,11 @@ def calculate_dB(df, collist, peak_datetimes, start_dt, end_dt):
         for l, time in enumerate(peak_datetimes): #looping through the peaks datetimes
             
             if l == 0:
-                time_before_left = start_dt
+                time_before_left = time - pd.Timedelta(seconds = 62)
             else:
                 #time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = 2) #old method to average over maximum possible time
                 tmp = time - pd.Timedelta(seconds = 62)
-                if tmp > peak_datetimes[l-1]: #checking to see which is later, if time distance between two peaks less than a minute
+                if tmp > peak_datetimes[l-1] + pd.Timedelta(seconds = 2): #checking to see which is later, if time distance between two peaks less than a minute
                     time_before_left = tmp
                 else:
                     time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = 2)
@@ -156,11 +156,11 @@ def calculate_dB(df, collist, peak_datetimes, start_dt, end_dt):
             time_after_left = time + pd.Timedelta(seconds = 2)
             
             if l == len(peak_datetimes)-1:
-                time_after_right = end_dt
+                time_after_right = time + pd.Timedelta(seconds = 62)
             else:
                 #time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2) # old method to average over maximum possible time
                 tmp = time + pd.Timedelta(seconds = 62)
-                if tmp < peak_datetimes[l+1]:
+                if tmp < peak_datetimes[l+1] - pd.Timedelta(seconds = 2):
                     time_after_right = tmp
                 else:
                     time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2)
