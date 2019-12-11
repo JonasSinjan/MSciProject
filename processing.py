@@ -160,7 +160,7 @@ def calculate_dB(df, collist, peak_datetimes, start_dt, end_dt):
             else:
                 #time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2) # old method to average over maximum possible time
                 tmp = time + pd.Timedelta(seconds = 62)
-                if tmp < peak_datetimes[l-1]:
+                if tmp < peak_datetimes[l+1]:
                     time_after_right = tmp
                 else:
                     time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2)
@@ -175,6 +175,11 @@ def calculate_dB(df, collist, peak_datetimes, start_dt, end_dt):
             
             step_tmp = avg_after_tmp - avg_tmp
             step_tmp_err = np.sqrt(std_before**2 + std_after**2)
+            
+            if math.isnan(step_tmp):
+                print(l, time)
+                print(time_before_left, time_before_right)
+                print(time_after_left, time_after_right)
             
             tmp_step_list[l] = step_tmp
             tmp_step_err_list[l] = step_tmp_err

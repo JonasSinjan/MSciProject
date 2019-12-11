@@ -13,7 +13,7 @@ def vector_map(vect_dict, instrument):
     it = list(vect_dict.keys())
     for i in range(len(vect_dict)):
         tmp = probe_list[int(it[i])-1]
-        tmp2 = vect_dict[it[i]]
+        tmp2 = vect_dict[it[i]][:3]
         soa[i] = np.append(tmp,tmp2)
         i += 1
 
