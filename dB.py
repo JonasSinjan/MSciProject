@@ -26,11 +26,11 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
         path_fol_A = os.path.expanduser("~/Documents/MSciProject/Data/day_two/A")
         path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_two/B")
     
-    start_dt = peak_datetimes[0] - pd.Timedelta(minutes = 2)
-    end_dt = peak_datetimes[-1] + pd.Timedelta(minutes = 2)
+    start_dt = peak_datetimes[0] - pd.Timedelta(minutes = 3)
+    end_dt = peak_datetimes[-1] + pd.Timedelta(minutes = 3)
     
     day = 2 #second day
-    sampling_freq = 1000 #do we want to remove the high freq noise?
+    sampling_freq = 1 #do we want to remove the high freq noise?
     
     start_csv_A, end_csv_A = which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
     start_csv_B, end_csv_B = which_csvs(False, day ,start_dt, end_dt, tz_MAG = True)
@@ -74,10 +74,18 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
             rotate_mat = rotate_24(soloA_bool)[i-8]
         df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
         #print(len(df))
+        print(df.head())
+        print(df.tail())
     
         df = shifttime(df, soloA_bool) # must shift MFSA data to MAG/spacecraft time
         
+        print(df.head())
+        print(df.tail())
+        
         df = df.between_time(start_dt.time(), end_dt.time())
+        
+        print(df.head())
+        print(df.tail())
 
         lowpass = False
         
