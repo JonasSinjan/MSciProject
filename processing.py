@@ -130,9 +130,10 @@ def shifttime(df, soloAbool):
         
     return df
 
-def calculate_dB(df, collist, peak_datetimes, start_dt, end_dt):
+def calculate_dB(df, peak_datetimes):
     step_dict = {}
-    for k in collist[1:]: #looping through x, y, z
+    time_to_avg = 30 + 2
+    for k in df.columns.tolist(): #looping through x, y, z
         print(k)
         if str(k) not in step_dict.keys():
             step_dict[str(k)] = 0
@@ -143,10 +144,10 @@ def calculate_dB(df, collist, peak_datetimes, start_dt, end_dt):
         for l, time in enumerate(peak_datetimes): #looping through the peaks datetimes
             
             if l == 0:
-                time_before_left = time - pd.Timedelta(seconds = 62)
+                time_before_left = time - pd.Timedelta(seconds = time_to_avg)
             else:
                 #time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = 2) #old method to average over maximum possible time
-                tmp = time - pd.Timedelta(seconds = 62)
+                tmp = time - pd.Timedelta(seconds = time_to_avg)
                 if tmp > peak_datetimes[l-1] + pd.Timedelta(seconds = 2): #checking to see which is later, if time distance between two peaks less than a minute
                     time_before_left = tmp
                 else:
@@ -156,29 +157,22 @@ def calculate_dB(df, collist, peak_datetimes, start_dt, end_dt):
             time_after_left = time + pd.Timedelta(seconds = 2)
             
             if l == len(peak_datetimes)-1:
-                time_after_right = time + pd.Timedelta(seconds = 62)
+                time_after_right = time + pd.Timedelta(seconds = time_to_avg)
             else:
                 #time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2) # old method to average over maximum possible time
-                tmp = time + pd.Timedelta(seconds = 62)
+                tmp = time + pd.Timedelta(seconds = time_to_avg)
                 if tmp < peak_datetimes[l+1] - pd.Timedelta(seconds = 2):
                     time_after_right = tmp
                 else:
                     time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2)
                 
-            #df_before = 
-            #print(df_before)
-            #print(df.head())
-            print(df.tail())
-            df = df["Probe09_X"]
-
-            print(df.tail())
-            df_before = df.between_time(time_before_left.time(), time_before_right.time())
+           
+            df_tmp = df[str(k)]
+            df_before = df_tmp.between_time(time_before_left.time(), time_before_right.time())
             avg_tmp = df_before.mean()
             std_before = df_before.std()/np.sqrt(len(df_before))
             
-            #df_after = 
-            #print(df_after)
-            df_after = df.between_time(time_after_left.time(), time_after_right.time())
+            df_after = df_tmp.between_time(time_after_left.time(), time_after_right.time())
             avg_after_tmp = df_after.mean()
             std_after = df_after.std()/np.sqrt(len(df_after))
 

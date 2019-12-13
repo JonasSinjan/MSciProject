@@ -47,7 +47,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
 
     powerspecplot(df, fs, collist, False, inst = instrument)
 
-    step_dict = calculate_dB(df, collist, peak_datetimes, start_dt, end_dt)
+    step_dict = calculate_dB(df, peak_datetimes)
 
     plt.figure()
     plt.errorbar(current_dif, step_dict.get('X'), yerr = step_dict.get('X err'), fmt = 'bs',label = 'X', markeredgewidth = 2) #also need to save the change in current

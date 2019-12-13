@@ -30,7 +30,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
     end_dt = peak_datetimes[-1] + pd.Timedelta(minutes = 3)
     
     day = 2 #second day
-    sampling_freq = 1 #do we want to remove the high freq noise?
+    sampling_freq = 1000 #do we want to remove the high freq noise?
     
     start_csv_A, end_csv_A = which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
     start_csv_B, end_csv_B = which_csvs(False, day ,start_dt, end_dt, tz_MAG = True)
@@ -106,7 +106,8 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
             for axis in ['X','Y','Z']:
                 df[f'Probe{num_str}_{axis}'] = butter_lowpass_filter(df[f'Probe{num_str}_{axis}'], cutoff, fs)
 
-        step_dict = calculate_dB(df, collist, peak_datetimes, start_dt, end_dt)
+
+        step_dict = calculate_dB(df, peak_datetimes)
 
         #adding bonus point of origin
         xdata = list(current_dif)
@@ -182,11 +183,11 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
 if __name__ == "__main__":
     jonas = False
     dict_current = current_peaks(jonas, plot=False)
-    instrument = 'METIS'
+    instrument = 'SPICE'
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
     print(peak_datetimes[0], peak_datetimes[-1])
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
-    probes = [8]
+    probes = range(12)
     vect_dict = dB(peak_datetimes, instrument, current_dif, jonas, probes, plot=False)
     w = csv.writer(open(f"{instrument}_vect_dict.csv", "w"))
     w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
