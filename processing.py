@@ -175,9 +175,12 @@ def calculate_dB(df, peak_datetimes):
             df_after = df_tmp.between_time(time_after_left.time(), time_after_right.time())
             avg_after_tmp = df_after.mean()
             std_after = df_after.std()/np.sqrt(len(df_after))
-            
+
+
             step_tmp = avg_after_tmp - avg_tmp
             step_tmp_err = np.sqrt(std_before**2 + std_after**2)
+
+            print(step_tmp,step_tmp_err)
             
             if math.isnan(step_tmp):
                 print(l, time)
