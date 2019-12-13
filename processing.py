@@ -168,10 +168,11 @@ def calculate_dB(df, collist, peak_datetimes, start_dt, end_dt):
             #df_before = 
             #print(df_before)
             #print(df.head())
-            df = df['Probe09_X']
+            print(df.tail())
+            df = df["Probe09_X"]
+
             print(df.tail())
             df_before = df.between_time(time_before_left.time(), time_before_right.time())
-            print(df.tail())
             avg_tmp = df_before.mean()
             std_before = df_before.std()/np.sqrt(len(df_before))
             
@@ -180,9 +181,12 @@ def calculate_dB(df, collist, peak_datetimes, start_dt, end_dt):
             df_after = df.between_time(time_after_left.time(), time_after_right.time())
             avg_after_tmp = df_after.mean()
             std_after = df_after.std()/np.sqrt(len(df_after))
-            
+
+
             step_tmp = avg_after_tmp - avg_tmp
             step_tmp_err = np.sqrt(std_before**2 + std_after**2)
+
+            print(step_tmp,step_tmp_err)
             
             if math.isnan(step_tmp):
                 print(l, time)

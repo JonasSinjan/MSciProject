@@ -44,7 +44,6 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
     
     all_files_B = [0]*(end_csv_B + 1 - start_csv_B)
     for index, j in enumerate(range(start_csv_B, end_csv_B + 1)): 
-        print("J IS",j)
         if jonas:
             all_files_B[index] = path_fol_B + f'\SoloB_2019-06-24--08-14-24_{j}.csv'
         else:
@@ -74,18 +73,18 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
             rotate_mat = rotate_24(soloA_bool)[i-8]
         df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
         #print(len(df))
-        print(df.head())
-        print(df.tail())
+        #print(df.head())
+        #print(df.tail())
     
         df = shifttime(df, soloA_bool) # must shift MFSA data to MAG/spacecraft time
         
-        print(df.head())
-        print(df.tail())
+        #print(df.head())
+        #print(df.tail())
         
         df = df.between_time(start_dt.time(), end_dt.time())
         
-        print(df.head())
-        print(df.tail())
+        #print(df.head())
+        #print(df.tail())
 
         lowpass = False
         
@@ -106,7 +105,6 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
 
             for axis in ['X','Y','Z']:
                 df[f'Probe{num_str}_{axis}'] = butter_lowpass_filter(df[f'Probe{num_str}_{axis}'], cutoff, fs)
-
 
         step_dict = calculate_dB(df, collist, peak_datetimes, start_dt, end_dt)
 
