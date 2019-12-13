@@ -165,11 +165,19 @@ def calculate_dB(df, collist, peak_datetimes, start_dt, end_dt):
                 else:
                     time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2)
                 
-            df_before = df[k][time_before_left: time_before_right]
+            #df_before = 
+            #print(df_before)
+            #print(df.head())
+            df = df['Probe09_X']
+            print(df.tail())
+            df_before = df.between_time(time_before_left.time(), time_before_right.time())
+            print(df.tail())
             avg_tmp = df_before.mean()
             std_before = df_before.std()/np.sqrt(len(df_before))
             
-            df_after = df[k][time_after_left:time_after_right]
+            #df_after = 
+            #print(df_after)
+            df_after = df.between_time(time_after_left.time(), time_after_right.time())
             avg_after_tmp = df_after.mean()
             std_after = df_after.std()/np.sqrt(len(df_after))
             
