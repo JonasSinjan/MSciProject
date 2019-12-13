@@ -166,30 +166,18 @@ def calculate_dB(df, peak_datetimes):
                 else:
                     time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2)
                 
-            #df_before = 
-            #print(df_before)
-            #print(df.head())
-            #print(df.columns.tolist())
+           
             df_tmp = df[str(k)]
-            #print(df_tmp.tail())
             df_before = df_tmp.between_time(time_before_left.time(), time_before_right.time())
-            #print(df_before.tail())
             avg_tmp = df_before.mean()
-            #print(avg_tmp)
             std_before = df_before.std()/np.sqrt(len(df_before))
-            #print(std_before)
             
             df_after = df_tmp.between_time(time_after_left.time(), time_after_right.time())
-            #print(df_after.tail())
             avg_after_tmp = df_after.mean()
-            #print(avg_after_tmp)
             std_after = df_after.std()/np.sqrt(len(df_after))
-            #print(std_after)
             
             step_tmp = avg_after_tmp - avg_tmp
-            #print(step_tmp)
             step_tmp_err = np.sqrt(std_before**2 + std_after**2)
-            #print(step_tmp_err)
             
             if math.isnan(step_tmp):
                 print(l, time)
