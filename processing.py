@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import time
 import math
 
-def read_files(all_files, soloA, jonas, sampling_freq = None, collist=None, day=1, start_dt = None, end_dt = None):
+def read_files(all_files, soloA, windows, sampling_freq = None, collist=None, day=1, start_dt = None, end_dt = None):
     #path - location of folder to concat
     #soloA - set to True if soloA, if soloB False
     li = [] 

@@ -11,8 +11,8 @@ import time
 from datetime import datetime
 import glob
 
-def current_peaks(jonas, plot = False, sample = False):
-    if jonas:
+def current_peaks(windows, plot = False, sample = False):
+    if windows:
         filename = r'C:\Users\jonas\MSci-Data\LCL_data\Day 2 Payload LCL Current Profiles.xlsx'
     else:
         filename = os.path.expanduser("~/Documents/MSciProject/Data/LCL_Data/Day_2_Payload_LCL_Current_Profiles.xlsx")

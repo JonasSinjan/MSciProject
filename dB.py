@@ -17,9 +17,9 @@ import matplotlib.pyplot as plt
 import csv 
 
 
-def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): #for only one instrument
+def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False): #for only one instrument
 
-    if jonas:
+    if windows:
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_two\A'
         path_fol_B = r'C:\Users\jonas\MSci-Data\day_two\B'
     else:
@@ -37,14 +37,14 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
 
     all_files_A = [0]*(end_csv_A + 1 - start_csv_A)
     for index, j in enumerate(range(start_csv_A, end_csv_A + 1)): #this will loop through and add the csv files that contain the start and end time set above
-        if jonas:
+        if windows:
             all_files_A[index] = path_fol_A + f'\SoloA_2019-06-24--08-14-46_{j}.csv'
         else:
             all_files_A[index] = path_fol_A + os.path.expanduser(f'/SoloA_2019-06-24--08-14-46_{j}.csv') #need to change path_fol_A  to the path where your A folder is
     
     all_files_B = [0]*(end_csv_B + 1 - start_csv_B)
     for index, j in enumerate(range(start_csv_B, end_csv_B + 1)): 
-        if jonas:
+        if windows:
             all_files_B[index] = path_fol_B + f'\SoloB_2019-06-24--08-14-24_{j}.csv'
         else:
             all_files_B[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-24--08-14-24_{j}.csv') #need to change path_f
@@ -66,10 +66,10 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
         collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
             
         if soloA_bool:
-            df = read_files(all_files, soloA_bool, jonas, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
+            df = read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
             rotate_mat = rotate_24(soloA_bool)[i]
         else:
-            df = read_files(all_files, soloA_bool, jonas, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
+            df = read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
             rotate_mat = rotate_24(soloA_bool)[i-8]
         df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
         #print(len(df))
@@ -181,14 +181,14 @@ def dB(peak_datetimes, instrument, current_dif, jonas, probe_list, plot=False): 
     return vect_dict
 
 if __name__ == "__main__":
-    jonas = True
-    dict_current = current_peaks(jonas, plot=False)
+    windows = True
+    dict_current = current_peaks(windows, plot=False)
     instrument = 'PHI'
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
     print(peak_datetimes[0], peak_datetimes[-1])
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
     probes = range(12)
-    vect_dict = dB(peak_datetimes, instrument, current_dif, jonas, probes, plot=False)
+    vect_dict = dB(peak_datetimes, instrument, current_dif, windows, probes, plot=False)
     
     w = csv.writer(open(f"{instrument}_vect_dict.csv", "w"))
     w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
