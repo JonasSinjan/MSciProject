@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from processing import soloA, soloB, read_files, powerspecplot, rotate_21, which_csvs
+from processing import processing
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 import pandas as pd
@@ -24,11 +24,11 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     sampling_freq - set to desired sampling frequency - default = None
     """
     if soloA_bool:
-        df = read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
-        rotate_mat = rotate_21(soloA_bool)[num-1]
+        df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
+        rotate_mat = processing.rotate_21(soloA_bool)[num-1]
     else:
-        df = read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
-        rotate_mat = rotate_21(soloA_bool)[num-9]
+        df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
+        rotate_mat = processing.rotate_21(soloA_bool)[num-9]
     df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
     print(len(df))
     
@@ -49,7 +49,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
 
     #power spectrum
     fs = sampling_freq
-    powerspecplot(df, fs, collist, alt)
+    processing.powerspecplot(df, fs, collist, alt)
 
     #spectogram    
     x = df2[collist[1]]
@@ -69,13 +69,9 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
 
 if __name__ == "__main__":
 
-    windows = False
+    windows = True
 
     if windows:
-        file_path_A = r'C:\Users\jonas\MSci-Data\day_one\A\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-21--08-10-10_1.csv'
-        file_path_B = r'C:\Users\jonas\MSci-Data\day_one\B\SoloB_2019-06-21--08-09-10_20\SoloB_2019-06-21--08-09-10_1.csv'
-        path_A = r'C:\Users\jonas\MSci-Data\day_one\A\SoloA_2019-06-21--08-10-10_50'
-        path_B = r'C:\Users\jonas\MSci-Data\day_one\B\SoloB_2019-06-21--08-09-10_20'
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_one\A'
         path_fol_B = r'C:\Users\jonas\MSci-Data\day_one\B'
     else:
@@ -102,7 +98,7 @@ if __name__ == "__main__":
     end_dt = datetime(2019,6,21,14,39)# this is the end
 
     day = 1
-    start_csv, end_csv = which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
+    start_csv, end_csv = processing.which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
     print(start_csv, end_csv)
 
     all_files = [0]*(end_csv + 1 - start_csv)

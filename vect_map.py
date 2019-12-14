@@ -43,4 +43,5 @@ if __name__ == "__main__":
     probes = range(11)
     vect_dict = dB(peak_datetimes, instrument, current_dif, windows, probes, plot=False)
     vector_map(vect_dict, instrument)
+    #should this read in files rather than recalculating the vect dicts?
 

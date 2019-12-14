@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from processing import soloA, soloB, read_files
+from processing import processing
 import pandas as pd
 import os
 import numpy as np
@@ -8,8 +8,8 @@ def align(file_path_A, file_path_B):
     #this function should only return the time diff between soloA and soloB files
     #which should then be read in when read_merge is executed
     
-    df_A = soloA(file_path_A)
-    df_B = soloB(file_path_B)
+    df_A = processing.soloA(file_path_A)
+    df_B = processing.soloB(file_path_B)
     #df_A = df_A[df_A['time']<=600]
     print(len(df_A), len(df_B))
     #df = df_A.merge(df_B) #if want to merge

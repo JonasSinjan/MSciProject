@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from processing import *
+from processing import processing
 from pandas.plotting import register_matplotlib_converters
 from current import current_peaks
 register_matplotlib_converters()
@@ -12,9 +12,9 @@ import time
 from datetime import datetime
 import scipy.stats as spstats
 
-def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
+def dB(peak_datetimes, instrument, current_dif, windows): #for only one instrument
 
-    if jonas:
+    if windows:
         mag_filepath = r'C:\Users\jonas\MSci-Data\PoweredDay2.csv.txt'
     else:
         mag_filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay2.csv.txt")
@@ -31,7 +31,7 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
     des_time = end_dt - start_dt
     nrows = int(des_time.total_seconds()*128 - 0.518/(1/128))
     
-    day = 2 #second day
+    #day = 2 #second day
 
     df = pd.read_csv(mag_filepath, header = None, skiprows = skiprows, nrows = nrows)
     df.columns = ['time','X','Y','Z']
@@ -45,9 +45,9 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
 
     collist = ['time','X','Y','Z']
 
-    powerspecplot(df, fs, collist, False, inst = instrument)
+    processing.powerspecplot(df, fs, collist, False, inst = instrument)
 
-    step_dict = calculate_dB(df, peak_datetimes)
+    step_dict = processing.calculate_dB(df, peak_datetimes)
 
     plt.figure()
     plt.errorbar(current_dif, step_dict.get('X'), yerr = step_dict.get('X err'), fmt = 'bs',label = 'X', markeredgewidth = 2) #also need to save the change in current
@@ -69,11 +69,11 @@ def dB(peak_datetimes, instrument, current_dif, jonas): #for only one instrument
     #each sensor will have 3 lines for X, Y, Z
     
 if __name__ == "__main__":
-    jonas = False
+    windows = True
 
-    dict_current = current_peaks(jonas, plot=False)
+    dict_current = current_peaks(windows, plot=False)
     instrument = 'EUI'
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
     print(peak_datetimes[0], peak_datetimes[-1])
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
-    dB(peak_datetimes, instrument, current_dif, jonas)
+    dB(peak_datetimes, instrument, current_dif, windows)

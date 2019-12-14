@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from processing import *
+from processing import processing
 from pandas.plotting import register_matplotlib_converters
 from current import current_peaks
 register_matplotlib_converters()
@@ -32,8 +32,8 @@ def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False)
     day = 2 #second day
     sampling_freq = 1000 #do we want to remove the high freq noise?
     
-    start_csv_A, end_csv_A = which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
-    start_csv_B, end_csv_B = which_csvs(False, day ,start_dt, end_dt, tz_MAG = True)
+    start_csv_A, end_csv_A = processing.which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
+    start_csv_B, end_csv_B = processing.which_csvs(False, day ,start_dt, end_dt, tz_MAG = True)
 
     all_files_A = [0]*(end_csv_A + 1 - start_csv_A)
     for index, j in enumerate(range(start_csv_A, end_csv_A + 1)): #this will loop through and add the csv files that contain the start and end time set above
@@ -66,17 +66,15 @@ def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False)
         collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
             
         if soloA_bool:
-            df = read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
-            rotate_mat = rotate_24(soloA_bool)[i]
+            df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
+            rotate_mat = processing.rotate_24(soloA_bool)[i]
         else:
-            df = read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
-            rotate_mat = rotate_24(soloA_bool)[i-8]
+            df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
+            rotate_mat = processing.rotate_24(soloA_bool)[i-8]
         df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
-        #print(len(df))
-        #print(df.head())
-        #print(df.tail())
+        
     
-        df = shifttime(df, soloA_bool) # must shift MFSA data to MAG/spacecraft time
+        df = processing.shifttime(df, soloA_bool) # must shift MFSA data to MAG/spacecraft time
         
         #print(df.head())
         #print(df.tail())
@@ -107,7 +105,7 @@ def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False)
                 df[f'Probe{num_str}_{axis}'] = butter_lowpass_filter(df[f'Probe{num_str}_{axis}'], cutoff, fs)
 
 
-        step_dict = calculate_dB(df, peak_datetimes)
+        step_dict = processing.calculate_dB(df, peak_datetimes)
 
         #adding bonus point of origin
         xdata = list(current_dif)

@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from processing import soloA, soloB, read_files, powerspecplot, rotate_21, rotate_24
+from processing import processing
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 import pandas as pd
@@ -146,5 +146,5 @@ def current_peaks(windows, plot = False, sample = False):
     return dict_cur
 
 if __name__ == "__main__":
-    dict = current_peaks(False, plot = True)
+    dict = current_peaks(True, plot = True)
     print(dict['MAG Current [A]'])

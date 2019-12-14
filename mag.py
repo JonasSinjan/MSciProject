@@ -54,7 +54,7 @@ def mag(filepath, start_dt=None, end_dt=None):
         plt.legend(loc="best")
         plt.title('MAG Powered Day 2')
         
-    
+        #finding the calibration spikes - only appropriate if not in the current time span when the spikes occur (at beginning of data - but first 3 spikes seen are MAG changing measurement ranges)
         time_list = []
         df2 = df.abs()
         for col in cols:
@@ -66,9 +66,9 @@ def mag(filepath, start_dt=None, end_dt=None):
     
 if __name__ == "__main__":
     
-    jonas = False
+    windows = True
     
-    if jonas:
+    if windows:
         filepath = r'C:\Users\jonas\MSci-Data\PoweredDay2.csv.txt'
     else:
         filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay2.csv.txt")
