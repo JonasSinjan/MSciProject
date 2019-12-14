@@ -24,10 +24,10 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     sampling_freq - set to desired sampling frequency - default = None
     """
     if soloA_bool:
-        df = read_files(all_files, soloA_bool, jonas, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
+        df = read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
         rotate_mat = rotate_21(soloA_bool)[num-1]
     else:
-        df = read_files(all_files, soloA_bool, jonas, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
+        df = read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
         rotate_mat = rotate_21(soloA_bool)[num-9]
     df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
     print(len(df))
@@ -69,9 +69,9 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
 
 if __name__ == "__main__":
 
-    jonas = False
+    windows = False
 
-    if jonas:
+    if windows:
         file_path_A = r'C:\Users\jonas\MSci-Data\day_one\A\SoloA_2019-06-21--08-10-10_20\SoloA_2019-06-21--08-10-10_1.csv'
         file_path_B = r'C:\Users\jonas\MSci-Data\day_one\B\SoloB_2019-06-21--08-09-10_20\SoloB_2019-06-21--08-09-10_1.csv'
         path_A = r'C:\Users\jonas\MSci-Data\day_one\A\SoloA_2019-06-21--08-10-10_50'
@@ -110,12 +110,12 @@ if __name__ == "__main__":
     for index, i in enumerate(range(start_csv, end_csv + 1)): #this will loop through and add the csv files that contain the start and end time set above
 
         if soloA_bool:
-            if jonas:
+            if windows:
                 all_files[index] = path_fol_A + f'\SoloA_2019-06-21--08-10-10_{i}.csv'
             else:
                 all_files[index] = path_fol_A + os.path.expanduser(f'/SoloA_2019-06-21--08-10-10_{i}.csv') #need to change path_fol_A  to the path where your A folder is
         else:
-            if jonas:
+            if windows:
                 all_files[index] = path_fol_B + f'\SoloB_2019-06-21--08-09-10_{i}.csv'
             else:
                 all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{i}.csv') #need to change path_fol_B to the path where your B folder is
