@@ -179,15 +179,23 @@ def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False)
     return vect_dict
 
 if __name__ == "__main__":
+    #these 3 factors need to be set 
     windows = True
+    instrument = 'SWA'
+    probes = range(12) #what probes are desired
+
+    #create dictionary with all current peaks for every instrument (v. fast)
     dict_current = current_peaks(windows, plot=False)
-    instrument = 'PHI'
+    #get list of the peaks' datetimes for the desired instrument
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
-    print(peak_datetimes[0], peak_datetimes[-1])
+    #print first and last peak datetime to affirm correct instrument
+    print(peak_datetimes[0], peak_datetimes[-1]) 
+    #need current dif (gradient in current) to plot later
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
-    probes = range(12)
+    #create dictionary of the Magnetic Field/Amp proportionality for the desired instrument
     vect_dict = dB(peak_datetimes, instrument, current_dif, windows, probes, plot=False)
     
+    #write the Magnetic Field/Amp proportionality to csv
     w = csv.writer(open(f"{instrument}_vect_dict.csv", "w"))
     w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
     for key, val in vect_dict.items():
