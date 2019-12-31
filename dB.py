@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import csv 
 
 
-def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False): #for only one instrument
+def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False, lowpass = False): #for only one instrument
 
     if windows:
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_two\A'
@@ -86,16 +86,16 @@ def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False)
         #print(df.head())
         #print(df.tail())
 
-        lowpass = False
+        #lowpass = False
         
         if lowpass:
-            def butter_lowpass(cutoff, fs, order=5):
+            def butter_lowpass(cutoff, fs, order=10):
                 nyq = 0.5 * fs
                 normal_cutoff = cutoff / nyq
                 b, a = butter(order, normal_cutoff, btype='low', analog=False)
                 return b, a
             
-            def butter_lowpass_filter(data, cutoff, fs, order=5):
+            def butter_lowpass_filter(data, cutoff, fs, order=10):
                 b, a = butter_lowpass(cutoff, fs, order=order)
                 y = lfilter(b, a, data)
                 return y
@@ -183,22 +183,26 @@ def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False)
 if __name__ == "__main__":
     #these 3 factors need to be set 
     windows = True
-    instrument = 'EPD'
+    #instrument = 'EPD'
     probes = range(12) #what probes are desired
+
+    instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 
     #create dictionary with all current peaks for every instrument (v. fast)
     dict_current = current_peaks(windows, plot=False)
-    #get list of the peaks' datetimes for the desired instrument
-    peak_datetimes = dict_current.get(f'{instrument} Current [A]')
-    #print first and last peak datetime to affirm correct instrument
-    print(peak_datetimes[0], peak_datetimes[-1]) 
-    #need current dif (gradient in current) to plot later
-    current_dif = dict_current.get(f'{instrument} Current [A] dI')
-    #create dictionary of the Magnetic Field/Amp proportionality for the desired instrument
-    vect_dict = dB(peak_datetimes, instrument, current_dif, windows, probes, plot=False)
+
+    for instrument in instru_list:
+        #get list of the peaks' datetimes for the desired instrument
+        peak_datetimes = dict_current.get(f'{instrument} Current [A]')
+        #print first and last peak datetime to affirm correct instrument
+        #print(peak_datetimes[0], peak_datetimes[-1]) 
+        #need current dif (gradient in current) to plot later
+        current_dif = dict_current.get(f'{instrument} Current [A] dI')
+        #create dictionary of the Magnetic Field/Amp proportionality for the desired instrument
+        vect_dict = dB(peak_datetimes, instrument, current_dif, windows, probes, plot=False, lowpass = True)
     
-    #write the Magnetic Field/Amp proportionality to csv
-    w = csv.writer(open(f"{instrument}_vect_dict.csv", "w"))
-    w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
-    for key, val in vect_dict.items():
-        w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9],val[10],val[11]])
+        #write the Magnetic Field/Amp proportionality to csv
+        w = csv.writer(open(f"{instrument}_vect_dict_lowpass.csv", "w"))
+        w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
+        for key, val in vect_dict.items():
+            w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9],val[10],val[11]])
