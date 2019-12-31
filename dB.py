@@ -35,6 +35,8 @@ def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False)
     start_csv_A, end_csv_A = processing.which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
     start_csv_B, end_csv_B = processing.which_csvs(False, day ,start_dt, end_dt, tz_MAG = True)
 
+    print(start_csv_A, end_csv_A)
+
     all_files_A = [0]*(end_csv_A + 1 - start_csv_A)
     for index, j in enumerate(range(start_csv_A, end_csv_A + 1)): #this will loop through and add the csv files that contain the start and end time set above
         if windows:
@@ -181,7 +183,7 @@ def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False)
 if __name__ == "__main__":
     #these 3 factors need to be set 
     windows = True
-    instrument = 'SWA'
+    instrument = 'EPD'
     probes = range(12) #what probes are desired
 
     #create dictionary with all current peaks for every instrument (v. fast)

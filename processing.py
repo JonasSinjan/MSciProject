@@ -105,9 +105,14 @@ class processing:
                 time_delta = (start_dt - day_two_A_dt).total_seconds()
             start_csv = math.floor(time_delta / 384) # approx number of csv files
             end_csv = start_csv + math.ceil(length/384) + 3
-            if end_csv > 81:
-                end_csv = 81
-                print('The desired time range may run outside the available data - check if so')
+            if day == 1:
+                if end_csv > 81:
+                    end_csv = 81
+                    print('The desired time range may run outside the available data - check if so')
+            else:
+                if end_csv > 83:
+                    end_csv = 83
+                    print('The desired time range may run outside the available data - check if so')
             #print(length/384, math.ceil(length/384))
         else:
             if day == 1 or day == 21:
