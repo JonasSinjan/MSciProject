@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import scipy as sp
 import matplotlib as plt
+from datetime import datetime as dt
+
+
 
 instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 df_percent_arr = [0]*8
@@ -25,11 +28,16 @@ for idx, instrument in enumerate(instru_list):
 df_concat = pd.concat(df_percent_arr)
 
 #filter the overall df for the desired probe
+
 probe_percent_dif_lowpass_dict = {}
+time_test = dt.now()
+
 for i in range(1,13):
-    df_tmp = df_concat[df_concat.index.isin([i])]
+    df_tmp = df_concat[df_concat.index.isin([1])]
     df_tmp['Instrument'] = instru_list
     df_tmp.loc['mean'] = df_tmp.mean()
     probe_percent_dif_lowpass_dict[f'Probe {i}'] = df_tmp
     
-print(probe_percent_dif_lowpass_dict)
+#print(probe_percent_dif_lowpass_dict)
+time_test = dt.now() - time_test
+print(time_test)
