@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import scipy as sp
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from datetime import datetime as dt
 
 
@@ -38,6 +38,36 @@ for i in range(1,13):
     df_tmp.loc['mean'] = df_tmp.mean()
     probe_percent_dif_lowpass_dict[f'Probe {i}'] = df_tmp
     
+    
 #print(probe_percent_dif_lowpass_dict)
 time_test = dt.now() - time_test
 print(time_test)
+
+df = probe_percent_dif_lowpass_dict.get('Probe 1')
+x = df.columns.tolist()[:-1]
+y = df.iloc[-1][:-1]
+
+#fig, ax = plt.subplots()
+plt.figure(figsize=(15.0, 8.0))
+rects1 = plt.bar(x, y)
+plt.ylabel('Percent difference with low pass filter (no filter is reference)')
+plt.title(f'Probe {df.index[0]}')
+
+def autolabel(rects):
+    """Attach a text label above each bar in *rects*, displaying its height."""
+    for rect in rects:
+        height = round(rect.get_height(),2)
+        #print(height)
+        if height < 0 :
+            xytext1 = (0, -14)
+        else:
+            xytext1 = (0, 3)
+        plt.annotate(f'{height}%',
+                    xy=(rect.get_x() + rect.get_width() / 2, height),
+                    xytext=xytext1,  # 3 points vertical offset
+                    textcoords="offset points",
+                    ha='center', va='bottom')
+
+autolabel(rects1)
+plt.tight_layout()
+plt.show()
