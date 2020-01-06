@@ -12,10 +12,14 @@ from datetime import datetime
 import glob
 
 def current_peaks(windows, plot = False, sample = False):
+    daynumber = 1
     if windows:
-        filename = r'C:\Users\jonas\MSci-Data\LCL_data\Day 2 Payload LCL Current Profiles.xlsx'
+        if daynumber == 1:
+            filename = r'C:\Users\jonas\MSci-Data\LCL_data\Day 1 Payload LCL Current Profiles.xlsx'
+        if daynumber == 2:
+            filename = r'C:\Users\jonas\MSci-Data\LCL_data\Day 2 Payload LCL Current Profiles.xlsx'
     else:
-        filename = os.path.expanduser("~/Documents/MSciProject/Data/LCL_Data/Day_2_Payload_LCL_Current_Profiles.xlsx")
+        filename = os.path.expanduser(f"~/Documents/MSciProject/Data/LCL_Data/Day_{daynumber}_Payload_LCL_Current_Profiles.xlsx")
     
     df =  pd.read_excel(filename)
     df.set_index(['EGSE Time'], inplace = True)
@@ -29,7 +33,10 @@ def current_peaks(windows, plot = False, sample = False):
         print (df2.head())
 
     def find_peak_times(dict, df, plot = False, i = 1):
-        day = datetime(2019,6,24,0,0,0)
+        if daynumber == 1:
+            day = datetime(2019,6,21,0,0,0)
+        if daynumber == 2:
+            day = datetime(2019,6,24,0,0,0)
         diff = df[col].diff()
         df['Current Dif'] = diff
         current_dif = np.array(diff)
@@ -68,29 +75,58 @@ def current_peaks(windows, plot = False, sample = False):
 
         noise = []
         
-        if col == "SoloHI Current [A]":
-            #noise = [1,7] for 5 resample and 4 std
-            noise = [1,2,3,4,5,6,7,8,9,12,16,17,18,19,20,21]
-        elif col == "EUI Current [A]":
-            #noise = [3,4]
-            noise = [3,4,10,11,12,13,14,15,16]
-        elif col == "PHI Current [A]":
-            #noise = [4,5,8,10]
-            noise = [4,7,8,10,13,14,15,17,18,19,20,21,22,23,24]
-        elif col == "STIX Current [A]":
-            #noise = [1]
-            noise = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,50,51,52,53,54,55,56,57,58,59]
-        elif col == "SPICE Current [A]":
-            #noise = [0,1,2,3,4,8,9,10,11] #removing the first time it was turned on into a bad operating mode
-            noise = [0,1,2,3,4,5,8,11,12,13,14]
-        elif col == "METIS Current [A]":
-            #noise = list(range(3,23))
-            noise = list(range(3,65))
-        elif col == "MAG Current [A]":
-            noise = [3,5,6,7,8]
-        elif col == "SWA Current [A]":
-            noise = [0,1,2,3,4,5,6,7,10,11,13,14,15,16,17,18,19,20,21,22,24,26,27,28,29,30,31,32,33,34,35,36,37,40]
         
+        if daynumber == 1:
+            if col == "EUI Current [A]":
+                #noise = [1,7] for 5 resample and 4 std
+                noise = [5,9,10] 
+            elif col == "SoloHI Current [A]":
+                #noise = [3,4]
+                noise = list(range(2,79))
+            elif col == "PHI Current [A]":
+                #noise = [4,5,8,10]
+                noise = [1]+list(range(3,27))
+            elif col == "STIX Current [A]":
+                #noise = [1]
+                noise = [0,1,2,3,4,6,7,8,9,10,11,12]
+            elif col == "SPICE Current [A]":
+                #noise = [0,1,2,3,4,8,9,10,11] #removing the first time it was turned on into a bad operating mode
+                noise = [1,4]
+            elif col == "METIS Current [A]":
+                #noise = list(range(3,23))
+                noise = list(range(3,172))
+            elif col == "MAG Current [A]":
+                noise = [1,4]
+            elif col == "SWA Current [A]":
+                noise = [0,1,3,12,13,14,15,16,79] + list(range(18,77))
+            elif col == "RPW Current [A]":
+                noise = [1,2,6] + list(range(8,87))
+            
+
+        if daynumber == 2:
+            if col == "SoloHI Current [A]":
+                #noise = [1,7] for 5 resample and 4 std
+                noise = [1,2,3,4,5,6,7,8,9,12,16,17,18,19,20,21]
+            elif col == "EUI Current [A]":
+                #noise = [3,4]
+                noise = [3,4,10,11,12,13,14,15,16]
+            elif col == "PHI Current [A]":
+                #noise = [4,5,8,10]
+                noise = [4,7,8,10,13,14,15,17,18,19,20,21,22,23,24]
+            elif col == "STIX Current [A]":
+                #noise = [1]
+                noise = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,50,51,52,53,54,55,56,57,58,59]
+            elif col == "SPICE Current [A]":
+                #noise = [0,1,2,3,4,8,9,10,11] #removing the first time it was turned on into a bad operating mode
+                noise = [0,1,2,3,4,5,8,11,12,13,14]
+            elif col == "METIS Current [A]":
+                #noise = list(range(3,23))
+                noise = list(range(3,65))
+            elif col == "MAG Current [A]":
+                noise = [3,5,6,7,8]
+            elif col == "SWA Current [A]":
+                noise = [0,1,2,3,4,5,6,7,10,11,13,14,15,16,17,18,19,20,21,22,24,26,27,28,29,30,31,32,33,34,35,36,37,40]
+            
         for index in sorted(noise, reverse=True):
                 del peak_datetimes[index]
         index_list = np.delete(index_list, noise)
@@ -146,5 +182,5 @@ def current_peaks(windows, plot = False, sample = False):
     return dict_cur
 
 if __name__ == "__main__":
-    dict = current_peaks(True, plot = True)
+    dict = current_peaks(False, plot = True)
     print(dict['MAG Current [A]'])
