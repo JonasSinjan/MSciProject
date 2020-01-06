@@ -183,7 +183,6 @@ def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot = Fals
 if __name__ == "__main__":
     #these 3 factors need to be set 
     windows = True
-    #instrument = 'EPD'
     probes = range(12) #what probes are desired
 
     instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
