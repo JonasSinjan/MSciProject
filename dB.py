@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import csv 
 
 
-def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False, lowpass = False): #for only one instrument
+def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot = False, lowpass = False): #for only one instrument
 
     if windows:
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_two\A'
