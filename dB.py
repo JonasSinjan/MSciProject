@@ -188,7 +188,7 @@ if __name__ == "__main__":
     instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 
     #create dictionary with all current peaks for every instrument (v. fast)
-    dict_current = current_peaks(windows, plot=False)
+    dict_current = current_peaks(windows, 2, plot=False)
 
     for instrument in instru_list:
         #get list of the peaks' datetimes for the desired instrument

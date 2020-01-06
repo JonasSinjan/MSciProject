@@ -11,8 +11,8 @@ import time
 from datetime import datetime
 import glob
 
-def current_peaks(windows, plot = False, sample = False):
-    daynumber = 1
+def current_peaks(windows, daynumber, plot = False, sample = False):
+    #daynumber = 1
     if windows:
         if daynumber == 1:
             filename = r'C:\Users\jonas\MSci-Data\LCL_data\Day 1 Payload LCL Current Profiles.xlsx'
