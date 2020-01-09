@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from datetime import datetime as dt
 
 
-
 instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 df_percent_arr = [0]*8
 
@@ -48,7 +47,7 @@ x = df.columns.tolist()[:-1]
 y = df.iloc[-1][:-1]
 
 #fig, ax = plt.subplots()
-plt.figure(figsize=(15.0, 8.0))
+plt.figure(figsize = (15.0, 8.0))
 rects1 = plt.bar(x, y)
 plt.ylabel('Percent difference with low pass filter (no filter is reference)')
 plt.title(f'Probe {df.index[0]}')

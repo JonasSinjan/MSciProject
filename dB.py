@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import csv 
 
 
-def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False, lowpass = False): #for only one instrument
+def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot = False, lowpass = False): #for only one instrument
 
     if windows:
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_two\A'
@@ -29,7 +29,7 @@ def dB(peak_datetimes, instrument, current_dif, windows, probe_list, plot=False,
     start_dt = peak_datetimes[0] - pd.Timedelta(minutes = 3)
     end_dt = peak_datetimes[-1] + pd.Timedelta(minutes = 3)
     
-    day = 2 #second day
+    #day = 2 #second day
     sampling_freq = 1000 #do we want to remove the high freq noise?
     
     start_csv_A, end_csv_A = processing.which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
@@ -184,11 +184,11 @@ if __name__ == "__main__":
     #these 3 factors need to be set 
     windows = False
     probes = range(12) #what probes are desired
-
+    day_number = 2
     instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 
     #create dictionary with all current peaks for every instrument (v. fast)
-    dict_current = current_peaks(windows, plot=False)
+    dict_current = current_peaks(windows, day_number, plot=False)
 
     for instrument in instru_list:
         #get list of the peaks' datetimes for the desired instrument
@@ -198,7 +198,7 @@ if __name__ == "__main__":
         #need current dif (gradient in current) to plot later
         current_dif = dict_current.get(f'{instrument} Current [A] dI')
         #create dictionary of the Magnetic Field/Amp proportionality for the desired instrument
-        vect_dict = dB(peak_datetimes, instrument, current_dif, windows, probes, plot=False, lowpass = True)
+        vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot=False, lowpass = True)
     
         #write the Magnetic Field/Amp proportionality to csv
         w = csv.writer(open(f"{instrument}_vect_dict_lowpass.csv", "w"))

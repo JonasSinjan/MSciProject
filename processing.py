@@ -87,6 +87,8 @@ class processing:
     @staticmethod
     def which_csvs(soloA_bool, day, start_dt, end_dt, tz_MAG = False):
         if tz_MAG:
+            day_one_A_dt = datetime(2019,6,21,8,10,10,12) - pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283) 
+            day_one_B_dt = datetime(2019,6,21,8,9,10) - pd.Timedelta(days = 0, hours = 1, minutes = 58, seconds = 46, milliseconds = 499)
             day_two_A_dt = datetime(2019,6,24,8,14,46,93) - pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283) 
             day_two_B_dt = datetime(2019,6,24,8,14,24) - pd.Timedelta(days = 0, hours = 1, minutes = 58, seconds = 46, milliseconds = 499)
         else:
