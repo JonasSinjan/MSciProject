@@ -9,8 +9,8 @@ instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 df_percent_arr = [0]*8
 
 for idx, instrument in enumerate(instru_list):
-    lp_false = pd.read_csv(f'./Gradient_dicts/{instrument}_vect_dict_30k.csv')
-    lp_true = pd.read_csv(f'./Gradient_dicts/{instrument}_vect_dict_lowpass.csv')
+    lp_false = pd.read_csv(f'./Gradient_dicts/Day_2/{instrument}_vect_dict_30k.csv')
+    lp_true = pd.read_csv(f'./Gradient_dicts/Day_2/{instrument}_vect_dict_lowpass.csv')
 
     lp_false.set_index('Probe', inplace = True)
     lp_true.set_index('Probe', inplace = True)
