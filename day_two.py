@@ -58,8 +58,6 @@ if __name__ == "__main__":
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_two\A'
         path_fol_B = r'C:\Users\jonas\MSci-Data\day_two\B'
     else:
-        file_path_A = os.path.expanduser("~/Documents/MsciProject/Data/SoloA_2019-06-24--08-14-46_9/SoloA_2019-06-24--08-14-46_1.csv")
-        file_path_B = os.path.expanduser("~/Documents/MsciProject/Data/SoloB_2019-06-24--08-14-24_20/SoloB_2019-06-24--08-14-24_1.csv")
         path_fol_A =  os.path.expanduser("~/Documents/MsciProject/Data/day_two/A")
         path_fol_B =  os.path.expanduser("~/Documents/MsciProject/Data/day_two/B")
     
