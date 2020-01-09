@@ -19,17 +19,24 @@ import csv
 
 def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot = False, lowpass = False): #for only one instrument
 
-    if windows:
-        path_fol_A = r'C:\Users\jonas\MSci-Data\day_two\A'
-        path_fol_B = r'C:\Users\jonas\MSci-Data\day_two\B'
-    else:
-        path_fol_A = os.path.expanduser("~/Documents/MSciProject/Data/day_two/A")
-        path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_two/B")
+    if day == 1:
+        if windows:
+            path_fol_A = r'C:\Users\jonas\MSci-Data\day_one\A'
+            path_fol_B = r'C:\Users\jonas\MSci-Data\day_one\B'
+        else:
+            path_fol_A = os.path.expanduser("~/Documents/MSciProject/Data/day_one/A")
+            path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_one/B")
+    elif day == 2:
+        if windows:
+            path_fol_A = r'C:\Users\jonas\MSci-Data\day_two\A'
+            path_fol_B = r'C:\Users\jonas\MSci-Data\day_two\B'
+        else:
+            path_fol_A = os.path.expanduser("~/Documents/MSciProject/Data/day_two/A")
+            path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_two/B")
     
     start_dt = peak_datetimes[0] - pd.Timedelta(minutes = 3)
     end_dt = peak_datetimes[-1] + pd.Timedelta(minutes = 3)
-    
-    #day = 2 #second day
+
     sampling_freq = 1000 #do we want to remove the high freq noise?
     
     start_csv_A, end_csv_A = processing.which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
@@ -38,18 +45,34 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
     print(start_csv_A, end_csv_A)
 
     all_files_A = [0]*(end_csv_A + 1 - start_csv_A)
-    for index, j in enumerate(range(start_csv_A, end_csv_A + 1)): #this will loop through and add the csv files that contain the start and end time set above
-        if windows:
-            all_files_A[index] = path_fol_A + f'\SoloA_2019-06-24--08-14-46_{j}.csv'
-        else:
-            all_files_A[index] = path_fol_A + os.path.expanduser(f'/SoloA_2019-06-24--08-14-46_{j}.csv') #need to change path_fol_A  to the path where your A folder is
-    
-    all_files_B = [0]*(end_csv_B + 1 - start_csv_B)
-    for index, j in enumerate(range(start_csv_B, end_csv_B + 1)): 
-        if windows:
-            all_files_B[index] = path_fol_B + f'\SoloB_2019-06-24--08-14-24_{j}.csv'
-        else:
-            all_files_B[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-24--08-14-24_{j}.csv') #need to change path_f
+
+    if day == 1
+        for index, j in enumerate(range(start_csv_A, end_csv_A + 1)): #this will loop through and add the csv files that contain the start and end time set above
+            if windows:
+                all_files_A[index] = path_fol_A + f'\SoloA_2019-06-21--08-10-10_{j}.csv'
+            else:
+                all_files_A[index] = path_fol_A + os.path.expanduser(f'/SoloA_2019-06-21--08-10-10_{j}.csv') #need to change path_fol_A  to the path where your A folder is
+        
+        all_files_B = [0]*(end_csv_B + 1 - start_csv_B)
+        for index, j in enumerate(range(start_csv_B, end_csv_B + 1)): 
+            if windows:
+                all_files_B[index] = path_fol_B + f'\SoloB_2019-06-21--08-09-10_{j}.csv'
+            else:
+                all_files_B[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{j}.csv') #need to change path_f
+
+    if day == 2
+        for index, j in enumerate(range(start_csv_A, end_csv_A + 1)): #this will loop through and add the csv files that contain the start and end time set above
+            if windows:
+                all_files_A[index] = path_fol_A + f'\SoloA_2019-06-24--08-14-46_{j}.csv'
+            else:
+                all_files_A[index] = path_fol_A + os.path.expanduser(f'/SoloA_2019-06-24--08-14-46_{j}.csv') #need to change path_fol_A  to the path where your A folder is
+        
+        all_files_B = [0]*(end_csv_B + 1 - start_csv_B)
+        for index, j in enumerate(range(start_csv_B, end_csv_B + 1)): 
+            if windows:
+                all_files_B[index] = path_fol_B + f'\SoloB_2019-06-24--08-14-24_{j}.csv'
+            else:
+                all_files_B[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-24--08-14-24_{j}.csv') #need to change path_f
 
     vect_dict = {}
     for i in probe_list:
@@ -182,9 +205,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
 if __name__ == "__main__":
     #these 3 factors need to be set 
-    windows = True
+    windows = False
     probes = range(12) #what probes are desired
-    day_number = 2
+    day_number = 1
     instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 
     #create dictionary with all current peaks for every instrument (v. fast)

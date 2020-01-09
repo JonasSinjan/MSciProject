@@ -69,21 +69,17 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
 
 if __name__ == "__main__":
 
-    windows = True
+    windows = False
 
     if windows:
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_one\A'
         path_fol_B = r'C:\Users\jonas\MSci-Data\day_one\B'
     else:
-        file_path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_20/SoloA_2019-06-21--08-10-10_01.csv")
-        file_path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20/SoloB_2019-06-21--08-09-10_01.csv")
-        path_A = os.path.expanduser("~/Documents/MSciProject/Data/SoloA_2019-06-21--08-10-10_50")
-        path_B = os.path.expanduser("~/Documents/MSciProject/Data/SoloB_2019-06-21--08-09-10_20")
         path_fol_A = os.path.expanduser("~/Documents/MSciProject/Data/day_one/A")
         path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_one/B")
 
     alt = False #set to true if you want to see power spec using the stnadard method - not the inbuilt funciton
-    num = 12
+    num = 11
     if num < 9:
         soloA_bool = True
     else:
@@ -94,8 +90,8 @@ if __name__ == "__main__":
         num_str = num
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
-    start_dt = datetime(2019,6,21,14,37)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,14,39)# this is the end
+    start_dt = datetime(2019,6,21,10,0)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,21,11,0)# this is the end
 
     day = 1
     start_csv, end_csv = processing.which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
