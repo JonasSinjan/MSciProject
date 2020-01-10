@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import scipy as sp
+from scipy.signal import butter, freqs, freqz
 import matplotlib.pyplot as plt
 from datetime import datetime as dt
 
@@ -64,6 +65,23 @@ def autolabel(rects):
                     xytext=xytext1,  # 3 points vertical offset
                     textcoords="offset points",
                     ha='center', va='bottom')
+        
+def butter_lowpass(cutoff, fs, order=10):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    return b, a
+        
+b, a = butter_lowpass(15, 1000) 
+w, h = freqs(b, a)
+plt.figure()
+plt.plot(w, 20 * np.log10(abs(h)))
+#plt.xscale('log')
+plt.title('Butterworth filter frequency response')
+plt.xlabel('Frequency [radians / second]')
+plt.ylabel('Amplitude [dB]')
+#plt.margins(0, 0.1)
+plt.show()
 
 for i in range(12): 
  

@@ -11,7 +11,7 @@ import scipy.signal as sps
 import time
 from datetime import datetime
 import scipy.stats as spstats
-from scipy.signal import butter, lfilter, freqz
+from scipy.signal import butter, lfilter, freqz, freqs
 import scipy.optimize as spo
 import matplotlib.pyplot as plt
 import csv 
@@ -46,7 +46,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
     all_files_A = [0]*(end_csv_A + 1 - start_csv_A)
 
-    if day == 1
+    if day == 1:
         for index, j in enumerate(range(start_csv_A, end_csv_A + 1)): #this will loop through and add the csv files that contain the start and end time set above
             if windows:
                 all_files_A[index] = path_fol_A + f'\SoloA_2019-06-21--08-10-10_{j}.csv'
@@ -60,7 +60,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             else:
                 all_files_B[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{j}.csv') #need to change path_f
 
-    if day == 2
+    if day == 2:
         for index, j in enumerate(range(start_csv_A, end_csv_A + 1)): #this will loop through and add the csv files that contain the start and end time set above
             if windows:
                 all_files_A[index] = path_fol_A + f'\SoloA_2019-06-24--08-14-46_{j}.csv'
@@ -128,6 +128,8 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
             for axis in ['X','Y','Z']:
                 df[f'Probe{num_str}_{axis}'] = butter_lowpass_filter(df[f'Probe{num_str}_{axis}'], cutoff, fs)
+               
+    
 
 
         step_dict = processing.calculate_dB(df, peak_datetimes)
@@ -205,9 +207,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
 if __name__ == "__main__":
     #these 3 factors need to be set 
-    windows = False
+    windows = True
     probes = range(12) #what probes are desired
-    day_number = 1
+    day_number = 2
     instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 
     #create dictionary with all current peaks for every instrument (v. fast)
