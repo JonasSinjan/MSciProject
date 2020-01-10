@@ -34,8 +34,8 @@ time_test = dt.now()
 for i in range(1,13):
     df_tmp = df_concat[df_concat.index.isin([i])]
     df_tmp['Instrument'] = instru_list
-    df_tmp.loc['std'] = df_tmp.std()
-    df_tmp.loc['mean'] = df_tmp.mean()
+    df_tmp.loc['std'] = df_tmp[df_tmp.index.isin([i])].std()/np.sqrt(8)
+    df_tmp.loc['mean'] = df_tmp[df_tmp.index.isin([i])].mean()
     probe_percent_dif_lowpass_dict[f'Probe {i}'] = df_tmp
     
     
@@ -68,9 +68,9 @@ def autolabel(rects):
 for i in range(12): 
  
     df = probe_percent_dif_lowpass_dict.get(f'Probe {i+1}')
-    x = df.columns.tolist()[:-7]
-    y = df.iloc[-1][:-7]
-    error = df.iloc[-2][:-7]
+    x = df.columns.tolist()[:-1]
+    y = df.iloc[-1][:-1]
+    error = df.iloc[-2][:-1]
     plt.figure(figsize = (15.0, 8.0))
     rects1 = plt.bar(x, y, yerr = error, capsize = 10)
     plt.ylabel('Percent difference with low pass filter (no filter is reference)')
