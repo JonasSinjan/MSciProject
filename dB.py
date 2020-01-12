@@ -208,7 +208,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 if __name__ == "__main__":
     #these 3 factors need to be set 
     windows = True
-    probes = [9]#range(12) #what probes are desired
+    probes = [8]#range(12) #what probes are desired
     day_number = 2
     instru_list = ['EUI']#['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 
@@ -223,10 +223,11 @@ if __name__ == "__main__":
         #need current dif (gradient in current) to plot later
         current_dif = dict_current.get(f'{instrument} Current [A] dI')
         #create dictionary of the Magnetic Field/Amp proportionality for the desired instrument
-        vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot=False, lowpass = True)
-    
+        vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot=True, lowpass = False)
+        """
         #write the Magnetic Field/Amp proportionality to csv
-        w = csv.writer(open(f"{instrument}_vect_dict_lowpass.csv", "w"))
+        w = csv.writer(open(f"{instrument}_vect_dict_.csv", "w"))
         w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
         for key, val in vect_dict.items():
             w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9],val[10],val[11]])
+        """

@@ -42,7 +42,7 @@ def dBmag(peak_datetimes, instrument, current_dif, windows): #for only one instr
 
     df = df.between_time(start_dt.time(), end_dt.time())
     fs = 128
-
+    #df = df.resample('1s').mean()
     collist = ['time','X','Y','Z']
 
     #processing.powerspecplot(df, fs, collist, False, inst = instrument)
@@ -78,7 +78,7 @@ if __name__ == "__main__":
     windows = True
     daynumber = 2
     dict_current = current_peaks(windows, daynumber, plot=False)
-    instrument = 'EUI'
+    instrument = 'PHI'
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
     print(peak_datetimes[0], peak_datetimes[-1])
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
