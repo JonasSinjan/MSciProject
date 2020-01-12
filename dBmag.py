@@ -12,7 +12,7 @@ import time
 from datetime import datetime
 import scipy.stats as spstats
 
-def dB(peak_datetimes, instrument, current_dif, windows): #for only one instrument
+def dBmag(peak_datetimes, instrument, current_dif, windows): #for only one instrument
 
     if windows:
         mag_filepath = r'C:\Users\jonas\MSci-Data\PoweredDay2.csv.txt'
@@ -45,21 +45,27 @@ def dB(peak_datetimes, instrument, current_dif, windows): #for only one instrume
 
     collist = ['time','X','Y','Z']
 
-    processing.powerspecplot(df, fs, collist, False, inst = instrument)
+    #processing.powerspecplot(df, fs, collist, False, inst = instrument)
 
     step_dict = processing.calculate_dB(df, peak_datetimes)
 
     plt.figure()
-    plt.errorbar(current_dif, step_dict.get('X'), yerr = step_dict.get('X err'), fmt = 'bs',label = 'X', markeredgewidth = 2) #also need to save the change in current
+
+    plt.errorbar(current_dif, step_dict.get('X'), yerr = step_dict.get('X err'), fmt = 'bs', markeredgewidth = 2) #also need to save the change in current
+    plt.errorbar(current_dif, step_dict.get('Y'), yerr = step_dict.get('Y err'), fmt = 'rs', markeredgewidth = 2)
+    plt.errorbar(current_dif, step_dict.get('Z'), yerr = step_dict.get('Z err'), fmt = 'gs', markeredgewidth = 2)
+    
+    print(step_dict.get('X err'))
+    print(step_dict.get('Y err'))
+    print(step_dict.get('Z err'))
+
     X = spstats.linregress(current_dif, step_dict.get('X'))
-    plt.errorbar(current_dif, step_dict.get('Y'), yerr = step_dict.get('Y err'), fmt = 'rs', label = 'Y', markeredgewidth = 2)
     Y = spstats.linregress(current_dif, step_dict.get('Y'))
-    plt.errorbar(current_dif, step_dict.get('Z'), yerr = step_dict.get('Z err'), fmt = 'gs', label = 'Z', markeredgewidth = 2)
     Z = spstats.linregress(current_dif, step_dict.get('Z'))
 
-    plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-', label = X.rvalue)
-    plt.plot(current_dif, Y.intercept + Y.slope*current_dif, 'r-', label = Y.rvalue)
-    plt.plot(current_dif, Z.intercept + Z.slope*current_dif, 'g-', label = Z.rvalue)
+    plt.plot(current_dif, X.intercept + X.slope*current_dif, 'b-', label = f'X Grad: {round(X.rvalue,2)} ± {round(X.stderr,2)}')
+    plt.plot(current_dif, Y.intercept + Y.slope*current_dif, 'r-', label = f'Y Grad: {round(Y.rvalue,2)} ± {round(Y.stderr,2)}')
+    plt.plot(current_dif, Z.intercept + Z.slope*current_dif, 'g-', label = f'Z Grad: {round(Z.rvalue,2)} ± {round(Z.stderr,2)}')
 
     plt.legend(loc="best")
     plt.title(f'{instrument} - MAG')
@@ -70,10 +76,10 @@ def dB(peak_datetimes, instrument, current_dif, windows): #for only one instrume
     
 if __name__ == "__main__":
     windows = True
-
-    dict_current = current_peaks(windows, plot=False)
+    daynumber = 2
+    dict_current = current_peaks(windows, daynumber, plot=False)
     instrument = 'EUI'
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
     print(peak_datetimes[0], peak_datetimes[-1])
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
-    dB(peak_datetimes, instrument, current_dif, windows)
+    dBmag(peak_datetimes, instrument, current_dif, windows)

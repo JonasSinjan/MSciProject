@@ -188,9 +188,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             plt.plot(xdata, Y.intercept + Y.slope*np.array(xdata), 'r-')
             plt.plot(xdata, Z.intercept + Z.slope*np.array(xdata), 'g-')
 
-            plt.plot(current_dif, params_x[0]*current_dif, 'b:', label = f'curve_fit - X grad: {round(params_x[0],3)} ± {round(perr_x[0],3)}')
-            plt.plot(current_dif, params_y[0]*current_dif, 'r:', label = f'curve_fit - Y grad: {round(params_y[0],3)} ± {round(perr_y[0],3)}')
-            plt.plot(current_dif, params_z[0]*current_dif, 'g:', label = f'curve_fit - Z grad: {round(params_z[0],3)} ± {round(perr_z[0],3)}')
+            # plt.plot(current_dif, params_x[0]*current_dif, 'b:', label = f'curve_fit - X grad: {round(params_x[0],3)} ± {round(perr_x[0],3)}')
+            # plt.plot(current_dif, params_y[0]*current_dif, 'r:', label = f'curve_fit - Y grad: {round(params_y[0],3)} ± {round(perr_y[0],3)}')
+            # plt.plot(current_dif, params_z[0]*current_dif, 'g:', label = f'curve_fit - Z grad: {round(params_z[0],3)} ± {round(perr_z[0],3)}')
 
             plt.legend(loc="best")
             plt.title(f'{instrument} - Probe {num_str} - MFSA')
@@ -205,10 +205,10 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
 if __name__ == "__main__":
     #these 3 factors need to be set 
-    windows = False
-    probes = range(12) #what probes are desired
-    day_number = 1
-    instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
+    windows = True
+    probes = 9 #what probes are desired
+    day_number = 2
+    instru_list = ['EUI']#['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 
     #create dictionary with all current peaks for every instrument (v. fast)
     dict_current = current_peaks(windows, day_number, plot=False)
