@@ -19,15 +19,15 @@ def dBmag(peak_datetimes, instrument, current_dif, windows): #for only one instr
     else:
         mag_filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay2.csv.txt")
     
-    origin = datetime(2019,6,24, hour = 7, minute = 48, second = 19)
+    origin = datetime(2019, 6, 24, hour = 7, minute = 48, second = 19)
     
-    start_dt = peak_datetimes[0]-pd.Timedelta(minutes = 1)
-    end_dt = peak_datetimes[-1]+pd.Timedelta(minutes = 1)
+    start_dt = peak_datetimes[0] - pd.Timedelta(minutes = 1)
+    end_dt = peak_datetimes[-1] + pd.Timedelta(minutes = 1)
 
     assert start_dt >= origin
     dtime = start_dt - origin
     skiprows = int(dtime.total_seconds()*128 - 0.518/(1/128))
-    assert (end_dt-origin).total_seconds()*128 <= 3332096 #making sure the end_dt time is within the file
+    assert (end_dt - origin).total_seconds()*128 <= 3332096 #making sure the end_dt time is within the file
     des_time = end_dt - start_dt
     nrows = int(des_time.total_seconds()*128 - 0.518/(1/128))
     

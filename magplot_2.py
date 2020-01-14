@@ -47,7 +47,7 @@ def mag(filepath, start_dt=None, end_dt=None):
     if plot:
         plt.figure()
         cols = df.columns.tolist()
-        df = df.resample('2s').mean()
+        #df = df.resample('2s').mean()
         for col in cols[1:]:
             plt.plot(df.index.time, df[col], label =f'{col}')
         plt.xlabel('Time [H:M:S]')
