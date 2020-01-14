@@ -10,9 +10,9 @@ from datetime import datetime, timedelta
 import time
 import math
 
-def mag_1(filepath, number_rows):
+def mag_1(filepath):#, number_rows):
 
-    df = pd.read_csv(filepath, header = None, nrows = number_rows)
+    df = pd.read_csv(filepath, header = None)#, nrows = number_rows)
 
     df.columns = ['time','X','Y','Z']
 
@@ -40,7 +40,7 @@ def mag_1(filepath, number_rows):
     if plot:
         plt.figure()
         cols = df.columns.tolist()
-        for col in cols[1:]:
+        for col in cols:
             plt.plot(df.index.time, df[col], label =f'{col}')
         plt.xlabel('Time')
         plt.ylabel('B [nT]')
@@ -76,6 +76,6 @@ if __name__ == "__main__":
     start_dt = datetime(2019, 6, 21, 9, 0)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
     end_dt = datetime(2019, 6, 21, 11, 0)# this is the end
 
-    number_rows = 1000000
+    number_rows = 5000000
 
-    mag(filepath, number_rows)
+    mag_1(filepath)#, number_rows)
