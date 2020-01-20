@@ -46,6 +46,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
     all_files_A = [0]*(end_csv_A + 1 - start_csv_A)
 
+    #finding all the csv files that we need from the start and end time
     if day == 1:
         for index, j in enumerate(range(start_csv_A, end_csv_A + 1)): #this will loop through and add the csv files that contain the start and end time set above
             if windows:
@@ -91,10 +92,10 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
         collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
             
         if soloA_bool:
-            df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
+            df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=day, start_dt = start_dt, end_dt = end_dt)
             rotate_mat = processing.rotate_24(soloA_bool)[i]
         else:
-            df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
+            df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=day, start_dt = start_dt, end_dt = end_dt)
             rotate_mat = processing.rotate_24(soloA_bool)[i-8]
         df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
         
@@ -108,8 +109,6 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
         
         #print(df.head())
         #print(df.tail())
-
-        #lowpass = False
         
         if lowpass:
             def butter_lowpass(cutoff, fs, order=10):
@@ -134,25 +133,30 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
         step_dict = processing.calculate_dB(df, peak_datetimes)
 
-        #adding bonus point of origin
         xdata = list(current_dif)
-        #xdata.append(0.0)
         
         probe_x_tmp = step_dict.get(f'Probe{num_str}_X')
         probe_y_tmp = step_dict.get(f'Probe{num_str}_Y')
         probe_z_tmp = step_dict.get(f'Probe{num_str}_Z')
 
-        #probe_x_tmp.append(0.0)
-        #probe_y_tmp.append(0.0)
-        #probe_z_tmp.append(0.0)
-
         probe_x_tmp_err = step_dict.get(f'Probe{num_str}_X err')
         probe_y_tmp_err = step_dict.get(f'Probe{num_str}_Y err')
         probe_z_tmp_err = step_dict.get(f'Probe{num_str}_Z err')
 
-        #probe_x_tmp_err.append(0.0) #error on bonus point should be zero, but curve_fit requires finite error - and this forces the line through the origin anyway
-        #probe_y_tmp_err.append(0.0)
-        #probe_z_tmp_err.append(0.0)
+        #adding bonus point of origin
+        force_zero = False
+
+        if force_zero:
+            xdata.append(0.0)
+
+            probe_x_tmp.append(0.0)
+            probe_y_tmp.append(0.0)
+            probe_z_tmp.append(0.0)
+
+            probe_x_tmp_err.append(0.0) #error on bonus point should be zero, but curve_fit requires finite error - and this forces the line through the origin anyway
+            probe_y_tmp_err.append(0.0)
+            probe_z_tmp_err.append(0.0)
+
 
         X = spstats.linregress(xdata, probe_x_tmp) #adding bonus point has little effect on grad - only changes intercept
         Y = spstats.linregress(xdata, probe_y_tmp)
@@ -199,18 +203,20 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             plt.xlabel('dI [A]')
             plt.ylabel('dB [nT]')
             plt.show()
+
+            
   
-        vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope,X.stderr,Y.stderr,Z.stderr]#,params_x[0],params_y[0],params_z[0],perr_x[0],perr_y[0],perr_z[0]] #atm linear regression gradient - or should it be curve_fit?
+        vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope,X.stderr,Y.stderr,Z.stderr, X.intercept ,Y.intercept, Z.intercept ]#,params_x[0],params_y[0],params_z[0],perr_x[0],perr_y[0],perr_z[0]] #atm linear regression gradient - or should it be curve_fit?
 
 
     return vect_dict
 
 if __name__ == "__main__":
     #these 3 factors need to be set 
-    windows = True
-    probes = [11]#range(12) #what probes are desired
+    windows = False
+    probes = range(12) #what probes are desired
     day_number = 2
-    instru_list = ['EUI']#['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
+    instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 
     #create dictionary with all current peaks for every instrument (v. fast)
     dict_current = current_peaks(windows, day_number, plot=False)
@@ -223,11 +229,11 @@ if __name__ == "__main__":
         #need current dif (gradient in current) to plot later
         current_dif = dict_current.get(f'{instrument} Current [A] dI')
         #create dictionary of the Magnetic Field/Amp proportionality for the desired instrument
-        vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot=True, lowpass = False)
-        """
+        vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot=False, lowpass = False)
+        
         #write the Magnetic Field/Amp proportionality to csv
-        w = csv.writer(open(f"{instrument}_vect_dict_.csv", "w"))
-        w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
+        w = csv.writer(open(f"{instrument}_vect_dict_NOORIGIN.csv", "w"))
+        w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
         for key, val in vect_dict.items():
-            w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9],val[10],val[11]])
-        """
+            w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8]])#,val[9],val[10],val[11]])
+        
