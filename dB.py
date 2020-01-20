@@ -37,7 +37,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
     start_dt = peak_datetimes[0] - pd.Timedelta(minutes = 3)
     end_dt = peak_datetimes[-1] + pd.Timedelta(minutes = 3)
 
-    sampling_freq = 1 #do we want to remove the high freq noise?
+    sampling_freq = 1000 #do we want to remove the high freq noise?
     
     start_csv_A, end_csv_A = processing.which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
     start_csv_B, end_csv_B = processing.which_csvs(False, day ,start_dt, end_dt, tz_MAG = True)
@@ -102,8 +102,8 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
     
         df = processing.shifttime(df, soloA_bool) # must shift MFSA data to MAG/spacecraft time
         
-        #print(df.head())
-        #print(df.tail())
+        print(df.head())
+        print(df.tail())
         
         df = df.between_time(start_dt.time(), end_dt.time())
         
@@ -232,8 +232,9 @@ if __name__ == "__main__":
         vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot=False, lowpass = False)
         
         #write the Magnetic Field/Amp proportionality to csv
-        w = csv.writer(open(f"{instrument}_vect_dict_NOORIGIN.csv", "w"))
+        w = csv.writer(open(f"{instrument}_vect_dict_NOORIGIN_notsampled.csv", "w"))
         w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
         for key, val in vect_dict.items():
             w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8]])#,val[9],val[10],val[11]])
+        
         
