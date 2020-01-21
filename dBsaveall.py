@@ -37,7 +37,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
     start_dt = peak_datetimes[0] - pd.Timedelta(minutes = 3)
     end_dt = peak_datetimes[-1] + pd.Timedelta(minutes = 3)
 
-    sampling_freq = 1000 #do we want to remove the high freq noise?
+    sampling_freq = 1 #do we want to remove the high freq noise?
     
     start_csv_A, end_csv_A = processing.which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
     start_csv_B, end_csv_B = processing.which_csvs(False, day ,start_dt, end_dt, tz_MAG = True)
@@ -77,6 +77,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
     vect_dict = {}
     for i in probe_list:
+        dBdI = {}
         #looping through each sensor
         if i < 8:
             soloA_bool = True
@@ -205,10 +206,19 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             plt.show()
 
             
+        for dI in range(len(xdata)):
+            dBdI[f'{dI+1}'] = [xdata[dI],probe_x_tmp[dI],probe_x_tmp_err[dI],probe_y_tmp[dI],probe_y_tmp_err[dI],probe_z_tmp[dI],probe_z_tmp_err[dI]]
+        
+
+        w = csv.writer(open(f"{instrument}_probe{i+1}_vect_dict_1Hz.csv", "w"))
+        w.writerow(["key","dI","dB_X","dB_X_err","dB_Y","dB_Y_err","dB_Z","dB_Z_err"])
+        for key, val in dBdI.items():
+            w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6]])#,val[9],val[10],val[11]])
+
+            
   
         vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope,X.stderr,Y.stderr,Z.stderr, X.intercept ,Y.intercept, Z.intercept ]#,params_x[0],params_y[0],params_z[0],perr_x[0],perr_y[0],perr_z[0]] #atm linear regression gradient - or should it be curve_fit?
-
-
+    
     return vect_dict
 
 if __name__ == "__main__":
@@ -216,7 +226,7 @@ if __name__ == "__main__":
     windows = False
     probes = range(12) #what probes are desired
     day_number = 2
-    instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
+    instru_list = ['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']#['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 
     #create dictionary with all current peaks for every instrument (v. fast)
     dict_current = current_peaks(windows, day_number, plot=False)
