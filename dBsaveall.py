@@ -37,7 +37,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
     start_dt = peak_datetimes[0] - pd.Timedelta(minutes = 3)
     end_dt = peak_datetimes[-1] + pd.Timedelta(minutes = 3)
 
-    sampling_freq = 1 #do we want to remove the high freq noise?
+    sampling_freq = 1000 #do we want to remove the high freq noise?
     
     start_csv_A, end_csv_A = processing.which_csvs(True, day ,start_dt, end_dt, tz_MAG = True)
     start_csv_B, end_csv_B = processing.which_csvs(False, day ,start_dt, end_dt, tz_MAG = True)
@@ -210,7 +210,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             dBdI[f'{dI+1}'] = [xdata[dI],probe_x_tmp[dI],probe_x_tmp_err[dI],probe_y_tmp[dI],probe_y_tmp_err[dI],probe_z_tmp[dI],probe_z_tmp_err[dI]]
         
 
-        w = csv.writer(open(f"{instrument}_probe{i+1}_vect_dict_1Hz.csv", "w"))
+        w = csv.writer(open(f"{instrument}_probe{i+1}_vect_dict_1kHz.csv", "w"))
         w.writerow(["key","dI","dB_X","dB_X_err","dB_Y","dB_Y_err","dB_Z","dB_Z_err"])
         for key, val in dBdI.items():
             w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6]])#,val[9],val[10],val[11]])
