@@ -204,7 +204,16 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             plt.ylabel('dB [nT]')
             plt.show()
 
-            
+            save_all = False 
+            if save_all:
+                dBdI = {}
+                for dI in range(len(xdata)):
+                    dBdI[f'{dI+1}'] = [xdata[dI],probe_x_tmp[dI],probe_x_tmp_err[dI],probe_y_tmp[dI],probe_y_tmp_err[dI],probe_z_tmp[dI],probe_z_tmp_err[dI]]
+                
+                w = csv.writer(open(f"{instrument}_probe{i+1}_vect_dict_1kHz.csv", "w"))
+                w.writerow(["key","dI","dB_X","dB_X_err","dB_Y","dB_Y_err","dB_Z","dB_Z_err"])
+                for key, val in dBdI.items():
+                    w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6]])#,val[9],val[10],val[11]])
   
         vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope,X.stderr,Y.stderr,Z.stderr, X.intercept ,Y.intercept, Z.intercept ]#,params_x[0],params_y[0],params_z[0],perr_x[0],perr_y[0],perr_z[0]] #atm linear regression gradient - or should it be curve_fit?
 
@@ -214,9 +223,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 if __name__ == "__main__":
     #these 3 factors need to be set 
     windows = False
-    probes = range(12) #what probes are desired
+    probes = [0]#range(12) #what probes are desired
     day_number = 2
-    instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
+    instru_list = ['EPD']#, 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 
     #create dictionary with all current peaks for every instrument (v. fast)
     dict_current = current_peaks(windows, day_number, plot=False)
@@ -229,7 +238,7 @@ if __name__ == "__main__":
         #need current dif (gradient in current) to plot later
         current_dif = dict_current.get(f'{instrument} Current [A] dI')
         #create dictionary of the Magnetic Field/Amp proportionality for the desired instrument
-        vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot=False, lowpass = False)
+        vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot=True, lowpass = False)
         
         #write the Magnetic Field/Amp proportionality to csv
         """

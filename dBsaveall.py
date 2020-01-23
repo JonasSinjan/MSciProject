@@ -210,10 +210,12 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             dBdI[f'{dI+1}'] = [xdata[dI],probe_x_tmp[dI],probe_x_tmp_err[dI],probe_y_tmp[dI],probe_y_tmp_err[dI],probe_z_tmp[dI],probe_z_tmp_err[dI]]
         
 
-        w = csv.writer(open(f"{instrument}_probe{i+1}_vect_dict_1kHz.csv", "w"))
-        w.writerow(["key","dI","dB_X","dB_X_err","dB_Y","dB_Y_err","dB_Z","dB_Z_err"])
-        for key, val in dBdI.items():
-            w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6]])#,val[9],val[10],val[11]])
+        save_all = False 
+        if save_all:
+            w = csv.writer(open(f"{instrument}_probe{i+1}_vect_dict_1kHz.csv", "w"))
+            w.writerow(["key","dI","dB_X","dB_X_err","dB_Y","dB_Y_err","dB_Z","dB_Z_err"])
+            for key, val in dBdI.items():
+                w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6]])#,val[9],val[10],val[11]])
 
             
   
