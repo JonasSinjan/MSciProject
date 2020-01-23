@@ -60,6 +60,7 @@ def plot(windows,day,instruments,probes,sample_rate):
             plt.title(f'Day {day} - {inst} - Probe {probe} - {sample}Hz - MFSA')
             plt.xlabel('dI [A]')
             plt.ylabel('dB [nT]')
+            
 
             plt.show()
         
@@ -67,8 +68,8 @@ def plot(windows,day,instruments,probes,sample_rate):
 
 windows = False
 day = 2
-instruments = ['EUI']
-probes = range(1,13)
+instruments = ['SoloHI']
+probes = [10]
 sample_rate = 1
 
 plot(windows,day,instruments,probes,sample_rate)
