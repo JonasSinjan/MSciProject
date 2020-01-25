@@ -37,12 +37,14 @@ def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     
     if plot: #plotting the raw probes results
         plt.figure()
-        for col in collist[1:]:
-            plt.plot(df2.index.time, df2[col], label=str(col))
+        #for col in collist[2:4:3]:
+        plt.plot(df2.index.time, df2[collist[1]]+6, label=str(collist[1]))
+        plt.plot(df2.index.time, df2[collist[2]]-47, label=str(collist[2]))
+        plt.plot(df2.index.time, df2[collist[3]]+64, label=str(collist[3]))
             #print(df2[col].abs().idxmax())
-        plt.xlabel('Time (s)')
-        plt.ylabel('B (nT)')
-        plt.title(f'Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
+        plt.xlabel('Spacecraft Time [H:M:S]')
+        plt.ylabel('dB [nT]')
+        plt.title(f'Probe {num} @ {sampling_freq}Hz, {start_dt.date()} PHI')
         plt.legend(loc="best")
         plt.show()
 
@@ -62,20 +64,20 @@ if __name__ == "__main__":
         path_fol_B =  os.path.expanduser("~/Documents/MsciProject/Data/day_two/B")
     
     #here select which probe is desired, only one at a time
-    num = 12
+    num = 10
     if num < 9:
         soloA_bool = True
     else:
         soloA_bool = False
-    if num <10:
+    if num < 10:
         num_str = f'0{num}'
     else: 
         num_str = num
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
     #the datetime we change here is in spacecraft time - used for if want probes for a certain current profile (which is in spacecraft time)
-    start_dt = datetime(2019,6,24,9,25) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,10,9) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
+    start_dt = datetime(2019,6,24,8,3) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,24,8,40) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
     #start and end dt now in MFSA (German UT) time - as MFSA in that time
     day = 2
     #finding the correct MFSA data files
@@ -97,5 +99,5 @@ if __name__ == "__main__":
                 all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-24--08-14-24_{i}.csv') #need to change path_fol_B to the path where your B folder is
     
     alt = False #if want powerspec from `brute force' method - or inbuilt scipy periodogram method
-    day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 100) #pass through the list containing the file paths
+    day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 0.1) #pass through the list containing the file paths
 

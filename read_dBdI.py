@@ -22,8 +22,8 @@ def plot(windows,day,instruments,probes,sample_rate):
                 sample = '1'
 
             if windows:
-                a = 1
-                #path_fol = os.path.expanduser(f'C:\Users\jonas\MSci-Code\MSciProject\dBdI_data\Day{day}\{sample}Hz\{instrument}_probe{probe}_vect_dict_{sample}Hz.csv')
+                #a = 1
+                path_fol = f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\dBdI_data\\Day{day}\\{sample}Hz\\{inst}_probe{probe}_vect_dict_{sample}Hz.csv'
             else:
                 path_fol = os.path.expanduser(f"~/Documents/MSciProject/NewCode/dBdI_data/Day{day}/{sample}Hz/{inst}_probe{probe}_vect_dict_{sample}Hz.csv")
 
@@ -66,9 +66,9 @@ def plot(windows,day,instruments,probes,sample_rate):
         
 
 
-windows = False
+windows = True
 day = 2
-instruments = ['SoloHI']
+instruments = ['PHI']
 probes = [10]
 sample_rate = 1
 
