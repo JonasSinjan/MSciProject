@@ -76,10 +76,10 @@ def dB(peak_datetimes, instrument, current_dif, windows): #for only one instrume
     #each sensor will have 3 lines for X, Y, Z
     
 if __name__ == "__main__":
-    windows = False
+    windows = True
 
     dict_current = current_peaks(windows,2, plot=False)
-    instrument = 'METIS'
+    instrument = 'PHI'
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
     print(peak_datetimes[0], peak_datetimes[-1])
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
