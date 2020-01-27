@@ -38,9 +38,9 @@ def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     if plot: #plotting the raw probes results
         plt.figure()
         #for col in collist[2:4:3]:
-        plt.plot(df2.index.time, df2[collist[1]]+6, label=str(collist[1]))
-        plt.plot(df2.index.time, df2[collist[2]]-47, label=str(collist[2]))
-        plt.plot(df2.index.time, df2[collist[3]]+64, label=str(collist[3]))
+        plt.plot(df2.index.time, df2[collist[1]]+6, label=str(collist[1])) #probe 10: +6 #probe 9: +203
+        plt.plot(df2.index.time, df2[collist[2]]-47, label=str(collist[2])) #probe 10: -47 #probe 9: -50
+        plt.plot(df2.index.time, df2[collist[3]]+64, label=str(collist[3])) #probe 10: +64 #probe 9: +104
             #print(df2[col].abs().idxmax())
         plt.xlabel('Spacecraft Time [H:M:S]')
         plt.ylabel('dB [nT]')
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     else: 
         num_str = num
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
-
+    #8:03 - 8:40 phi, 9:24-10:10 eui
     #the datetime we change here is in spacecraft time - used for if want probes for a certain current profile (which is in spacecraft time)
     start_dt = datetime(2019,6,24,8,3) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
     end_dt = datetime(2019,6,24,8,40) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
