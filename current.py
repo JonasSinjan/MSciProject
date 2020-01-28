@@ -183,7 +183,7 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
     return dict_cur
 
 if __name__ == "__main__":
-    windows = False
+    windows = True
     daynumber = 2
-    dict = current_peaks(windows, daynumber, plot = True)
-    print(dict['MAG Current [A]'])
+    dict = current_peaks(windows, daynumber, plot = False)
+    print(dict['METIS Current [A]'])
