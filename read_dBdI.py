@@ -68,8 +68,8 @@ def plot(windows,day,instruments,probes,sample_rate):
 
 windows = False
 day = 2
-instruments = ['SoloHI']
-probes = [10]
+instruments = ['EPD']
+probes = [12]
 sample_rate = 1
 
 plot(windows,day,instruments,probes,sample_rate)

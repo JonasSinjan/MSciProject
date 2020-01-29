@@ -84,7 +84,7 @@ if __name__ == "__main__":
         else:
             filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay2.csv.txt")
         
-    start_dt = datetime(2019,6,21,10,38)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,15,0)# this is the end
+    start_dt = datetime(2019,6,21,10,39)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,21,15,1)# this is the end
 
     mag(filepath, day, start_dt=start_dt, end_dt=end_dt)

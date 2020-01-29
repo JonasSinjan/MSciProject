@@ -34,14 +34,15 @@ def vector_map(vect_dict, instrument):
 
 
 if __name__ == "__main__":
-    windows = True
-
-    dict_current = current_peaks(windows, plot=False)
-    instrument = 'EUI'
+    
+    windows = False
+    dict_current = current_peaks(windows,2, plot=False)
+    instrument = 'METIS'
     peak_datetimes = dict_current.get(f'{instrument} Current [A]')
     current_dif = dict_current.get(f'{instrument} Current [A] dI')
     probes = range(11)
-    vect_dict = dB(peak_datetimes, instrument, current_dif, windows, probes, plot=False)
+    vect_dict = dB(2,peak_datetimes, instrument, current_dif, windows, probes, plot=False)
+    
     vector_map(vect_dict, instrument)
     #should this read in files rather than recalculating the vect dicts?
 

@@ -11,8 +11,12 @@ import scipy.signal as sps
 import time
 from datetime import datetime
 import scipy.stats as spstats
+import csv 
 
 def dB(peak_datetimes, instrument, current_dif, windows): #for only one instrument
+
+
+    sampling_freq = 1
 
     if windows:
         mag_filepath = r'C:\Users\jonas\MSci-Data\PoweredDay2.csv.txt'
@@ -41,11 +45,21 @@ def dB(peak_datetimes, instrument, current_dif, windows): #for only one instrume
     df = df.loc[:, 'X':]
 
     df = df.between_time(start_dt.time(), end_dt.time())
-    fs = 128
+
+    if sampling_freq < 1000:
+        factor = int(1000/sampling_freq)
+        if factor >= 0.001:
+            df = df.resample(f'{factor}ms').mean()
+        else:
+            print('The resampling is in the wrong units - must be factor*milliseconds')
+    else:
+        print('The desired sampling frequency is greater than the raw data available - defaulted to 1kHz')
+        
+    fs = 20
 
     collist = ['time','X','Y','Z']
-    df = df.resample('1s').mean()
-    processing.powerspecplot(df, fs, collist, False, inst = instrument)
+    #df = df.resample('1s').mean()
+    #processing.powerspecplot(df, fs, collist, False, inst = instrument)
 
     step_dict = processing.calculate_dB(df, peak_datetimes)
 
@@ -53,7 +67,8 @@ def dB(peak_datetimes, instrument, current_dif, windows): #for only one instrume
     X = spstats.linregress(current_dif, step_dict.get('X'))
     Y = spstats.linregress(current_dif, step_dict.get('Y'))
     Z = spstats.linregress(current_dif, step_dict.get('Z'))
-
+    
+    """
     plt.figure()
     plt.errorbar(current_dif, step_dict.get('X'), yerr = step_dict.get('X err'), fmt = 'bs', label = f'X grad: {round(X.slope,2)} ± {round(X.stderr,2)} int: {round(X.intercept, 2)}',markeredgewidth = 2) #also need to save the change in current
     plt.errorbar(current_dif, step_dict.get('Y'), yerr = step_dict.get('Y err'), fmt = 'rs', label = f'Y grad: {round(Y.slope,2)} ± {round(Y.stderr,2)} int: {round(Y.intercept, 2)}', markeredgewidth = 2)
@@ -68,19 +83,52 @@ def dB(peak_datetimes, instrument, current_dif, windows): #for only one instrume
     plt.xlabel('dI [A]')
     plt.ylabel('dB [nT]')
     plt.show()
-
+    
     print('sps.linregress')
     print('Slope = ', X.slope, '+/-', X.stderr, ' Intercept = ', X.intercept)
     print('Slope = ', Y.slope, '+/-', Y.stderr, ' Intercept = ', Y.intercept)
     print('Slope = ', Z.slope, '+/-', Z.stderr, ' Intercept = ', Z.intercept)
     #each sensor will have 3 lines for X, Y, Z
+    """
+    vect_dict = {}
     
+    dBdI = {}
+    for dI in range(len(current_dif)):
+        dBdI[f'{dI+1}'] = [current_dif[dI],step_dict.get('X')[dI],step_dict.get('X err')[dI],step_dict.get('Y')[dI],step_dict.get('Y err')[dI],step_dict.get('Z')[dI],step_dict.get('Z err')[dI]]
+                
+        w = csv.writer(open(f"{instrument}_vect_dict_mag_dBdI_day2.csv", "w"))
+        w.writerow(["key","dI","dB_X","dB_X_err","dB_Y","dB_Y_err","dB_Z","dB_Z_err"])
+    for key, val in dBdI.items():
+        w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6]])#,val[9],val[10],val[11]])
+
+    vect_list = [instrument,X.slope, Y.slope, Z.slope,X.stderr,Y.stderr,Z.stderr, X.intercept ,Y.intercept, Z.intercept ]
+    return vect_list
+    
+
 if __name__ == "__main__":
     windows = False
 
     dict_current = current_peaks(windows,2, plot=False)
-    instrument = 'METIS'
-    peak_datetimes = dict_current.get(f'{instrument} Current [A]')
-    print(peak_datetimes[0], peak_datetimes[-1])
-    current_dif = dict_current.get(f'{instrument} Current [A] dI')
-    dB(peak_datetimes, instrument, current_dif, windows)
+    instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
+    vect_dict = {}
+    i = 0
+    for instrument in instru_list:
+        i+=1
+        #get list of the peaks' datetimes for the desired instrument
+        peak_datetimes = dict_current.get(f'{instrument} Current [A]')
+        #print first and last peak datetime to affirm correct instrument
+        #print(peak_datetimes[0], peak_datetimes[-1]) 
+        #need current dif (gradient in current) to plot later
+        current_dif = dict_current.get(f'{instrument} Current [A] dI')
+        #create dictionary of the Magnetic Field/Amp proportionality for the desired instrument
+        vect_dict[f'{i}'] = dB(peak_datetimes, instrument, current_dif, windows)
+        #write the Magnetic Field/Amp proportionality to csv
+        
+
+w = csv.writer(open("mag_vect_dict_slopes_day2.csv", "w"))
+w.writerow(["instrument","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
+for key, val in vect_dict.items():
+    w.writerow([val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9]])#,val[9],val[10],val[11]])
+
+    
+    

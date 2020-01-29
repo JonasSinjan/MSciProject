@@ -160,6 +160,7 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
             plt.ylabel('Current [A]')
             #else:
             #   print("no peaks detected")
+            plt.savefig('%s_dI' % str(col))
             plt.show()
             
         return dict_cur, i
