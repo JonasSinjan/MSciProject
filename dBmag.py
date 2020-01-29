@@ -106,7 +106,7 @@ def dB(peak_datetimes, instrument, current_dif, windows): #for only one instrume
     
 
 if __name__ == "__main__":
-    windows = False
+    windows = True
 
     dict_current = current_peaks(windows,2, plot=False)
     instru_list = ['EPD', 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
@@ -116,6 +116,7 @@ if __name__ == "__main__":
         i+=1
         #get list of the peaks' datetimes for the desired instrument
         peak_datetimes = dict_current.get(f'{instrument} Current [A]')
+        print(peak_datetimes[0], peak_datetimes[-1])
         #print first and last peak datetime to affirm correct instrument
         #print(peak_datetimes[0], peak_datetimes[-1]) 
         #need current dif (gradient in current) to plot later

@@ -222,10 +222,10 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
 if __name__ == "__main__":
     #these 3 factors need to be set 
-    windows = False
-    probes = [0]#range(12) #what probes are desired
+    windows = True
+    probes = [9]#range(12) #what probes are desired
     day_number = 2
-    instru_list = ['EPD']#, 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
+    instru_list = ['EUI']#, 'EUI', 'SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI']
 
     #create dictionary with all current peaks for every instrument (v. fast)
     dict_current = current_peaks(windows, day_number, plot=False)
