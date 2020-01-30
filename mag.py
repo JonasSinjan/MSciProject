@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 import time
 import math
 
-def mag(filepath, day, start_dt=None, end_dt=None):
+def mag(filepath, day, start_dt=None, end_dt=None, plot = False):
     
     if day == 1:
         origin = datetime(2019,6,21, hour = 10, minute = 38, second = 0)
@@ -43,10 +43,9 @@ def mag(filepath, day, start_dt=None, end_dt=None):
     #df.index = df.index*(1/128) #hardcoding 128 vectors/second
     df.index = pd.to_datetime(df['time'], unit = 's', origin = origin) #microsecond not added because when to_datetime unit must be 's' (due to data format of csv)
     df = df.loc[:, 'X':]
-    print(df.head())
-    print(df.tail())
+    #print(df.head())
+    #print(df.tail())
 
-    plot = True
     if plot:
         plt.figure()
         cols = df.columns.tolist()
@@ -66,6 +65,8 @@ def mag(filepath, day, start_dt=None, end_dt=None):
         print(time_list[2]- time_list[0], time_list[1]-time_list[2])
 
         plt.show()
+        print (type(df))
+    return df 
     
 if __name__ == "__main__":
     day = 1
@@ -84,7 +85,7 @@ if __name__ == "__main__":
         else:
             filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay2.csv.txt")
         
-    start_dt = datetime(2019,6,21,10,39)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,15,1)# this is the end
+    start_dt = datetime(2019,6,21,12,0)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,21,14,30)# this is the end
 
-    mag(filepath, day, start_dt=start_dt, end_dt=end_dt)
+    df = mag(filepath, day, start_dt=start_dt, end_dt=end_dt, plot = True)

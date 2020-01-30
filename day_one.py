@@ -79,7 +79,7 @@ if __name__ == "__main__":
         path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_one/B")
 
     alt = False #set to true if you want to see power spec using the stnadard method - not the inbuilt funciton
-    num = 11
+    num = 1
     if num < 9:
         soloA_bool = True
     else:
@@ -90,7 +90,7 @@ if __name__ == "__main__":
         num_str = num
     collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
-    start_dt = datetime(2019,6,21,16,0)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    start_dt = datetime(2019,6,21,15,30)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
     end_dt = datetime(2019,6,21,16,30)# this is the end
 
     day = 1
