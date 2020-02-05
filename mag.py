@@ -13,7 +13,7 @@ import math
 def mag(filepath, day, start_dt=None, end_dt=None, plot = False):
     
     if day == 1:
-        origin = datetime(2019,6,21, hour = 10, minute = 38, second = 0)
+        origin = datetime(2019,6,21, hour = 8, minute = 57, second = 4)
     elif day == 2:
         origin = datetime(2019,6,24, hour = 7, minute = 48, second = 19)
 
@@ -85,7 +85,7 @@ if __name__ == "__main__":
         else:
             filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay2.csv.txt")
         
-    start_dt = datetime(2019,6,21,12,0)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,14,30)# this is the end
+    start_dt = datetime(2019,6,21,8,58)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,21,12,30)# this is the end
 
     df = mag(filepath, day, start_dt=start_dt, end_dt=end_dt, plot = True)

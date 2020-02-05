@@ -313,32 +313,3 @@ for i in range(len(start_times)):
         #print("mag variation (T)", dif,"+/-" , tot_std)
 """
 
-"""
-
-# -------METIS-----------#
-#metis current variation during scientific operation is 0.1286 +/- 0.0003 A
-
-#metis only significant signal in Y at probe 10: 0.29nT/A
-var = 0.29*dif
-#when multiplying together, add the fractional errors in quadrature
-err = np.sqrt((0.13/0.29)**2 + (tot_std/dif)**2) #fractional error in variation
-print(round(var, 4), '+/-', round(err*var,4), 'nT') #in nT
-#metis B var at MAG-OBS: 37 +/- 17 pT
-
-
-# -------EUI----------#
-dif = 0.8 #rough estimate as variation not as constant as with metis
-tot_std = 0.1
-tot_grad = np.sqrt(0.71**2 + 1.02**2)
-
-print(tot_grad, 'nT/A')
-
-grad_err = np.sqrt(((0.71/tot_grad)**2)*(0.19**2) + ((1.02/tot_grad)**2)*(0.19**2))
-
-var = dif * tot_grad
-
-var_err = np.sqrt((grad_err/var)**2 + (tot_std/dif)**2)
-print(1000*round(var, 5), '+/-', 1000*round(var_err*var,5), 'pT') #in nT
-
-
-"""
