@@ -140,7 +140,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
         step_dict = processing.calculate_dB(df, peak_datetimes)
 
-        xdata = list(current_dif[0:len(peak_datetimes)])
+        xdata = list(current_dif[:len(peak_datetimes)])
         
         probe_x_tmp = step_dict.get(f'Probe{num_str}_X')
         probe_y_tmp = step_dict.get(f'Probe{num_str}_Y')
@@ -232,7 +232,7 @@ if __name__ == "__main__":
     windows = True
     probes = range(12) #what probes are desired
     day_number = 1
-    instru_list = ['SWA']#, 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI'] #['EUI']
+    instru_list = ['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI'] #['EUI', 'SWA']
 
     #create dictionary with all current peaks for every instrument (v. fast)
     dict_current = current_peaks(windows, day_number, plot=False)
@@ -252,9 +252,9 @@ if __name__ == "__main__":
         print(vect_dict['12'])
         
         #write the Magnetic Field/Amp proportionality to csv
-        """
-        w = csv.writer(open(f"{instrument}_vect_dict_NOORIGIN_Day{day_number}.csv", "w"))
-        w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
-        for key, val in vect_dict.items():
-            w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8]])#,val[9],val[10],val[11]])
-        """
+        
+    w = csv.writer(open(f"{instrument}_vect_dict_NOORIGIN_Day{day_number}.csv", "w"))
+    w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
+    for key, val in vect_dict.items():
+        w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8]])#,val[9],val[10],val[11]])
+        
