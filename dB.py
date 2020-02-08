@@ -232,7 +232,7 @@ if __name__ == "__main__":
     windows = True
     probes = range(12) #what probes are desired
     day_number = 1
-    instru_list = ['SWA', 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI'] #['EUI']
+    instru_list = ['SWA']#, 'STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI'] #['EUI']
 
     #create dictionary with all current peaks for every instrument (v. fast)
     dict_current = current_peaks(windows, day_number, plot=False)
