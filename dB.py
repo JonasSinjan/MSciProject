@@ -140,7 +140,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
         step_dict = processing.calculate_dB(df, peak_datetimes)
 
-        xdata = list(current_dif)
+        xdata = list(current_dif[0:len(peak_datetimes)])
         
         probe_x_tmp = step_dict.get(f'Probe{num_str}_X')
         probe_y_tmp = step_dict.get(f'Probe{num_str}_Y')
@@ -211,16 +211,16 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             plt.ylabel('dB [nT]')
             plt.show()
 
-            save_all = True
-            if save_all:
-                dBdI = {}
-                for dI in range(len(xdata)):
-                    dBdI[f'{dI+1}'] = [xdata[dI],probe_x_tmp[dI],probe_x_tmp_err[dI],probe_y_tmp[dI],probe_y_tmp_err[dI],probe_z_tmp[dI],probe_z_tmp_err[dI]]
-                
-                w = csv.writer(open(f"{instrument}_probe{i+1}_vect_dict_1Hz_day{day_number}.csv", "w"))
-                w.writerow(["key","dI","dB_X","dB_X_err","dB_Y","dB_Y_err","dB_Z","dB_Z_err"])
-                for key, val in dBdI.items():
-                    w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6]])#,val[9],val[10],val[11]])
+        save_all = True
+        if save_all:
+            dBdI = {}
+            for dI in range(len(xdata)):
+                dBdI[f'{dI+1}'] = [xdata[dI],probe_x_tmp[dI],probe_x_tmp_err[dI],probe_y_tmp[dI],probe_y_tmp_err[dI],probe_z_tmp[dI],probe_z_tmp_err[dI]]
+            
+            w = csv.writer(open(f"{instrument}_probe{i+1}_vect_dict_1Hz_day{day_number}.csv", "w"))
+            w.writerow(["key","dI","dB_X","dB_X_err","dB_Y","dB_Y_err","dB_Z","dB_Z_err"])
+            for key, val in dBdI.items():
+                w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6]])#,val[9],val[10],val[11]])
   
         vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope,X.stderr,Y.stderr,Z.stderr, X.intercept ,Y.intercept, Z.intercept ]#,params_x[0],params_y[0],params_z[0],perr_x[0],perr_y[0],perr_z[0]] #atm linear regression gradient - or should it be curve_fit?
 
@@ -241,7 +241,7 @@ if __name__ == "__main__":
         #get list of the peaks' datetimes for the desired instrument
         peak_datetimes = dict_current.get(f'{instrument} Current [A]')
         if day_number == 1:
-            peak_datetimes = [peak for peak in peak_datetimes if peak < datetime(2019,6,21,14,40)]
+            peak_datetimes = [peak for peak in peak_datetimes if peak < datetime(2019,6,21,14,44)]
         #print(peak_datetimes)
         #print first and last peak datetime to affirm correct instrument
         #print(peak_datetimes[0], peak_datetimes[-1]) 
@@ -249,11 +249,12 @@ if __name__ == "__main__":
         current_dif = dict_current.get(f'{instrument} Current [A] dI')
         #create dictionary of the Magnetic Field/Amp proportionality for the desired instrument
         vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot = False, lowpass = False)
+        print(vect_dict['12'])
         
         #write the Magnetic Field/Amp proportionality to csv
-        
+        """
         w = csv.writer(open(f"{instrument}_vect_dict_NOORIGIN_Day{day_number}.csv", "w"))
         w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
         for key, val in vect_dict.items():
             w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8]])#,val[9],val[10],val[11]])
-        
+        """
