@@ -253,8 +253,8 @@ if __name__ == "__main__":
         
         #write the Magnetic Field/Amp proportionality to csv
         
-    w = csv.writer(open(f"{instrument}_vect_dict_NOORIGIN_Day{day_number}.csv", "w"))
-    w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
-    for key, val in vect_dict.items():
-        w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8]])#,val[9],val[10],val[11]])
+        w = csv.writer(open(f"{instrument}_vect_dict_NOORIGIN_Day{day_number}.csv", "w"))
+        w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
+        for key, val in vect_dict.items():
+            w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8]])#,val[9],val[10],val[11]])
         
