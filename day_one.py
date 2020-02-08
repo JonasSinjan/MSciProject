@@ -10,6 +10,7 @@ import scipy.signal as sps
 import time
 from datetime import datetime
 import glob
+import csv
 
 
 def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = None):
@@ -38,18 +39,24 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     #print(df2.head())
 
     if plot: #plotting the raw probes results
-        plt.figure()
+        #plt.figure()
+        tmp = []
         for col in collist[1:]:
-            plt.plot(df2.index.time, df2[col], label=str(col))
+            #plt.plot(df2.index.time, df2[col], label=str(col))
             #print(df2[col].abs().idxmax())
-            print('std - 1Hz', col,  np.std(df3[col]))
-            print('std - 1kHz', col,  np.std(df2[col]))
+            var_1hz = np.std(df3[col])
+            var_1khz = np.std(df2[col])
+            print('std - 1Hz', col, var_1hz)
+            print('std - 1kHz', col,  var_1khz)
+            tmp.append(var_1hz)
+            tmp.append(var_1khz)
+        """
         plt.xlabel('Time (s)')
         plt.ylabel('B (nT)')
         plt.title(f'Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
         plt.legend(loc="best")
         plt.show()
-
+        """
     #power spectrum
     fs = sampling_freq
     #processing.powerspecplot(df, fs, collist, alt)
@@ -70,6 +77,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     plt.colorbar()  
     plt.show()
     """
+    return tmp
 
 
 if __name__ == "__main__":
@@ -85,7 +93,8 @@ if __name__ == "__main__":
 
     alt = False #set to true if you want to see power spec using the stnadard method - not the inbuilt funciton
     #num = 5
-    for num in range(12,13):
+    b_noise = []
+    for num in range(1,13):
         print('num = ', num)
         if num < 9:
             soloA_bool = True
@@ -97,8 +106,8 @@ if __name__ == "__main__":
             num_str = num
         collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
-        start_dt = datetime(2019,6,21,10,10)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-        end_dt = datetime(2019,6,21,10,50)# this is the end
+        start_dt = datetime(2019,6,21,9,45)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+        end_dt = datetime(2019,6,21,10,0)# this is the end
 
         day = 1
         start_csv, end_csv = processing.which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
@@ -119,8 +128,16 @@ if __name__ == "__main__":
                 else:
                     all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{i}.csv') #need to change path_fol_B to the path where your B folder is
 
-        day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 1000) #pass through the list containing the file paths
+        tmp = day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 1000) #pass through the list containing the file paths
+        b_noise.extend(tmp)
 
-
-
+    
+    w = csv.writer(open(f"day1_mfsa_probe_vars.csv", "w"))
+    w.writerow(["Probe","Bx_var","By_var","Bz_var","Bx_var_1k","By_var_1k","Bz_var_1k"])
+    val = b_noise
+    j = 0
+    for i in range(12):
+        w.writerow([i+1,val[j],val[j+2],val[j+4],val[j+1],val[j+3],val[j+5]])#,val[9],val[10],val[11]])
+        j += 6
+    
 

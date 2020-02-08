@@ -22,13 +22,18 @@ def plot(windows,day,instruments,probes,sample_rate):
                 sample = '1'
 
             if windows:
-                #a = 1
                 path = f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\dBdI_data\\Day{day}\\{sample}Hz\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz.csv'
-                if day == 2:
+                if day == 1:
+                    path = f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\dBdI_data\\Day{day}\\{sample}Hz\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz_day1.csv'
+                    err_path = f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\day1_mfsa_probe_vars.csv'
+                elif day == 2:
                     err_path = f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\day2_mfsa_probe_vars.csv'
             else:
                 path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/dBdI_data/Day{day}/{sample}Hz/{inst}/{inst}_probe{probe}_vect_dict_{sample}Hz.csv")
-                if day == 2:
+                if day == 1:
+                    path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/dBdI_data/Day{day}/{sample}Hz/{inst}/{inst}_probe{probe}_vect_dict_{sample}Hz_day1.csv")
+                    err_path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/day1_mfsa_probe_vars.csv")
+                elif day == 2:
                     err_path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/day2_mfsa_probe_vars.csv")
 
             df = pd.read_csv(path)
@@ -73,7 +78,7 @@ def plot(windows,day,instruments,probes,sample_rate):
 
 
 windows = True
-day = 2
+day = 1
 instruments = ['EUI']
 probes = [3,9,10,11]
 sample_rate = 1
