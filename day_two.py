@@ -29,7 +29,7 @@ def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     print(df2.head())
     
     #shitfing time so the axes are in spacecraft time to compare with current data
-    df2 = processing.shifttime(df2, soloA_bool)
+    df2 = processing.shifttime(df2, soloA_bool, 2)
     
     plot = True
     #df2 = df.between_time(start_dt.time(), end_dt.time()) 

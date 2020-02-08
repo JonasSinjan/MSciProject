@@ -93,10 +93,17 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             
         if soloA_bool:
             df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=day, start_dt = start_dt, end_dt = end_dt)
-            rotate_mat = processing.rotate_24(soloA_bool)[i]
+            if day == 1:
+                rotate_mat = processing.rotate_21(soloA_bool)[i]
+            else:
+                rotate_mat = processing.rotate_24(soloA_bool)[i]
         else:
             df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=day, start_dt = start_dt, end_dt = end_dt)
-            rotate_mat = processing.rotate_24(soloA_bool)[i-8]
+            if day == 1:
+                rotate_mat = processing.rotate_21(soloA_bool)[i-8]
+            else:
+                rotate_mat = processing.rotate_24(soloA_bool)[i-8]
+                
         df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
         
     

@@ -92,7 +92,7 @@ def burst_concat(file_1, file_2):
 
     #burst_day_one.to_csv('Day1MAGBurst_full.csv')
 
-def compar(file_1, file_2):
+def compar(file_1, file_2, start_var, end_var, plot=True):
 
     start_time = time.time()
 
@@ -113,7 +113,11 @@ def compar(file_1, file_2):
     #print(len(df))
     start_time = time.time()
     df_2 = pd.read_csv(file_2)
-    df_2.set_index('time', inplace = True)
+    #df_2.set_index('time', inplace = True)
+    df_2.index = pd.to_datetime(df_2['time'])
+    df_2 = df_2[['X', 'Y', 'Z']]
+    print(df_2.head())
+    #print(df_2.index.dtype)
     print("--- %s seconds ---" % (time.time() - start_time))
     #print(len(df_2))
     #print(df_2.iloc[654:666])
@@ -121,21 +125,35 @@ def compar(file_1, file_2):
     #df_merge = df.merge(df_2)
 
     #print(df_merge.head())
+    
+    df = df.between_time(start_var.time(), end_var.time())
+    df_2 = df_2.between_time(start_var.time(), end_var.time())
 
-    plot = False
     if plot:
         plt.figure()
         cols = df.columns.tolist()
         for col in cols:
-            dif_cols = df[col]-df_2[col]
-            print(dif_cols, type(dif_cols))
-            #plt.plot(df.index.time, dif_cols, label =f'{col}')
-            print(np.mean(dif_cols))
+            #dif_cols = df[col]-df_2[col]
+            #print(dif_cols, type(dif_cols))
+            #plt.plot(df.index.time, df[col], label =f'{col}')
+            plt.plot(df_2.index.time, df_2[col], label =f'{col}')
+            #print(np.mean(dif_cols))
         plt.xlabel('Time')
         #plt.ylabel('B [nT]')
         plt.legend(loc="best")
         plt.title('Difference')
+        
+        time_list, time_list_2 = [], []
+        df_abs = df.abs()
+        df_2_abs = df.abs()
+        for col in cols:
+            time_list.append(df_abs[col].idxmax())
+            time_list_2.append(df_2_abs[col].idxmax())
+        print(time_list, time_list_2)
+        
         plt.show()
+        
+    return time_list
 
     
 if __name__ == "__main__":
@@ -154,13 +172,35 @@ if __name__ == "__main__":
         else:
             filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay2.csv.txt")
         
-    start_dt = datetime(2019, 6, 21, 9, 0)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019, 6, 21, 11, 0)# this is the end
+    #start_dt = datetime(2019, 6, 21, 9, 0)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    #end_dt = datetime(2019, 6, 21, 11, 0)# this is the end
 
-    number_rows = 5000000
+    #number_rows = 5000000
 
     #mag_1(filepath)#, number_rows)
 
     #burst_concat(r'C:\Users\jonas\MSci-Data\Day1MAGBurst1.csv',  r'C:\Users\jonas\MSci-Data\Day1MAGBurst2.csv')
 
-    compar(r'C:\Users\jonas\MSci-Data\PoweredDay1.csv', r'C:\Users\jonas\MSci-Data\Day1MAGBurst_full.csv')
+    start_var = datetime(2019,6,21,8,57)
+    end_var = datetime(2019,6,21,9,0)
+    time_list = compar(r'C:\Users\jonas\MSci-Data\PoweredDay1.csv', r'C:\Users\jonas\MSci-Data\Day1MAGBurst_full.csv', start_var, end_var)
+    
+     #First power amplifier check mfsa soloB
+    mfsa_first = datetime(2019,6,21,10,57,50,593000)
+    mfsa_second = datetime(2019,6,21,10,58,0,820000)
+    mfsa_third = datetime(2019,6,21,10,58,10,676000)
+    
+    """ #second power amplifier check mfsa soloB
+    mfsa_first = datetime(2019,6,21,16,2,48,876000)
+    mfsa_second = datetime(2019,6,21,16,2,59,300000)
+    mfsa_third = datetime(2019,6,21,16,3,9,167000)
+    """
+    first_Dt = mfsa_first - min(time_list)
+    second_Dt = mfsa_second - time_list[-1]
+    third_Dt = mfsa_third - max(time_list)
+    tmp = [first_Dt, second_Dt, third_Dt]
+    print(tmp)
+    print(sum(tmp,timedelta(0))/len(tmp))#/np.sqrt(3))
+    
+    
+    

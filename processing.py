@@ -132,11 +132,17 @@ class processing:
         return start_csv, end_csv
 
     @staticmethod
-    def shifttime(df, soloAbool):
+    def shifttime(df, soloAbool, day):
         if soloAbool:
-            df.index = df.index - pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)  
+            if day == 1:
+                df.index = df.index - pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 30, milliseconds = 137)
+            else:
+                df.index = df.index - pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)  
         else:
-            df.index = df.index - pd.Timedelta(days = 0, hours = 1, minutes = 58, seconds = 46, milliseconds = 499)  
+            if day == 1:
+                df.index = df.index - pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 1, milliseconds = 606)
+            else:
+                df.index = df.index - pd.Timedelta(days = 0, hours = 1, minutes = 58, seconds = 46, milliseconds = 499)  
             
         return df
 
