@@ -240,6 +240,8 @@ if __name__ == "__main__":
     for instrument in instru_list:
         #get list of the peaks' datetimes for the desired instrument
         peak_datetimes = dict_current.get(f'{instrument} Current [A]')
+        peak_datetimes = [peak for peak in peak_datetimes if peak < datetime(2019,6,21,14,40)]
+        #print(peak_datetimes)
         #print first and last peak datetime to affirm correct instrument
         #print(peak_datetimes[0], peak_datetimes[-1]) 
         #need current dif (gradient in current) to plot later
