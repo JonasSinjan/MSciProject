@@ -23,20 +23,26 @@ def plot(windows,day,instruments,probes,sample_rate):
 
             if windows:
                 #a = 1
-                path_fol = f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\dBdI_data\\Day{day}\\{sample}Hz\\{inst}_probe{probe}_vect_dict_{sample}Hz.csv'
+                path = f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\dBdI_data\\Day{day}\\{sample}Hz\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz.csv'
+                if day == 2:
+                    err_path = f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\day2_mfsa_probe_vars.csv'
             else:
-                path_fol = os.path.expanduser(f"~/Documents/MSciProject/NewCode/dBdI_data/Day{day}/{sample}Hz/{inst}_probe{probe}_vect_dict_{sample}Hz.csv")
+                path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/dBdI_data/Day{day}/{sample}Hz/{inst}/{inst}_probe{probe}_vect_dict_{sample}Hz.csv")
+                if day == 2:
+                    err_path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/day2_mfsa_probe_vars.csv")
 
-
-            df = pd.read_csv(path_fol)
+            df = pd.read_csv(path)
+            df_err_correction = pd.read_csv(err_path)
+            print(df_err_correction.head())#['Bx_var'])
+            df_err = df_err_correction.iloc[probe-1]
 
             xdata = df['dI']
             probe_x_tmp = df['dB_X']
-            probe_x_tmp_err = df['dB_X_err']
+            probe_x_tmp_err = np.sqrt(df['dB_X_err']**2 + df_err['Bx_var']**2)
             probe_y_tmp = df['dB_Y']
-            probe_y_tmp_err = df['dB_Y_err']
+            probe_y_tmp_err = np.sqrt(df['dB_Y_err']**2 + df_err['By_var']**2)
             probe_z_tmp = df['dB_Z']
-            probe_z_tmp_err = df['dB_Z_err']
+            probe_z_tmp_err = np.sqrt(df['dB_Z_err']**2 + df_err['Bz_var']**2)
 
             X = spstats.linregress(xdata, probe_x_tmp) #adding bonus point has little effect on grad - only changes intercept
             Y = spstats.linregress(xdata, probe_y_tmp)
@@ -68,8 +74,8 @@ def plot(windows,day,instruments,probes,sample_rate):
 
 windows = True
 day = 2
-instruments = ['EPD']
-probes = [12]
+instruments = ['EUI']
+probes = [3,9,10,11]
 sample_rate = 1
 
 plot(windows,day,instruments,probes,sample_rate)
