@@ -78,9 +78,9 @@ def plot(windows,day,instruments,probes,sample_rate):
 
 
 windows = True
-day = 1
-instruments = ['EUI', 'METIS', 'PHI', 'SWA', 'EPD', 'SoloHI', 'STIX', 'SPICE']
-probes = range(1,13)
+day = 2
+instruments = ['EUI']#['EUI', 'METIS', 'PHI', 'SWA', 'EPD', 'SoloHI', 'STIX', 'SPICE']
+probes = [12]#range(1,13)
 sample_rate = 1
 
 plot(windows,day,instruments,probes,sample_rate)

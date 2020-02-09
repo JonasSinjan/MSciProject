@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import sys
+sys.path.append("..") 
 from processing import processing
 from pandas.plotting import register_matplotlib_converters
 from current import current_peaks
@@ -17,7 +19,7 @@ import matplotlib.pyplot as plt
 import csv 
 
 
-def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot = False, lowpass = False): #for only one instrument
+def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot = False, lowpass = False, rand_noise=False): #for only one instrument
 
     if day == 1:
         if windows:
@@ -140,6 +142,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
         step_dict = processing.calculate_dB(df, peak_datetimes)
 
+
         xdata = list(current_dif[:len(peak_datetimes)])
         
         probe_x_tmp = step_dict.get(f'Probe{num_str}_X')
@@ -150,6 +153,30 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
         probe_y_tmp_err = step_dict.get(f'Probe{num_str}_Y err')
         probe_z_tmp_err = step_dict.get(f'Probe{num_str}_Z err')
 
+        if rand_noise:
+            if day == 1:
+                    err_path = f'..\\day1_mfsa_probe_vars.csv'
+            elif day == 2:
+                err_path = f'..\\day2_mfsa_probe_vars.csv'
+            
+            df_err_correction = pd.read_csv(err_path)
+            df_err = df_err_correction.iloc[i]
+            print(df_err, i, num_str)
+
+            probe_x_tmp_err = [np.sqrt(k**2 + df_err['Bx_var']**2) for k in probe_x_tmp_err]
+            probe_y_tmp_err = [np.sqrt(k**2 + df_err['By_var']**2) for k in probe_y_tmp_err]
+            probe_z_tmp_err = [np.sqrt(k**2 + df_err['Bz_var']**2) for k in probe_z_tmp_err]
+
+            def line(x,a,b):
+                return a*x + b
+
+            params_x,cov_x = spo.curve_fit(line, current_dif, probe_x_tmp[:], sigma = probe_x_tmp_err[:], absolute_sigma = True)
+            params_y,cov_y = spo.curve_fit(line, current_dif, probe_y_tmp[:], sigma = probe_y_tmp_err[:], absolute_sigma = True)
+            params_z,cov_z = spo.curve_fit(line, current_dif, probe_z_tmp[:], sigma = probe_z_tmp_err[:], absolute_sigma = True)
+
+            perr_x = np.sqrt(np.diag(cov_x))
+            perr_y = np.sqrt(np.diag(cov_y))
+            perr_z = np.sqrt(np.diag(cov_z))
         #adding bonus point of origin
         force_zero = False
 
@@ -169,16 +196,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
         Y = spstats.linregress(xdata, probe_y_tmp)
         Z = spstats.linregress(xdata, probe_z_tmp)
         
-        #def line(x,a,b):
-        #    return a*x + b #forcing the line through the origin - same as adding bonus point at origin - as curve_fit requires error on origin point - which must be set to ~0 physically
-
-        #params_x,cov_x = spo.curve_fit(line, current_dif, probe_x_tmp[:], sigma = probe_x_tmp_err[:], absolute_sigma = True)
-        #params_y,cov_y = spo.curve_fit(line, current_dif, probe_y_tmp[:], sigma = probe_y_tmp_err[:], absolute_sigma = True)
-        #params_z,cov_z = spo.curve_fit(line, current_dif, probe_z_tmp[:], sigma = probe_z_tmp_err[:], absolute_sigma = True)
-
-        # perr_x = np.sqrt(np.diag(cov_x))
-        # perr_y = np.sqrt(np.diag(cov_y))
-        # perr_z = np.sqrt(np.diag(cov_z))
+        
 
         print('sps.linregress')
         print('Slope = ', X.slope, '+/-', X.stderr, ' Intercept = ', X.intercept)
@@ -186,10 +204,10 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
         print('Slope = ', Z.slope, '+/-', Z.stderr, ' Intercept = ', Z.intercept)
 
         print('~')
-        # print('spo.curve_fit')
-        # print('Slope & Intercept = ', params_x, '+/-', perr_x)
-        # print('Slope & Intercept = ', params_y, '+/-', perr_y)
-        # print('Slope & Intercept = ', params_z, '+/-', perr_z)
+        print('spo.curve_fit')
+        print('Slope & Intercept = ', params_x, '+/-', perr_x)
+        print('Slope & Intercept = ', params_y, '+/-', perr_y)
+        print('Slope & Intercept = ', params_z, '+/-', perr_z)
 
         if plot:
             plt.figure()
@@ -201,9 +219,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             plt.plot(xdata, Y.intercept + Y.slope*np.array(xdata), 'r-')
             plt.plot(xdata, Z.intercept + Z.slope*np.array(xdata), 'g-')
 
-           # plt.plot(current_dif, params_x[0]*current_dif + params_x[1], 'b:', label = f'curve_fit - X grad: {round(params_x[0],1)} ± {round(perr_x[0],1)} int: {round(params_x[1],1)} ± {round(perr_x[1],1)}')
-          #  plt.plot(current_dif, params_y[0]*current_dif + params_y[1], 'r:', label = f'curve_fit - Y grad: {round(params_y[0],1)} ± {round(perr_y[0],1)} int: {round(params_y[1],1)} ± {round(perr_y[1],1)}')
-         #   plt.plot(current_dif, params_z[0]*current_dif + params_z[1], 'g:', label = f'curve_fit - Z grad: {round(params_z[0],1)} ± {round(perr_z[0],1)} int: {round(params_z[1],1)} ± {round(perr_z[1],1)}')
+            plt.plot(current_dif, params_x[0]*current_dif + params_x[1], 'b:', label = f'curve_fit - X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
+            plt.plot(current_dif, params_y[0]*current_dif + params_y[1], 'r:', label = f'curve_fit - Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
+            plt.plot(current_dif, params_z[0]*current_dif + params_z[1], 'g:', label = f'curve_fit - Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
 
             plt.legend(loc="best")
             plt.title(f'{instrument} - Probe {num_str} - MFSA - Day {day_number}')
@@ -221,8 +239,12 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             w.writerow(["key","dI","dB_X","dB_X_err","dB_Y","dB_Y_err","dB_Z","dB_Z_err"])
             for key, val in dBdI.items():
                 w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6]])#,val[9],val[10],val[11]])
-  
-        vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope,X.stderr,Y.stderr,Z.stderr, X.intercept ,Y.intercept, Z.intercept ]#,params_x[0],params_y[0],params_z[0],perr_x[0],perr_y[0],perr_z[0]] #atm linear regression gradient - or should it be curve_fit?
+
+        if rand_noise:
+            vect_dict[f'{i+1}'] = [params_x[0], params_y[0], params_z[0], perr_x[0], perr_y[0], perr_z[0], params_x[1], params_y[1], params_z[1], perr_x[1], perr_y[1], perr_z[1]]
+        else:
+            vect_dict[f'{i+1}'] = [X.slope, Y.slope, Z.slope,X.stderr,Y.stderr,Z.stderr, X.intercept ,Y.intercept, Z.intercept]
+        ##,params_x[0],params_y[0],params_z[0],perr_x[0],perr_y[0],perr_z[0]] #atm linear regression gradient - or should it be curve_fit?
 
 
     return vect_dict
@@ -230,9 +252,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 if __name__ == "__main__":
     #these 3 factors need to be set 
     windows = True
-    probes = range(12) #what probes are desired
-    day_number = 1
-    instru_list = ['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI'] #['EUI', 'SWA']
+    probes = range(12)#range(8,12) #what probes are desired
+    day_number = 2
+    instru_list = ['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI', 'EUI', 'SWA', 'EPD']
 
     #create dictionary with all current peaks for every instrument (v. fast)
     dict_current = current_peaks(windows, day_number, plot=False)
@@ -248,13 +270,14 @@ if __name__ == "__main__":
         #need current dif (gradient in current) to plot later
         current_dif = dict_current.get(f'{instrument} Current [A] dI')
         #create dictionary of the Magnetic Field/Amp proportionality for the desired instrument
-        vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot = False, lowpass = False)
-        print(vect_dict['12'])
+        vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot = True, lowpass = False, rand_noise = True)
+        #print(vect_dict['12'])
         
         #write the Magnetic Field/Amp proportionality to csv
         
-        w = csv.writer(open(f"{instrument}_vect_dict_NOORIGIN_Day{day_number}.csv", "w"))
-        w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
+        w = csv.writer(open(f"..\\Results\\Gradient_dicts\\Day_{day_number}\\1hz_noorigin\\{instrument}_vect_dict_NOORIGIN_Day{day_number}_curve_fit.csv", "w"))
+        #w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
+        w.writerow(["Probe","X.slope_cur", "Y.slope_cur", "Z.slope_cur","X.slope_cur_err", "Y.slope_cur_err", "Z.slope_cur_err","X_zero_int","Y_zero_int","Z_zero_int", "X_zero_int_err","Y_zero_int_err","Z_zero_int_err"]
         for key, val in vect_dict.items():
-            w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8]])#,val[9],val[10],val[11]])
+            w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9],val[10],val[11]])
         
