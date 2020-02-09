@@ -146,6 +146,9 @@ for i in range(len(var_current)):
         B_var_Y_err_estim = np.sqrt(Y_Slope_err**2 + var_current_err[i]**2)
         B_var_Z_err_estim = np.sqrt(Z_Slope_err**2 + var_current_err[i]**2)
 
+        #BETTER TO ALSO CALCULATE TOTAL B VAR AND ERR HERE IN FILE
+        #B_tot_var = np.sqrt(B_var_X_estim**2 + B_var_Y_err_estim**2 + B_var_Z_estim**2)
+
         #print (f"Extimated B variation, probe {j} X:", B_var_X_estim, "+/-", B_var_X_err_estim)
         #print (f"Extimated B variation, probe {j} Y:", B_var_Y_estim, "+/-", B_var_Y_err_estim)
         #print (f"Extimated B variation, probe {j} Z:", B_var_Z_estim, "+/-", B_var_Z_err_estim)
