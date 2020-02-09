@@ -17,12 +17,26 @@ def check_grads(folder_path, day):
             df['Y_int_bool'] = abs(df['Y_zero_int']) - df['Y_zero_int_err'] > 0
             df['Z_int_bool'] = abs(df['Z_zero_int']) - df['Z_zero_int_err'] > 0
 
+            inst = file.split('\\cur\\')[1]
+            if day == 1:
+                inst = inst[0:-38]
+            elif day == 2:
+                inst = inst[0:-38]
+            print(inst)
+
         else:
             tmp = 'lin'
         
             df['X_int_bool'] = abs(df['X_zero_err']) > int_thresh
             df['Y_int_bool'] = abs(df['Y_zero_err']) > int_thresh
             df['Z_int_bool'] = abs(df['Z_zero_err']) > int_thresh
+
+            inst = file.split('\\lin\\')[1]
+            if day == 1:
+                inst = inst[1:-28]
+            elif day == 2:
+                inst = inst[1:-23]
+            print(inst)
 
         df['X_sig_level'] = round(abs(df[f'X.slope_{tmp}'])/df[f'X.slope_{tmp}_err'],2)
         df['Y_sig_level'] = round(abs(df[f'Y.slope_{tmp}'])/df[f'Y.slope_{tmp}_err'],2)
@@ -38,16 +52,12 @@ def check_grads(folder_path, day):
         df['Y_sig_level'] = df['Y_sig_level'].where(df['Y_sig_level'] > 2, other = 0)
         df['Z_sig_level'] = df['Z_sig_level'].where(df['Z_sig_level'] > 2, other = 0)
         
-        inst = file.split('1hz_noorigin')[1]
-        if day == 1:
-            inst = inst[1:-28]
-        elif day == 2:
-            inst = inst[1:-23]
-        print(inst)
-        df.to_csv(f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\Results\\Gradient_dicts\\Day_{day}\\bool_check_grads\\{inst}_bool_check_day{day}_{tmp}.csv')
+        
+        df.to_csv(f'.\\Results\\Gradient_dicts\\Day_{day}\\bool_check_grads_{tmp}\\{inst}_bool_check_day{day}_{tmp}.csv')
         
 if __name__ == "__main__":
-    day = 1
-    fol_path = f'.\\Results\\Gradient_dicts\\Day_{day}\\1hz_noorigin\\'
+    day = 2
+    line_fit_type = 'cur'
+    fol_path = f'.\\Results\\Gradient_dicts\\Day_{day}\\1hz_noorigin\\{line_fit_type}\\'
     check_grads(fol_path, day)
     
