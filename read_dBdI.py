@@ -12,7 +12,7 @@ import csv
 
 
 
-def plot(windows,day,instruments,probes,sample_rate):
+def plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate):
     for inst in instruments:
         for probe in probes:
 
@@ -83,5 +83,5 @@ instruments = ['EUI']#['EUI', 'METIS', 'PHI', 'SWA', 'EPD', 'SoloHI', 'STIX', 'S
 probes = [12]#range(1,13)
 sample_rate = 1
 
-plot(windows,day,instruments,probes,sample_rate)
+plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate)
 
