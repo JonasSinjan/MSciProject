@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 import csv 
 
 
-def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot = False, lowpass = False, rand_noise=False): #for only one instrument
+def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot = False, lowpass = False, rand_noise=True): #for only one instrument
 
     if day == 1:
         if windows:
@@ -152,6 +152,18 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
         probe_x_tmp_err = step_dict.get(f'Probe{num_str}_X err')
         probe_y_tmp_err = step_dict.get(f'Probe{num_str}_Y err')
         probe_z_tmp_err = step_dict.get(f'Probe{num_str}_Z err')
+        
+        force_zero = False
+        if force_zero:
+            xdata.append(0.0)
+
+            probe_x_tmp.append(0.0)
+            probe_y_tmp.append(0.0)
+            probe_z_tmp.append(0.0)
+
+            probe_x_tmp_err.append(0.0) #error on bonus point should be zero, but curve_fit requires finite error - and this forces the line through the origin anyway
+            probe_y_tmp_err.append(0.0)
+            probe_z_tmp_err.append(0.0)
 
         if rand_noise:
             if day == 1:
@@ -161,7 +173,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             
             df_err_correction = pd.read_csv(err_path)
             df_err = df_err_correction.iloc[i]
-            print(df_err, i, num_str)
+            #print(df_err, i, num_str)
 
             probe_x_tmp_err = [np.sqrt(k**2 + df_err['Bx_var']**2) for k in probe_x_tmp_err]
             probe_y_tmp_err = [np.sqrt(k**2 + df_err['By_var']**2) for k in probe_y_tmp_err]
@@ -177,51 +189,39 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             perr_x = np.sqrt(np.diag(cov_x))
             perr_y = np.sqrt(np.diag(cov_y))
             perr_z = np.sqrt(np.diag(cov_z))
-        #adding bonus point of origin
-        force_zero = False
-
-        if force_zero:
-            xdata.append(0.0)
-
-            probe_x_tmp.append(0.0)
-            probe_y_tmp.append(0.0)
-            probe_z_tmp.append(0.0)
-
-            probe_x_tmp_err.append(0.0) #error on bonus point should be zero, but curve_fit requires finite error - and this forces the line through the origin anyway
-            probe_y_tmp_err.append(0.0)
-            probe_z_tmp_err.append(0.0)
-
-
-        X = spstats.linregress(xdata, probe_x_tmp) #adding bonus point has little effect on grad - only changes intercept
-        Y = spstats.linregress(xdata, probe_y_tmp)
-        Z = spstats.linregress(xdata, probe_z_tmp)
-        
-        
-
-        print('sps.linregress')
-        print('Slope = ', X.slope, '+/-', X.stderr, ' Intercept = ', X.intercept)
-        print('Slope = ', Y.slope, '+/-', Y.stderr, ' Intercept = ', Y.intercept)
-        print('Slope = ', Z.slope, '+/-', Z.stderr, ' Intercept = ', Z.intercept)
-
-        print('~')
-        print('spo.curve_fit')
-        print('Slope & Intercept = ', params_x, '+/-', perr_x)
-        print('Slope & Intercept = ', params_y, '+/-', perr_y)
-        print('Slope & Intercept = ', params_z, '+/-', perr_z)
+            
+            print('spo.curve_fit')
+            print('Slope = ', params_x[0], '+/-', perr_x[0], 'Intercept = ', params_x[1], '+/-', perr_x[1])
+            print('Slope = ', params_y[0], '+/-', perr_y[0], 'Intercept = ', params_y[1], '+/-', perr_y[1])
+            print('Slope = ', params_z[0], '+/-', perr_z[0], 'Intercept = ', params_z[1], '+/-', perr_z[1])
+            
+        else:
+            
+            X = spstats.linregress(xdata, probe_x_tmp) #adding bonus point has little effect on grad - only changes intercept
+            Y = spstats.linregress(xdata, probe_y_tmp)
+            Z = spstats.linregress(xdata, probe_z_tmp)
+            
+            print('sps.linregress')
+            print('Slope = ', X.slope, '+/-', X.stderr, ' Intercept = ', X.intercept)
+            print('Slope = ', Y.slope, '+/-', Y.stderr, ' Intercept = ', Y.intercept)
+            print('Slope = ', Z.slope, '+/-', Z.stderr, ' Intercept = ', Z.intercept)
 
         if plot:
             plt.figure()
-            plt.errorbar(xdata, probe_x_tmp, yerr = probe_x_tmp_err, fmt = 'bs',label = f'X grad: {round(X.slope,2)} ± {round(X.stderr,2)} int: {round(X.intercept, 2)}', markeredgewidth = 2)
-            plt.errorbar(xdata, probe_y_tmp, yerr = probe_y_tmp_err, fmt = 'rs', label = f'Y grad: {round(Y.slope,2)} ± {round(Y.stderr,2)} int: {round(Y.intercept, 2)}', markeredgewidth = 2)
-            plt.errorbar(xdata, probe_z_tmp, yerr = probe_z_tmp_err, fmt = 'gs', label = f'Z grad: {round(Z.slope,2)} ± {round(Z.stderr,2)} int: {round(Z.intercept, 2)}', markeredgewidth = 2)
-
-            plt.plot(xdata, X.intercept + X.slope*np.array(xdata), 'b-')
-            plt.plot(xdata, Y.intercept + Y.slope*np.array(xdata), 'r-')
-            plt.plot(xdata, Z.intercept + Z.slope*np.array(xdata), 'g-')
-
-            plt.plot(current_dif, params_x[0]*current_dif + params_x[1], 'b:', label = f'curve_fit - X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
-            plt.plot(current_dif, params_y[0]*current_dif + params_y[1], 'r:', label = f'curve_fit - Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
-            plt.plot(current_dif, params_z[0]*current_dif + params_z[1], 'g:', label = f'curve_fit - Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
+            
+            if rand_noise:
+                plt.plot(current_dif, params_x[0]*current_dif + params_x[1], 'b:', label = f'curve_fit - X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
+                plt.plot(current_dif, params_y[0]*current_dif + params_y[1], 'r:', label = f'curve_fit - Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
+                plt.plot(current_dif, params_z[0]*current_dif + params_z[1], 'g:', label = f'curve_fit - Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
+            
+            elif rand_noise == False:
+                plt.plot(xdata, X.intercept + X.slope*np.array(xdata), 'b-', label = f'X grad: {round(X.slope,2)} ± {round(X.stderr,2)} int: {round(X.intercept, 2)}')
+                plt.plot(xdata, Y.intercept + Y.slope*np.array(xdata), 'r-', label = f'Y grad: {round(Y.slope,2)} ± {round(Y.stderr,2)} int: {round(Y.intercept, 2)}')
+                plt.plot(xdata, Z.intercept + Z.slope*np.array(xdata), 'g-', label = f'Z grad: {round(Z.slope,2)} ± {round(Z.stderr,2)} int: {round(Z.intercept, 2)}')
+            
+            plt.errorbar(xdata, probe_x_tmp, yerr = probe_x_tmp_err, fmt = 'bs', markeredgewidth = 2)
+            plt.errorbar(xdata, probe_y_tmp, yerr = probe_y_tmp_err, fmt = 'rs', markeredgewidth = 2)
+            plt.errorbar(xdata, probe_z_tmp, yerr = probe_z_tmp_err, fmt = 'gs', markeredgewidth = 2)
 
             plt.legend(loc="best")
             plt.title(f'{instrument} - Probe {num_str} - MFSA - Day {day_number}')
@@ -270,14 +270,14 @@ if __name__ == "__main__":
         #need current dif (gradient in current) to plot later
         current_dif = dict_current.get(f'{instrument} Current [A] dI')
         #create dictionary of the Magnetic Field/Amp proportionality for the desired instrument
-        vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot = True, lowpass = False, rand_noise = True)
+        vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot = False, lowpass = False, rand_noise = True)
         #print(vect_dict['12'])
         
         #write the Magnetic Field/Amp proportionality to csv
         
         w = csv.writer(open(f"..\\Results\\Gradient_dicts\\Day_{day_number}\\1hz_noorigin\\{instrument}_vect_dict_NOORIGIN_Day{day_number}_curve_fit.csv", "w"))
         #w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
-        w.writerow(["Probe","X.slope_cur", "Y.slope_cur", "Z.slope_cur","X.slope_cur_err", "Y.slope_cur_err", "Z.slope_cur_err","X_zero_int","Y_zero_int","Z_zero_int", "X_zero_int_err","Y_zero_int_err","Z_zero_int_err"]
+        w.writerow(["Probe","X.slope_cur", "Y.slope_cur", "Z.slope_cur","X.slope_cur_err", "Y.slope_cur_err", "Z.slope_cur_err","X_zero_int","Y_zero_int","Z_zero_int", "X_zero_int_err","Y_zero_int_err","Z_zero_int_err"])
         for key, val in vect_dict.items():
             w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9],val[10],val[11]])
         
