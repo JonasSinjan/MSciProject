@@ -1,7 +1,7 @@
 import pandas as pd
 import glob
 
-def check_grads(folder_path):
+def check_grads(folder_path, day):
 
     int_thresh = 0.1
     sig_thresh = 2
@@ -18,13 +18,17 @@ def check_grads(folder_path):
         df['Z_int_bool'] = abs(df['Z_zero_err']) > int_thresh
 
         df = df[['Probe','X_bool_sig', 'Y_bool_sig', 'Z_bool_sig', 'X_int_bool', 'Y_int_bool', 'Z_int_bool']]
+        
         inst = file.split('1hz_noorigin')[1]
-        inst = inst[1:-28]
-        #print(inst)
-        df.to_csv(f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\Results\\Gradient_dicts\\Day_1\\bool_check_grads\\{inst}_bool_check_day1.csv')
+        if day == 1:
+            inst = inst[1:-28]
+        elif day == 2:
+            inst = inst[1:-23]
+        print(inst)
+        df.to_csv(f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\Results\\Gradient_dicts\\Day_{day}\\bool_check_grads\\{inst}_bool_check_day1.csv')
 
 if __name__ == "__main__":
-
-    fol_path = '.\\Results\\Gradient_dicts\\Day_1\\1hz_noorigin\\'
-    check_grads(fol_path)
+    day = 2
+    fol_path = f'.\\Results\\Gradient_dicts\\Day_{day}\\1hz_noorigin\\'
+    check_grads(fol_path, day)
     
