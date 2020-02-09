@@ -22,12 +22,12 @@ def plot(windows,day,instruments,probes,sample_rate):
                 sample = '1'
 
             if windows:
-                path = f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\dBdI_data\\Day{day}\\{sample}Hz\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz.csv'
+                path = f'.\\Results\\dBdI_data\\Day{day}\\{sample}Hz\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz.csv'
                 if day == 1:
-                    path = f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\dBdI_data\\Day{day}\\{sample}Hz\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz_day1.csv'
-                    err_path = f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\day1_mfsa_probe_vars.csv'
+                    path = f'.\\Results\\dBdI_data\\Day{day}\\{sample}Hz\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz_day1.csv'
+                    err_path = f'.\\day1_mfsa_probe_vars.csv'
                 elif day == 2:
-                    err_path = f'C:\\Users\\jonas\\MSci-Code\\MSciProject\\day2_mfsa_probe_vars.csv'
+                    err_path = f'.\\day2_mfsa_probe_vars.csv'
             else:
                 path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/dBdI_data/Day{day}/{sample}Hz/{inst}/{inst}_probe{probe}_vect_dict_{sample}Hz.csv")
                 if day == 1:
@@ -79,8 +79,8 @@ def plot(windows,day,instruments,probes,sample_rate):
 
 windows = True
 day = 1
-instruments = ['EUI']
-probes = [3,9,10,11]
+instruments = ['EUI', 'METIS', 'PHI', 'SWA', 'EPD', 'SoloHI', 'STIX', 'SPICE']
+probes = range(1,13)
 sample_rate = 1
 
 plot(windows,day,instruments,probes,sample_rate)
