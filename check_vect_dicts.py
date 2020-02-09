@@ -1,5 +1,4 @@
 import pandas as pd
-import csv
 import glob
 
 def check_grads(folder_path):
