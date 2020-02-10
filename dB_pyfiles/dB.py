@@ -182,9 +182,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             def line(x,a,b):
                 return a*x + b
 
-            params_x,cov_x = spo.curve_fit(line, current_dif, probe_x_tmp[:], sigma = probe_x_tmp_err[:], absolute_sigma = True)
-            params_y,cov_y = spo.curve_fit(line, current_dif, probe_y_tmp[:], sigma = probe_y_tmp_err[:], absolute_sigma = True)
-            params_z,cov_z = spo.curve_fit(line, current_dif, probe_z_tmp[:], sigma = probe_z_tmp_err[:], absolute_sigma = True)
+            params_x,cov_x = spo.curve_fit(line, xdata, probe_x_tmp[:], sigma = probe_x_tmp_err[:], absolute_sigma = True)
+            params_y,cov_y = spo.curve_fit(line, xdata, probe_y_tmp[:], sigma = probe_y_tmp_err[:], absolute_sigma = True)
+            params_z,cov_z = spo.curve_fit(line, xdata, probe_z_tmp[:], sigma = probe_z_tmp_err[:], absolute_sigma = True)
 
             perr_x = np.sqrt(np.diag(cov_x))
             perr_y = np.sqrt(np.diag(cov_y))
@@ -210,9 +210,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             plt.figure()
             
             if rand_noise:
-                plt.plot(current_dif, params_x[0]*current_dif + params_x[1], 'b:', label = f'curve_fit - X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
-                plt.plot(current_dif, params_y[0]*current_dif + params_y[1], 'r:', label = f'curve_fit - Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
-                plt.plot(current_dif, params_z[0]*current_dif + params_z[1], 'g:', label = f'curve_fit - Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
+                plt.plot(xdata, params_x[0]*xdata + params_x[1], 'b:', label = f'curve_fit - X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
+                plt.plot(xdata, params_y[0]*xdata + params_y[1], 'r:', label = f'curve_fit - Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
+                plt.plot(xdata, params_z[0]*xdata + params_z[1], 'g:', label = f'curve_fit - Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
             
             elif rand_noise == False:
                 plt.plot(xdata, X.intercept + X.slope*np.array(xdata), 'b-', label = f'X grad: {round(X.slope,2)} ± {round(X.stderr,2)} int: {round(X.intercept, 2)}')
@@ -254,7 +254,7 @@ if __name__ == "__main__":
     windows = True
     probes = range(12)#range(8,12) #what probes are desired
     day_number = 1
-    instru_list = ['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI', 'EUI', 'SWA', 'EPD']
+    instru_list = ['SWA', 'EPD']#['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI', 'EUI', 'SWA', 'EPD']
 
     #create dictionary with all current peaks for every instrument (v. fast)
     dict_current = current_peaks(windows, day_number, plot=False)
