@@ -9,6 +9,7 @@ import pandas as pd
 import os
 import numpy as np
 import csv 
+import scipy.optimize as spo
 
 
 
@@ -74,14 +75,65 @@ def plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate):
             
 
             plt.show()
+
+def plot_new_curve(windows, day, instruments, probes, sample):
+    for inst in instruments:
+        for probe in probes:
+
+            if windows:
+                path = f'.\\Results\\dBdI_data\\Day{day}\\{sample}Hz_with_err\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz_day{day}.csv'
+
+            else:
+                path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/dBdI_data/Day{day}/{sample}Hz_with_err/{inst}/{inst}_probe{probe}_vect_dict_{sample}Hz_day{day}.csv")
         
+            df = pd.read_csv(path)
+            xdata = df['dI']
+            probe_x_tmp = df['dB_X']
+            probe_y_tmp = df['dB_Y']
+            probe_z_tmp = df['dB_Z']
 
+            probe_x_tmp_err = df['dB_X_err']
+            probe_y_tmp_err = df['dB_Y_err']
+            probe_z_tmp_err = df['dB_Z_err']
 
-windows = True
-day = 2
-instruments = ['EUI']#['EUI', 'METIS', 'PHI', 'SWA', 'EPD', 'SoloHI', 'STIX', 'SPICE']
-probes = [12]#range(1,13)
-sample_rate = 1
+            def line(x,a,b):
+                return a*x + b
 
-plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate)
+            params_x,cov_x = spo.curve_fit(line, xdata, probe_x_tmp[:], sigma = probe_x_tmp_err[:], absolute_sigma = True)
+            params_y,cov_y = spo.curve_fit(line, xdata, probe_y_tmp[:], sigma = probe_y_tmp_err[:], absolute_sigma = True)
+            params_z,cov_z = spo.curve_fit(line, xdata, probe_z_tmp[:], sigma = probe_z_tmp_err[:], absolute_sigma = True)
+
+            perr_x = np.sqrt(np.diag(cov_x))
+            perr_y = np.sqrt(np.diag(cov_y))
+            perr_z = np.sqrt(np.diag(cov_z))
+            
+            print('spo.curve_fit')
+            print('Slope = ', params_x[0], '+/-', perr_x[0], 'Intercept = ', params_x[1], '+/-', perr_x[1])
+            print('Slope = ', params_y[0], '+/-', perr_y[0], 'Intercept = ', params_y[1], '+/-', perr_y[1])
+            print('Slope = ', params_z[0], '+/-', perr_z[0], 'Intercept = ', params_z[1], '+/-', perr_z[1])
+
+            plt.plot(xdata, params_x[0]*xdata + params_x[1], 'b-',label='_nolegend_')
+            plt.plot(xdata, params_y[0]*xdata + params_y[1], 'r-',label='_nolegend_')
+            plt.plot(xdata, params_z[0]*xdata + params_z[1], 'g-',label='_nolegend_')
+
+            plt.errorbar(xdata, probe_x_tmp, yerr = probe_x_tmp_err, fmt = 'bs', markeredgewidth = 2, label = f'curve_fit - X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
+            plt.errorbar(xdata, probe_y_tmp, yerr = probe_y_tmp_err, fmt = 'rs', markeredgewidth = 2, label = f'curve_fit - Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
+            plt.errorbar(xdata, probe_z_tmp, yerr = probe_z_tmp_err, fmt = 'gs', markeredgewidth = 2, label = f'curve_fit - Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
+
+            plt.legend(loc="best")
+            plt.title(f'Day {day} - {inst} - Probe {probe} - {sample}Hz - MFSA')
+            plt.xlabel('dI [A]')
+            plt.ylabel('dB [nT]')
+            plt.show()
+
+if __name__ == "__main__":
+    windows = True
+    day = 2
+    instruments = ['EUI']#['EUI', 'METIS', 'PHI', 'SWA', 'EPD', 'SoloHI', 'STIX', 'SPICE']
+    probes = [12]#range(1,13)
+    sample_rate = 1
+
+    #plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate)
+
+    plot_new_curve(windows, day, instruments, probes, sample_rate)
 
