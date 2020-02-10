@@ -56,7 +56,7 @@ def check_grads(folder_path, day):
         df.to_csv(f'.\\Results\\Gradient_dicts\\Day_{day}\\bool_check_grads_{tmp}\\{inst}_bool_check_day{day}_{tmp}.csv')
         
 if __name__ == "__main__":
-    day = 2
+    day = 1
     line_fit_type = 'cur'
     fol_path = f'.\\Results\\Gradient_dicts\\Day_{day}\\1hz_noorigin\\{line_fit_type}\\'
     check_grads(fol_path, day)
