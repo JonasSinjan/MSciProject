@@ -235,7 +235,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             for dI in range(len(xdata)):
                 dBdI[f'{dI+1}'] = [xdata[dI],probe_x_tmp[dI],probe_x_tmp_err[dI],probe_y_tmp[dI],probe_y_tmp_err[dI],probe_z_tmp[dI],probe_z_tmp_err[dI]]
             
-            w = csv.writer(open(f"{instrument}_probe{i+1}_vect_dict_1Hz_day{day_number}.csv", "w"))
+            w = csv.writer(open(f"..\\Results\\dBdI_data\\Day{day_number}\\1Hz_with_err\\{instrument}\\{instrument}_probe{i+1}_vect_dict_1Hz_day{day_number}.csv", "w"))
             w.writerow(["key","dI","dB_X","dB_X_err","dB_Y","dB_Y_err","dB_Z","dB_Z_err"])
             for key, val in dBdI.items():
                 w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6]])#,val[9],val[10],val[11]])
@@ -253,7 +253,7 @@ if __name__ == "__main__":
     #these 3 factors need to be set 
     windows = True
     probes = range(12)#range(8,12) #what probes are desired
-    day_number = 2
+    day_number = 1
     instru_list = ['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI', 'EUI', 'SWA', 'EPD']
 
     #create dictionary with all current peaks for every instrument (v. fast)
@@ -275,7 +275,7 @@ if __name__ == "__main__":
         
         #write the Magnetic Field/Amp proportionality to csv
         
-        w = csv.writer(open(f"..\\Results\\Gradient_dicts\\Day_{day_number}\\1hz_noorigin\\{instrument}_vect_dict_NOORIGIN_Day{day_number}_curve_fit.csv", "w"))
+        w = csv.writer(open(f"..\\Results\\Gradient_dicts\\Day_{day_number}\\1hz_noorigin\\cur\\{instrument}_vect_dict_NOORIGIN_Day{day_number}_curve_fit.csv", "w"))
         #w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
         w.writerow(["Probe","X.slope_cur", "Y.slope_cur", "Z.slope_cur","X.slope_cur_err", "Y.slope_cur_err", "Z.slope_cur_err","X_zero_int","Y_zero_int","Z_zero_int", "X_zero_int_err","Y_zero_int_err","Z_zero_int_err"])
         for key, val in vect_dict.items():
