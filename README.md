@@ -10,8 +10,6 @@ Code for MSci Project - ESA/NASA Solar Orbiter Electromagnetic Compatibility Tes
 
 ## Introduction
 
----
-
 In June 2019, ESA/NASA Solar Orbiter spacecraft sent to IABG's facility: MFSA (Magnetfeldsimulationnanlage) in Munich to undergo magnetic testing.
 
 21st June - 1st Powered Day - Instruments tested cumulatively
@@ -19,8 +17,6 @@ In June 2019, ESA/NASA Solar Orbiter spacecraft sent to IABG's facility: MFSA (M
 24th June - 2nd Powered Day - Instruments tested separately
 
 ## Navigating the Data
-
----
 
 - Results
    - dBdI_data -------------------> contains csv files with the xdata, ydata to plot dB vs dI
@@ -45,7 +41,6 @@ In June 2019, ESA/NASA Solar Orbiter spacecraft sent to IABG's facility: MFSA (M
   
 ## Code files
 
----
 
 ### dB_pyfiles
   
