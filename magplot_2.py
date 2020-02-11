@@ -42,19 +42,26 @@ def mag(filepath, start_dt=None, end_dt=None):
     df = df.loc[:, 'X':]
     print(df.head())
     print(df.tail())
+    
+    df = df.resample('1s').mean()
+    
+    df['X'] = df['X'] - df['X'].mean()
+    df['Y'] = df['Y'] - df['Y'].mean()
+    df['Z'] = df['Z'] - df['Z'].mean()
 
     plot = True
     if plot:
         plt.figure()
         cols = df.columns.tolist()
         #df = df.resample('2s').mean()
-        for col in cols[1:]:
+        for col in cols:
             plt.plot(df.index.time, df[col], label =f'{col}')
         plt.xlabel('Time [H:M:S]')
-        plt.ylabel('B [nT]')
+        plt.ylabel('dB [nT]')
         plt.legend(loc="best")
-        plt.title('MAG Powered Day 2')
+        plt.title('MAG Powered Day 2 METIS')
         
+        """ 
         #finding the calibration spikes - only appropriate if not in the current time span when the spikes occur (at beginning of data - but first 3 spikes seen are MAG changing measurement ranges)
         time_list = []
         df2 = df.abs()
@@ -62,7 +69,7 @@ def mag(filepath, start_dt=None, end_dt=None):
             time_list.append(df2[col].idxmax())
         print(time_list)
         print(time_list[2]- time_list[0], time_list[1]-time_list[2])
-
+        """
         plt.show()
     
 if __name__ == "__main__":
@@ -82,7 +89,7 @@ if __name__ == "__main__":
         else:
             filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay2.csv.txt")
         
-    start_dt = datetime(2019,6,24,9,24)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,10,10)# this is the end
+    start_dt = datetime(2019,6,24,10,7)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,24,10,58)# this is the end
 
     mag(filepath, start_dt=start_dt, end_dt=end_dt)
