@@ -93,52 +93,52 @@ check_vect_dicts.py
 ```
 Creates the boolean dfs, that checks if grad > 2*sigma or if origin (0,0) within intercept uncertainty
 
-```
+```python
 mag.py
 ```
 Plots timeseries data from stowed MAG_OBS instrument during powered testing.  Used to calibrate the timezones looking at the power amplifier peaks.
 
-```
+```python
 magplot_1.py, magplot_2.py
 ```
 
 Time index of MAG_OBS for day 1 and day 2 properly calculated (`mag.py` now redundant). So better for plotting and finding peaks.
 
-```
+```python
 metis_var.py
 ```
 
 Calculates average current (I) variation during METIS scientific operations and estimates dB at MAG_OBS location because of this dI
 
-```
+```python
 plot_variation.py
 ```
 
 Plots bar chart of the Variations csv folders - showing the estimated total dB at each probe (all 3 axis combined) - with errorbars
 
-```
+```python
 probe_dist.py
 ```
 Calculates distance of each MFSA probe from the center of the spacecraft and estimates 1/r^3 dipole factor.
 
-```
+```python
 read_dBdO.py
 ```
 
 Reads in the dBdI data, calculates slope using either `scipy.stats.linregress` or `scipy.optimize.curve_fit` method and shows the plots. Very quick.
 
-```
+```python
 variation.py
 ```
 Calculates the variation measured in MAG_OBS and MFSA data due to noisy current in EUI and METIS.  Used to validate our estimates.
 
-```
+```python
 vect_map.py
 ```
 Plots 3D map showing the vectors of the proportionality constants calculated at every probe for a given instrument. Probe 12 not shown as too far awawy and often dominates the plot.
 
 
-```
+```python
 lowpassdif.py
 ```
 Calculates % dif if a order 10 butterworth low pass filter is applied to the MFSA data before calculating the proportionality constants
