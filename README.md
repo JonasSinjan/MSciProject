@@ -83,7 +83,7 @@ Contains class `processing` that contains many methods which reads in, cleans th
 
 ### Analysis/Plotting Files
 
-```
+```python
 day_one.py, day_two.py
 ```
 Used to plot, calculate powerspectrum & noise level of MFSA probes for a given timespan, probe and instrument
