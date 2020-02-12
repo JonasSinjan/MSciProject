@@ -2,7 +2,7 @@
 
 Code for MSci Project - ESA/NASA Solar Orbiter Electromagnetic Compatibility Testing
 
-[![Contributors][contributors-shield]][contributers-url]
+[![Contributors][contributors-shield]][contributors-url]
 <!-- [![Forks][forks-shield]][0] -->
 <!-- [![Stargazers][stars-shield]][0] -->
 [![Issues][issues-shield]][issues-url]
