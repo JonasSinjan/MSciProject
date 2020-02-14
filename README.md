@@ -26,7 +26,7 @@ In June 2019, ESA/NASA Solar Orbiter spacecraft sent to IABG's facility: MFSA (M
         - 1Hz_with_err ---> same files but the random noise for each probe is added
         - 1kHz -----------> sampling MFSA at 1kHz (raw data)
         - mag ------------> for the stowed MAG_OBS
-    - dBdB_oldplots ----------------> some saved plots ofusing 1Hz data
+    - dBdB_oldplots ----------------> some saved plots of using 1Hz data
     - dI_graphs ---------------------> saved current profiles
     - Gradient_dicts ----------------> contains csv files of B/I proportionality constants
         - Day_1
@@ -114,7 +114,14 @@ Calculates average current (I) variation during METIS scientific operations and 
 plot_variation.py
 ```
 
-Plots bar chart of the Variations csv folders - showing the estimated total dB at each probe (all 3 axis combined) - with errorbars
+Plots bar chart and cubic fit of the variations csv folders - showing the estimated total dB at each probe (all 3 axis combined) - with errorbars
+
+```python
+plot_raw_current.py
+```
+
+Plots timeseries of raw LCL current data
+
 
 ```python
 probe_dist.py
@@ -122,7 +129,7 @@ probe_dist.py
 Calculates distance of each MFSA probe from the center of the spacecraft and estimates 1/r^3 dipole factor.
 
 ```python
-read_dBdO.py
+read_dBdI.py
 ```
 
 Reads in the dBdI data, calculates slope using either `scipy.stats.linregress` or `scipy.optimize.curve_fit` method and shows the plots. Very quick.
