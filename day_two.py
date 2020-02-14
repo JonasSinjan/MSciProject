@@ -34,6 +34,7 @@ def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     
     df3 = df2.resample('1s').mean()
     
+    
     plot = True
     #df2 = df.between_time(start_dt.time(), end_dt.time()) 
     #print(df2.head())
@@ -42,7 +43,9 @@ def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
         #plt.figure()
         tmp = []
         for col in collist[1:]:
-            #plt.plot(df2.index.time, df2[col], label=str(col))
+            df2[col] = df2[col] - df2[col].mean()
+            plt.plot(df2.index.time, df2[col], label=str(col))
+            
             var_1hz = np.std(df3[col])
             var_1khz = np.std(df2[col])
             print('std - 1Hz', col, var_1hz)
@@ -50,13 +53,13 @@ def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
             tmp.append(var_1hz)
             tmp.append(var_1khz)
             #print(df2[col].abs().idxmax())
-        """
+        
         plt.xlabel('Time (s)')
-        plt.ylabel('B (nT)')
+        plt.ylabel('dB (nT)')
         plt.title(f'Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
         plt.legend(loc="best")
-        #plt.show()
-        """
+        plt.show()
+        
     #fs = 50
     
     return tmp
@@ -77,7 +80,7 @@ if __name__ == "__main__":
     #here select which probe is desired, only one at a time
     #num = 12
     b_noise = []
-    for num in range(1,13):
+    for num in [7]:
         print('num = ', num)
         if num < 9:
             soloA_bool = True
@@ -113,7 +116,7 @@ if __name__ == "__main__":
                     all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-24--08-14-24_{i}.csv') #need to change path_fol_B to the path where your B folder is
         
         alt = False #if want powerspec from `brute force' method - or inbuilt scipy periodogram method
-        tmp = day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 1000) #pass through the list containing the file paths
+        tmp = day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 1) #pass through the list containing the file paths
         b_noise.extend(tmp)
     """
     w = csv.writer(open(f"day2_mfsa_probe_vars.csv", "w"))

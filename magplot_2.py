@@ -42,19 +42,26 @@ def mag(filepath, start_dt=None, end_dt=None):
     df = df.loc[:, 'X':]
     print(df.head())
     print(df.tail())
+    
+    df = df.resample('1s').mean()
+    
+    df['X'] = df['X'] - df['X'].mean()
+    df['Y'] = df['Y'] - df['Y'].mean()
+    df['Z'] = df['Z'] - df['Z'].mean()
 
     plot = True
     if plot:
         plt.figure()
         cols = df.columns.tolist()
         #df = df.resample('2s').mean()
-        for col in cols[1:]:
+        for col in cols:
             plt.plot(df.index.time, df[col], label =f'{col}')
         plt.xlabel('Time [H:M:S]')
-        plt.ylabel('B [nT]')
+        plt.ylabel('dB [nT]')
         plt.legend(loc="best")
-        plt.title('MAG Powered Day 2')
+        plt.title('MAG Powered Day 2 METIS')
         
+        """ 
         #finding the calibration spikes - only appropriate if not in the current time span when the spikes occur (at beginning of data - but first 3 spikes seen are MAG changing measurement ranges)
         time_list = []
         df2 = df.abs()
@@ -62,7 +69,7 @@ def mag(filepath, start_dt=None, end_dt=None):
             time_list.append(df2[col].idxmax())
         print(time_list)
         print(time_list[2]- time_list[0], time_list[1]-time_list[2])
-
+        """
         plt.show()
     
 if __name__ == "__main__":
