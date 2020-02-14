@@ -38,10 +38,15 @@ def plot_b_var_est(file_path, inst, plot = False):
         params,cov = spo.curve_fit(cubic, df['dist'], df['B_tot'], sigma = df['B_tot_err'], absolute_sigma = True)
         perr = np.sqrt(np.diag(cov))
 
+
+
         plt.figure()
         plt.scatter(df['dist'],df['B_tot'])
         plt.errorbar(df['dist'],df['B_tot'],yerr=df['B_tot_err'], linestyle="None")
-        plt.plot(df['dist'], params[0]*(df['dist'])**(-3) + params[1], 'b-',label='_nolegend_')
+        xdata = np.linspace(0.8,4.5,100)
+        plt.plot(xdata, params[0]*(xdata)**(-3) + params[1], 'b-',label='_nolegend_')
+        plt.xlabel('Distance from -Y instrument panel [m]')
+        plt.ylabel('B_var [nT]')
         print(params, perr)
         plt.show()
 
