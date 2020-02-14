@@ -57,13 +57,36 @@ def calc_var(windows, day, inst):
         elif inst == 'METIS':
             df_current_list.append(df_current.between_time('10:35:30', '10:55'))
             df_mag_list.append(df_mag.between_time('10:35:30', '10:55'))
-            
     elif day == 1:
         if inst == 'EUI':
             pass
         elif inst == 'METIS':
             df_current_list.append(df_current.between_time('12:07', '14:17'))
             df_mag_list.append(df_mag.between_time('12:07', '14:17'))
+
+    for df in df_current_list:
+        plt.figure()
+        plt.plot(df.index.time, df)
+        plt.xlabel('Time [H:M:S]')
+        plt.ylabel('Current [A]')
+        plt.title(f'{inst} CURRENT PROFILE')
+        plt.show()
+
+        #calculate amplition of variation
+        mean_val = df.mean()
+        df_top = df[df > mean_val]
+        df_bot = df[df < mean_val]
+        top_avg = df_top.mean()
+        top_std = df_top.std()/np.sqrt(len(df_top))
+        bot_avg = df_bot.mean()
+        bot_std = df_bot.std()/np.sqrt(len(df_bot))
+        tot_std = np.sqrt(bot_std**2 + top_std**2)
+        dif = top_avg - bot_avg
+        print(dif, tot_std)
+
+        var_current.append(dif)
+        var_current_err.append(tot_std)
+        print(var_current_err)
 
         #print("current variation (A)", dif,"+/-" , tot_std)
     #dont think this should be used for MAG - only really apt for the metis current variation as so consistent.
@@ -145,7 +168,7 @@ def calc_var(windows, day, inst):
         B_variation['current'] = [var_current[i],var_current[i],var_current[i],var_current_err[i],var_current_err[i],var_current_err[i]]
         
 
-        w = csv.writer(open(f"{inst}_var{i+1}_B_variation_estimated_day{day}.csv", "w"))
+        w = csv.writer(open(f".\\{inst}_var{i+1}_B_variation_estimated_day{day}.csv", "w"))
         w.writerow(["Probe","var_X", "var_Y", "var_Z","var_X_err", "var_Y_err", "var_Z_err"])
         for key, val in B_variation.items():
             w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5]])
