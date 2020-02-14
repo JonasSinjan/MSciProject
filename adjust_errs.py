@@ -33,11 +33,9 @@ def correct_errs(file_path, day):
     #print(df.head())
     df.to_csv(file_path)
 
-if __name__ == "__main__":
-    #testing
-    #file_path = 'Results\\dBdI_data\\Day2\\1Hz_with_err\\EPD\\EPD_probe1_vect_dict_1Hz_day2.csv'
 
-    #correct_errs(file_path, 2)
+if __name__ == "__main__":
+    #to correct the dbdI data 1hz with err files
     day = 1
     inst_list = ['METIS', 'PHI', 'SWA', 'EPD', 'SoloHI', 'STIX', 'SPICE']#'EUI'
     for inst in inst_list:
@@ -45,3 +43,5 @@ if __name__ == "__main__":
         for num in range(1,13):
             file_path = f'Results\\dBdI_data\\Day{day}\\1Hz_with_err\\{inst}\\{inst}_probe{num}_vect_dict_1Hz_day{day}.csv'
             correct_errs(file_path, day)
+    
+
