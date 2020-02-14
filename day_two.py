@@ -65,7 +65,7 @@ def day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
 
 if __name__ == "__main__":
     
-    windows = True
+    windows = False
 
     if windows:
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_two\A'
@@ -90,8 +90,8 @@ if __name__ == "__main__":
         collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
         #the datetime we change here is in spacecraft time - used for if want probes for a certain current profile (which is in spacecraft time)
-        start_dt = datetime(2019,6,24,7,45) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-        end_dt = datetime(2019,6,24,8,0) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
+        start_dt = datetime(2019,6,24,11,0) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+        end_dt = datetime(2019,6,24,11,20) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
         #start and end dt now in MFSA (German UT) time - as MFSA in that time
         day = 2
         #finding the correct MFSA data files
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         alt = False #if want powerspec from `brute force' method - or inbuilt scipy periodogram method
         tmp = day_two(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 1000) #pass through the list containing the file paths
         b_noise.extend(tmp)
-
+    """
     w = csv.writer(open(f"day2_mfsa_probe_vars.csv", "w"))
     w.writerow(["Probe","Bx_var","By_var","Bz_var","Bx_var_1k","By_var_1k","Bz_var_1k"])
     val = b_noise
@@ -123,3 +123,4 @@ if __name__ == "__main__":
     for i in range(12):
         w.writerow([i+1,val[j],val[j+2],val[j+4],val[j+1],val[j+3],val[j+5]])#,val[9],val[10],val[11]])
         j += 6
+    """
