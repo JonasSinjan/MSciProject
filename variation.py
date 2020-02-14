@@ -79,9 +79,10 @@ def calc_var(windows, day, inst):
 
         var_current.append(dif)
         var_current_err.append(tot_std)
+        print(var_current_err)
 
         #print("current variation (A)", dif,"+/-" , tot_std)
-
+    #dont think this should be used for MAG - only really apt for the metis current variation as so consistent.
     for df in df_mag_list:
         plt.figure()
         plt.plot(df.index.time, df)
@@ -118,9 +119,9 @@ def calc_var(windows, day, inst):
 
 
     if windows: #jonas put ur equivalent filepath here 
-        filename_MFSA = f'C:\\Users\\jonas\\MSci-Code\\MsciProject\\Results\\Gradient_dicts\\Day_{day}\\1Hz_NoOrigin\\{inst}_vect_dict_NOORIGIN.csv'
+        filename_MFSA = f'C:\\Users\\jonas\\MSci-Code\\MsciProject\\Results\\Gradient_dicts\\Day_{day}\\1hz_noorigin\\cur\\{inst}_vect_dict_NOORIGIN_Day2_curve_fit.csv'
     else: 
-        filename_MFSA = os.path.expanduser(f"~/Documents/MSciProject/NewCode/Gradient_dicts/Day_{day}/1Hz_NoOrigin/{inst}_vect_dict_NOORIGIN.csv")
+        filename_MFSA = os.path.expanduser(f"~/Documents/MSciProject/NewCode/Gradient_dicts/Day_{day}/cur/1Hz_NoOrigin/{inst}_vect_dict_NOORIGIN.csv")
             
     grad_df = pd.read_csv(filename_MFSA)
 
@@ -132,15 +133,15 @@ def calc_var(windows, day, inst):
             probe = list(grad_df.iloc[j])
 
             X_Slope,Y_Slope,Z_Slope,X_Slope_err,Y_Slope_err,Z_Slope_err = probe[1],probe[2],probe[3],probe[4],probe[5],probe[6]
-
+            print(X_Slope_err, Y_Slope_err, Z_Slope_err)
             #assuming intercept is zero
             B_var_X_estim = X_Slope * var_current[i]
             B_var_Y_estim = Y_Slope * var_current[i]
             B_var_Z_estim = Z_Slope * var_current[i]
 
-            B_var_X_err_estim = np.sqrt(X_Slope_err**2 + var_current_err[i]**2)
-            B_var_Y_err_estim = np.sqrt(Y_Slope_err**2 + var_current_err[i]**2)
-            B_var_Z_err_estim = np.sqrt(Z_Slope_err**2 + var_current_err[i]**2)
+            B_var_X_err_estim = np.sqrt((X_Slope_err*var_current[i])**2 + (X_Slope*var_current_err[i])**2)
+            B_var_Y_err_estim = np.sqrt((Y_Slope_err*var_current[i])**2 + (Y_Slope*var_current_err[i])**2)
+            B_var_Z_err_estim = np.sqrt((Z_Slope_err*var_current[i])**2 + (Z_Slope*var_current_err[i])**2)
 
             #BETTER TO ALSO CALCULATE TOTAL B VAR AND ERR HERE IN FILE
             #B_tot_var = np.sqrt(B_var_X_estim**2 + B_var_Y_err_estim**2 + B_var_Z_estim**2)
