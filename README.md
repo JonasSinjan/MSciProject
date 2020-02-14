@@ -143,6 +143,11 @@ lowpassdif.py
 ```
 Calculates % dif if a order 10 butterworth low pass filter is applied to the MFSA data before calculating the proportionality constants
 
+```python
+adjust_errs.py
+```
+
+Corrects the errors on dBdI_data to only be the random noise level by each probe (previously this was added in quadrature with the standard error of mean propagation)
 
 
 
