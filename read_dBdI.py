@@ -128,9 +128,9 @@ def plot_new_curve(windows, day, instruments, probes, sample):
 
 if __name__ == "__main__":
     windows = True
-    day = 2
+    day = 1
     instruments = ['METIS']#['EUI', 'METIS', 'PHI', 'SWA', 'EPD', 'SoloHI', 'STIX', 'SPICE']
-    probes = [9,10]#range(1,13)
+    probes = range(1,13)
     sample_rate = 1
 
     #plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate)
