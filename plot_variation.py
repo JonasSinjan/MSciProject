@@ -57,9 +57,9 @@ if __name__ == "__main__":
     windows = True
     inst = 'METIS'
     var = 1
-
+    #day 2
     if windows:
-        file_path = f'.\\{inst}_var{var}_B_variation_estimated.csv'
+        file_path = f'.\\Results\\variation\\{inst}_var{var}_B_variation_estimated.csv'
     else:
         file_path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/Results/variation/{inst}_var{var}_B_variation_estimated.csv")
 
