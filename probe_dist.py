@@ -1,3 +1,4 @@
+
 probe_1 = [0.045,0,2.674]
 probe_2 = [0.045,-2.12,1.794]
 probe_3 = [0.045,-2.12,-0.326]
@@ -10,6 +11,22 @@ probe_9 = [0.84,-0.3,-2.086]
 probe_10 = [0.245,-0.05,-4.341]
 probe_11 = [0.685,-0.175,-4.211]
 probe_12 = [7.664,11.092,-1.283]
+
+y_panel = [0.045, 1, -0.326]
+
+for index in [0,1,2]:
+    probe_1[index] = probe_1[index] - y_panel[index]
+    probe_2[index] = probe_2[index] - y_panel[index]
+    probe_3[index] = probe_3[index] - y_panel[index]
+    probe_4[index] = probe_4[index] - y_panel[index]
+    probe_5[index] = probe_5[index] - y_panel[index]
+    probe_6[index] = probe_6[index] - y_panel[index]
+    probe_7[index] = probe_7[index] - y_panel[index]
+    probe_8[index] = probe_8[index] - y_panel[index]
+    probe_9[index] = probe_9[index] - y_panel[index]
+    probe_10[index] = probe_10[index] - y_panel[index]
+    probe_11[index] = probe_11[index] - y_panel[index]
+    probe_12[index] = probe_12[index] - y_panel[index]
 
 def dist(probe):
     #returns dist and 1/r^3 for dipole power law
@@ -24,7 +41,10 @@ def probe_loc():
 if __name__ == "__main__":
     probe_list = probe_loc()
     j = 0
+    distance = []
     for i in probe_list:
         tmp_dist, tmp_factor = dist(i)
         print('Probe no.', j+1, 'dist = ', round(tmp_dist,3), 'factor = ', round(tmp_factor,5))
+        distance.append(tmp_dist)
         j += 1
+    print(distance)
