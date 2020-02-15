@@ -77,7 +77,9 @@ def plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate):
             plt.show()
 
 def plot_new_curve(windows, day, instruments, probes, sample):
+    
     for inst in instruments:
+        vect_dict = {}
         for probe in probes:
 
             if windows:
@@ -111,7 +113,7 @@ def plot_new_curve(windows, day, instruments, probes, sample):
             print('Slope = ', params_x[0], '+/-', perr_x[0], 'Intercept = ', params_x[1], '+/-', perr_x[1])
             print('Slope = ', params_y[0], '+/-', perr_y[0], 'Intercept = ', params_y[1], '+/-', perr_y[1])
             print('Slope = ', params_z[0], '+/-', perr_z[0], 'Intercept = ', params_z[1], '+/-', perr_z[1])
-
+            
             plt.plot(xdata, params_x[0]*xdata + params_x[1], 'b-',label='_nolegend_')
             plt.plot(xdata, params_y[0]*xdata + params_y[1], 'r-',label='_nolegend_')
             plt.plot(xdata, params_z[0]*xdata + params_z[1], 'g-',label='_nolegend_')
@@ -125,15 +127,25 @@ def plot_new_curve(windows, day, instruments, probes, sample):
             plt.xlabel('dI [A]')
             plt.ylabel('dB [nT]')
             plt.show()
-
+            
+            #   this """ section is to update the gradient dicts using the corrected dbdi data
+            """
+            vect_dict[f'{probe}'] = [params_x[0], params_y[0], params_z[0], perr_x[0], perr_y[0], perr_z[0], params_x[1], params_y[1], params_z[1], perr_x[1], perr_y[1], perr_z[1]]
+            #print(vect_dict[f'{probe}'])
+        
+        w = csv.writer(open(f".\\Results\\Gradient_dicts\\Day_{day}\\1hz_noorigin\\cur\\{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv", "w"))
+        w.writerow(["Probe","X.slope_cur", "Y.slope_cur", "Z.slope_cur","X.slope_cur_err", "Y.slope_cur_err", "Z.slope_cur_err","X_zero_int","Y_zero_int","Z_zero_int", "X_zero_int_err","Y_zero_int_err","Z_zero_int_err"])
+        for key, val in vect_dict.items():
+            w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9],val[10],val[11]])
+        """
+        
 if __name__ == "__main__":
     windows = True
-    day = 2
-    instruments = ['METIS']#['EUI', 'METIS', 'PHI', 'SWA', 'EPD', 'SoloHI', 'STIX', 'SPICE']
-    probes = [9,10]#range(1,13)
+    day = 1
+    instruments = ['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
+    probes = range(1,13)
     sample_rate = 1
 
     #plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate)
 
     plot_new_curve(windows, day, instruments, probes, sample_rate)
-

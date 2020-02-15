@@ -48,15 +48,21 @@ def calc_var(windows, day, inst):
     var_mag_Z = []
     var_mag_Z_err = []
 
-    if inst == 'EUI':
-        df_current_list.append(df_current.between_time('9:49:00', '9:54:40'))
-        df_current_list.append(df_current.between_time('9:54:30', '10:03:20'))
-        df_mag_list.append(df_mag.between_time('9:49:00', '9:54:40'))
-        df_mag_list.append(df_mag.between_time('9:54:30', '10:03:20'))
-    elif inst == 'METIS':
-        df_current_list.append(df_current.between_time('10:35:30', '10:55'))
-        df_mag_list.append(df_mag.between_time('10:35:30', '10:55'))
-
+    if day == 2:
+        if inst == 'EUI':
+            df_current_list.append(df_current.between_time('9:49:00', '9:54:40'))
+            df_current_list.append(df_current.between_time('9:54:30', '10:03:20'))
+            df_mag_list.append(df_mag.between_time('9:49:00', '9:54:40'))
+            df_mag_list.append(df_mag.between_time('9:54:30', '10:03:20'))
+        elif inst == 'METIS':
+            df_current_list.append(df_current.between_time('10:35:30', '10:55'))
+            df_mag_list.append(df_mag.between_time('10:35:30', '10:55'))
+    elif day == 1:
+        if inst == 'EUI':
+            pass
+        elif inst == 'METIS':
+            df_current_list.append(df_current.between_time('12:07', '14:17'))
+            df_mag_list.append(df_mag.between_time('12:07', '14:17'))
 
     for df in df_current_list:
         plt.figure()
@@ -76,12 +82,14 @@ def calc_var(windows, day, inst):
         bot_std = df_bot.std()/np.sqrt(len(df_bot))
         tot_std = np.sqrt(bot_std**2 + top_std**2)
         dif = top_avg - bot_avg
+        print(dif, tot_std)
 
         var_current.append(dif)
         var_current_err.append(tot_std)
+        print(var_current_err)
 
         #print("current variation (A)", dif,"+/-" , tot_std)
-
+    #dont think this should be used for MAG - only really apt for the metis current variation as so consistent.
     for df in df_mag_list:
         plt.figure()
         plt.plot(df.index.time, df)
@@ -118,9 +126,9 @@ def calc_var(windows, day, inst):
 
 
     if windows: #jonas put ur equivalent filepath here 
-        filename_MFSA = f'C:\\Users\\jonas\\MSci-Code\\MsciProject\\Results\\Gradient_dicts\\Day_{day}\\1Hz_NoOrigin\\{inst}_vect_dict_NOORIGIN.csv'
+        filename_MFSA = f'C:\\Users\\jonas\\MSci-Code\\MsciProject\\Results\\Gradient_dicts\\Day_{day}\\1hz_noorigin\\cur\\{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv'
     else: 
-        filename_MFSA = os.path.expanduser(f"~/Documents/MSciProject/NewCode/Gradient_dicts/Day_{day}/1Hz_NoOrigin/{inst}_vect_dict_NOORIGIN.csv")
+        filename_MFSA = os.path.expanduser(f"~/Documents/MSciProject/NewCode/Gradient_dicts/Day_{day}/cur/1Hz_NoOrigin/{inst}_vect_dict_NOORIGIN.csv")
             
     grad_df = pd.read_csv(filename_MFSA)
 
@@ -132,15 +140,15 @@ def calc_var(windows, day, inst):
             probe = list(grad_df.iloc[j])
 
             X_Slope,Y_Slope,Z_Slope,X_Slope_err,Y_Slope_err,Z_Slope_err = probe[1],probe[2],probe[3],probe[4],probe[5],probe[6]
-
+            print(X_Slope_err, Y_Slope_err, Z_Slope_err)
             #assuming intercept is zero
             B_var_X_estim = X_Slope * var_current[i]
             B_var_Y_estim = Y_Slope * var_current[i]
             B_var_Z_estim = Z_Slope * var_current[i]
 
-            B_var_X_err_estim = np.sqrt(X_Slope_err**2 + var_current_err[i]**2)
-            B_var_Y_err_estim = np.sqrt(Y_Slope_err**2 + var_current_err[i]**2)
-            B_var_Z_err_estim = np.sqrt(Z_Slope_err**2 + var_current_err[i]**2)
+            B_var_X_err_estim = np.sqrt((X_Slope_err*var_current[i])**2 + (X_Slope*var_current_err[i])**2)
+            B_var_Y_err_estim = np.sqrt((Y_Slope_err*var_current[i])**2 + (Y_Slope*var_current_err[i])**2)
+            B_var_Z_err_estim = np.sqrt((Z_Slope_err*var_current[i])**2 + (Z_Slope*var_current_err[i])**2)
 
             #BETTER TO ALSO CALCULATE TOTAL B VAR AND ERR HERE IN FILE
             #B_tot_var = np.sqrt(B_var_X_estim**2 + B_var_Y_err_estim**2 + B_var_Z_estim**2)
@@ -160,7 +168,7 @@ def calc_var(windows, day, inst):
         B_variation['current'] = [var_current[i],var_current[i],var_current[i],var_current_err[i],var_current_err[i],var_current_err[i]]
         
 
-        w = csv.writer(open(f"{inst}_var{i+1}_B_variation_estimated.csv", "w"))
+        w = csv.writer(open(f".\\{inst}_var{i+1}_B_variation_estimated_day{day}.csv", "w"))
         w.writerow(["Probe","var_X", "var_Y", "var_Z","var_X_err", "var_Y_err", "var_Z_err"])
         for key, val in B_variation.items():
             w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5]])
@@ -168,7 +176,7 @@ def calc_var(windows, day, inst):
 
 if __name__ == "__main__":
     windows = True
-    day = 2
+    day = 1
     inst = 'METIS'
 
     calc_var(windows, day, inst)
