@@ -186,5 +186,6 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
 if __name__ == "__main__":
     windows = True
     daynumber = 2
-    dict = current_peaks(windows, daynumber, plot = True)
-    print(dict['SPICE Current [A]'])
+    dict = current_peaks(windows, daynumber, plot = False)
+    print(dict['EUI Current [A]'])
+    print(dict['METIS Current [A]'])
