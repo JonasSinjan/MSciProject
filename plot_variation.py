@@ -52,7 +52,7 @@ def plot_b_var_est(file_path, inst, plot = False):
 
 
 if __name__ == "__main__":
-    windows = True
+    windows = False
     inst = 'METIS'
     var = 1
 
