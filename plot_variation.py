@@ -15,6 +15,7 @@ def plot_b_var_est(file_path, inst, day, plot = False):
     
     B_tot = list(df['B_tot'])
     B_tot_err = list(df['B_tot_err'])
+    print(df.tail())
 
     #print(df.head())
     #print(df.tail())
@@ -45,7 +46,7 @@ def plot_b_var_est(file_path, inst, day, plot = False):
         plt.scatter(df['dist'],df['B_tot'])
         plt.errorbar(df['dist'],df['B_tot'],yerr=df['B_tot_err'], linestyle="None")
         xdata = np.linspace(1,4.5,100)
-        plt.plot(xdata, params[0]*(xdata)**(-3) + params[1], 'b-',label= f'y = {params[0]}/r^3 + {params[1]} ')
+        plt.plot(xdata, params[0]*(xdata)**(-3) + params[1], 'b-',label= f'y = ({params[0]}±{perr[0]})/r^3 + {params[1]} ± {perr[0]}') 
         plt.xlabel('r (distance from centre of -Y instrument panel) [m]')
         plt.ylabel('B_var [nT]')
         plt.title(f'1/r^3 Dipole Fit -  {inst} - Day {day}')
@@ -57,7 +58,7 @@ if __name__ == "__main__":
     windows = True
     inst = 'METIS'
     var = 1
-    day =  1
+    day =  2
     if windows:
         file_path = f'.\\Results\\variation\\{inst}_var{var}_B_variation_estimated_day{day}.csv'
     else:
