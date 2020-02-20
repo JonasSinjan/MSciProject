@@ -45,10 +45,10 @@ def plot_b_var_est(file_path, inst, day, plot = False):
         plt.scatter(df['dist'],df['B_tot'])
         plt.errorbar(df['dist'],df['B_tot'],yerr=df['B_tot_err'], linestyle="None")
         xdata = np.linspace(1,4.5,100)
-        plt.plot(xdata, params[0]*(xdata)**(-3) + params[1], 'b-',label= f'y = {params[0]}/r^3 + {params[1]} ')
+        plt.plot(xdata, params[0]*(xdata)**(-3) + params[1], 'b-',label= f'y = {params[0]}/r^3 + {params[1]}')
         plt.xlabel('r (distance from centre of -Y instrument panel) [m]')
         plt.ylabel('B_var [nT]')
-        plt.title(f'1/r^3 Dipole Fit -  {inst} - Day {day}')
+        #plt.title(f'1/r^3 Dipole Fit -  {inst} - Day {day}')
         print(params, perr)
         plt.show()
 
