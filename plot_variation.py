@@ -34,10 +34,11 @@ def plot_b_var_est(file_path, inst, day, plot = False):
         ax.set_ylabel("B_var [nT]")
         plt.show()
         """
+        df = df.sort_values('dist', ascending = True, kind = 'mergesort')
 
         def cubic(x,a,b):
                 return a*(x**(-3)) + b
-        df = df.sort_values('dist', ascending = True, kind = 'mergesort')
+        
         params,cov = spo.curve_fit(cubic, df['dist'], df['B_tot'], sigma = df['B_tot_err'], absolute_sigma = True)
         perr = np.sqrt(np.diag(cov))
 
@@ -48,8 +49,23 @@ def plot_b_var_est(file_path, inst, day, plot = False):
         plt.plot(xdata, params[0]*(xdata)**(-3) + params[1], 'r-',label= f'y = {params[0]}/r^3 + {params[1]}')
         plt.xlabel('r (distance from centre of -Y instrument panel) [m]')
         plt.ylabel('B_var [nT]')
-        #plt.title(f'1/r^3 Dipole Fit -  {inst} - Day {day}')
         print(params, perr)
+        #plt.title(f'1/r^3 Dipole Fit -  {inst} - Day {day}')
+        def cubic_alt(x,a):
+                return a*(x**(-3))
+        
+        params_alt,cov_alt = spo.curve_fit(cubic_alt, df['dist'], df['B_tot'], sigma = df['B_tot_err'], absolute_sigma = True)
+        perr_alt = np.sqrt(np.diag(cov_alt))
+        
+        plt.figure()
+        plt.scatter(df['dist'],df['B_tot'])
+        plt.errorbar(df['dist'],df['B_tot'],yerr=df['B_tot_err'], linestyle="None")
+        xdata = np.linspace(1,4.5,100)
+        plt.plot(xdata, params_alt[0]*(xdata)**(-3), 'r-',label= f'y = {params_alt[0]}/r^3')
+        plt.xlabel('r (distance from centre of -Y instrument panel) [m]')
+        plt.ylabel('B_var [nT]')
+        #plt.title(f'1/r^3 Dipole Fit -  {inst} - Day {day}')
+        print(params_alt, perr_alt)
         plt.show()
 
 
