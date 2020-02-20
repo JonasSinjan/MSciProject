@@ -80,7 +80,7 @@ if __name__ == "__main__":
     #here select which probe is desired, only one at a time
     #num = 12
     b_noise = []
-    for num in [7]:
+    for num in [1,6,7]:
         print('num = ', num)
         if num < 9:
             soloA_bool = True
@@ -93,8 +93,8 @@ if __name__ == "__main__":
         collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
         #the datetime we change here is in spacecraft time - used for if want probes for a certain current profile (which is in spacecraft time)
-        start_dt = datetime(2019,6,24,11,0) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-        end_dt = datetime(2019,6,24,11,20) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
+        start_dt = datetime(2019,6,24,9,24,26) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+        end_dt = datetime(2019,6,24,10,9,30) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
         #start and end dt now in MFSA (German UT) time - as MFSA in that time
         day = 2
         #finding the correct MFSA data files

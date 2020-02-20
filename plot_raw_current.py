@@ -33,9 +33,12 @@ def plot_raw(windows, inst, daynumber):
     plt.title(f'{inst} Raw Current Profile - Day {daynumber}')
     plt.show()
 
+    print (df.head())
+    print (df.tail())
+
 if __name__ == "__main__":
-    windows = True
+    windows = False
     day = 2
-    inst = 'METIS'
+    inst = 'EUI'
 
     plot_raw(windows, inst, day)

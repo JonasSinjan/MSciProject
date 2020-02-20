@@ -86,7 +86,7 @@ def plot_new_curve(windows, day, instruments, probes, sample):
                 path = f'.\\Results\\dBdI_data\\Day{day}\\{sample}Hz_with_err\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz_day{day}.csv'
 
             else:
-                path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/dBdI_data/Day{day}/{sample}Hz_with_err/{inst}/{inst}_probe{probe}_vect_dict_{sample}Hz_day{day}.csv")
+                path = os.path.expanduser(f"~/Documents/MSciProject/NewCode//Results/dBdI_data/Day{day}/{sample}Hz_with_err/{inst}/{inst}_probe{probe}_vect_dict_{sample}Hz_day{day}.csv")
         
             df = pd.read_csv(path)
             xdata = df['dI']
@@ -140,9 +140,9 @@ def plot_new_curve(windows, day, instruments, probes, sample):
         """
         
 if __name__ == "__main__":
-    windows = True
-    day = 1
-    instruments = ['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
+    windows = False
+    day = 2
+    instruments = ['EUI']#['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
     probes = range(1,13)
     sample_rate = 1
 
