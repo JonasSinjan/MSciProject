@@ -118,12 +118,12 @@ def plot_new_curve(windows, day, instruments, probes, sample):
             plt.plot(xdata, params_y[0]*xdata + params_y[1], 'r-',label='_nolegend_')
             plt.plot(xdata, params_z[0]*xdata + params_z[1], 'g-',label='_nolegend_')
 
-            plt.errorbar(xdata, probe_x_tmp, yerr = probe_x_tmp_err, fmt = 'bs', markeredgewidth = 2, label = f'curve_fit - X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
-            plt.errorbar(xdata, probe_y_tmp, yerr = probe_y_tmp_err, fmt = 'rs', markeredgewidth = 2, label = f'curve_fit - Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
-            plt.errorbar(xdata, probe_z_tmp, yerr = probe_z_tmp_err, fmt = 'gs', markeredgewidth = 2, label = f'curve_fit - Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
+            plt.errorbar(xdata, probe_x_tmp, yerr = probe_x_tmp_err, fmt = 'bs', markeredgewidth = 2, label = f'X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)}, int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
+            plt.errorbar(xdata, probe_y_tmp, yerr = probe_y_tmp_err, fmt = 'rs', markeredgewidth = 2, label = f'Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)}, int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
+            plt.errorbar(xdata, probe_z_tmp, yerr = probe_z_tmp_err, fmt = 'gs', markeredgewidth = 2, label = f'Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)}, int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
 
             plt.legend(loc="best")
-            plt.title(f'Day {day} - {inst} - Probe {probe} - {sample}Hz - MFSA')
+            #plt.title(f'Day {day} - {inst} - Probe {probe} - {sample}Hz - MFSA')
             plt.xlabel('dI [A]')
             plt.ylabel('dB [nT]')
             plt.show()
@@ -141,9 +141,9 @@ def plot_new_curve(windows, day, instruments, probes, sample):
         
 if __name__ == "__main__":
     windows = True
-    day = 1
-    instruments = ['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
-    probes = range(1,13)
+    day = 2
+    instruments = ['METIS']#['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
+    probes = [7]
     sample_rate = 1
 
     #plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate)
