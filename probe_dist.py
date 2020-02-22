@@ -51,20 +51,21 @@ def return_ypanel_loc(): #x,y,z distance from centre of -y panel
 
 def return_ypanel_dist(probe_list):
     distance = []
+    factor = []
     for i in probe_list:
         tmp_dist, tmp_factor = dist(i)
         distance.append(tmp_dist)
-    return distance
+        factor.append(tmp_factor)
+    return distance, factor
 
 if __name__ == "__main__":
     probe_list = return_ypanel_loc()
-    
+    distance, factor = return_ypanel_dist(probe_list)
+
     j = 0
-    distance = []
-    for i in probe_list:
-        tmp_dist, tmp_factor = dist(i)
+    for i in range(len(probe_list)):
+        tmp_dist, tmp_factor = distance[i], factor[i]
         print('Probe no.', j+1, 'dist = ', round(tmp_dist,3), 'factor = ', round(tmp_factor,5))
-        distance.append(tmp_dist)
         j += 1
-    print(distance)
+ 
     
