@@ -44,12 +44,13 @@ def plot_b_var_est(file_path, inst, day, plot = False):
         perr = np.sqrt(np.diag(cov))
 
         plt.figure()
-        plt.scatter(df['dist'],df['B_tot'])
-        plt.errorbar(df['dist'],df['B_tot'],yerr=df['B_tot_err'], linestyle="None")
+        plt.scatter(df['dist'],df['B_tot'], label='_nolegend_')
+        plt.errorbar(df['dist'],df['B_tot'],yerr=df['B_tot_err'], linestyle="None", label='_nolegend_')
         xdata = np.linspace(1,4.5,100)
-        plt.plot(xdata, params[0]*(xdata)**(-3) + params[1], 'b-',label= f'y = ({round(params[0],2)}±{round(perr[0],2)})/r^3 + {round(params[1],2)} ± {round(perr[0],2)}') 
+        plt.plot(xdata, params[0]*(xdata)**(-3) + params[1], 'b-',label= f'y = ({round(params[0],2)}±{round(perr[0],2)})/r^3 + {round(params[1],2)} ± {round(perr[1],2)}') 
         plt.xlabel('r (distance from centre of -Y instrument panel) [m]')
         plt.ylabel('B_var [nT]')
+        plt.legend(loc='best')
         print(params, perr)
         #plt.title(f'1/r^3 Dipole Fit -  {inst} - Day {day}')
         def cubic_alt(x,a):
@@ -65,8 +66,8 @@ def plot_b_var_est(file_path, inst, day, plot = False):
         perr_inv = np.sqrt(np.diag(cov_inv))
         
         plt.figure()
-        plt.scatter(df['dist'],df['B_tot'])
-        plt.errorbar(df['dist'],df['B_tot'],yerr=df['B_tot_err'], linestyle="None")
+        plt.scatter(df['dist'],df['B_tot'], label='_nolegend_')
+        plt.errorbar(df['dist'],df['B_tot'],yerr=df['B_tot_err'], linestyle="None", label='_nolegend_')
         xdata = np.linspace(1.1,4.5,100)
         plt.plot(xdata, params_alt[0]*(xdata)**(-3), 'r-',label='Inverse Cubic Fit')#f'y = {params_alt[0]}/r^3')
         #plt.plot(xdata, params_inv[0]*(xdata)**(-1), 'g-',label= f'y = {params_alt[0]}/r')
