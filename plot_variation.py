@@ -29,16 +29,17 @@ def plot_b_var_est(file_path, inst, day, plot = False):
         ax = df.plot.bar(x='Probe', y = 'B_tot', yerr = 'B_tot_err', rot = 0, legend = False, title=f'{inst}_B_var')
         ax.set_ylabel("B_var [nT]")
         ax.set_title(f'{inst} B_var estimates - Day {day}')
-        plt.show()
+        #plt.show()
         """
         ax = df.plot.bar(x='dist', y = 'B_tot', yerr = 'B_tot_err', rot = 0, legend = False, title=f'{inst}_B_var')
         ax.set_ylabel("B_var [nT]")
         plt.show()
         """
+        df = df.sort_values('dist', ascending = True, kind = 'mergesort')
 
         def cubic(x,a,b):
                 return a*(x**(-3)) + b
-        df = df.sort_values('dist', ascending = True, kind = 'mergesort')
+        
         params,cov = spo.curve_fit(cubic, df['dist'], df['B_tot'], sigma = df['B_tot_err'], absolute_sigma = True)
         perr = np.sqrt(np.diag(cov))
 
@@ -46,11 +47,35 @@ def plot_b_var_est(file_path, inst, day, plot = False):
         plt.scatter(df['dist'],df['B_tot'])
         plt.errorbar(df['dist'],df['B_tot'],yerr=df['B_tot_err'], linestyle="None")
         xdata = np.linspace(1,4.5,100)
-        plt.plot(xdata, params[0]*(xdata)**(-3) + params[1], 'b-',label= f'y = ({params[0]}±{perr[0]})/r^3 + {params[1]} ± {perr[0]}') 
+        plt.plot(xdata, params[0]*(xdata)**(-3) + params[1], 'b-',label= f'y = ({round(params[0],2)}±{round(perr[0],2)})/r^3 + {round(params[1],2)} ± {round(perr[0],2)}') 
         plt.xlabel('r (distance from centre of -Y instrument panel) [m]')
         plt.ylabel('B_var [nT]')
-        plt.title(f'1/r^3 Dipole Fit -  {inst} - Day {day}')
         print(params, perr)
+        #plt.title(f'1/r^3 Dipole Fit -  {inst} - Day {day}')
+        def cubic_alt(x,a):
+            return a*(x**(-3))
+            
+        def inverse(x,a):
+            return a/x
+        
+        params_alt,cov_alt = spo.curve_fit(cubic_alt, df['dist'], df['B_tot'], sigma = df['B_tot_err'], absolute_sigma = True)
+        perr_alt = np.sqrt(np.diag(cov_alt))
+        
+        params_inv,cov_inv = spo.curve_fit(inverse, df['dist'], df['B_tot'], sigma = df['B_tot_err'], absolute_sigma = True)
+        perr_inv = np.sqrt(np.diag(cov_inv))
+        
+        plt.figure()
+        plt.scatter(df['dist'],df['B_tot'])
+        plt.errorbar(df['dist'],df['B_tot'],yerr=df['B_tot_err'], linestyle="None")
+        xdata = np.linspace(1.1,4.5,100)
+        plt.plot(xdata, params_alt[0]*(xdata)**(-3), 'r-',label='Inverse Cubic Fit')#f'y = {params_alt[0]}/r^3')
+        #plt.plot(xdata, params_inv[0]*(xdata)**(-1), 'g-',label= f'y = {params_alt[0]}/r')
+        plt.xlabel('r (distance from centre of -Y instrument panel) [m]')
+        plt.ylabel('B_var [nT]')
+        plt.legend(loc='best')
+        #plt.title(f'1/r^3 Dipole Fit -  {inst} - Day {day}')
+        print(params_alt, perr_alt)
+        print(params_inv, perr_inv)
         plt.show()
 
 
