@@ -12,7 +12,7 @@ def solver(file_path, inst, day):
     probe_loc_list = return_ypanel_loc()
     probe_loc_list = probe_loc_list[:-1] #dont want probe 12 location
 
-    probe_dist_list = return_ypanel_dist(probe_loc_list)
+    probe_dist_list, factor = return_ypanel_dist(probe_loc_list)
 
     mx_list, my_list, mz_list = 11*[0],  11*[0], 11*[0] 
     for i in range(0,11):
@@ -49,11 +49,11 @@ def solver(file_path, inst, day):
     y_list = [y for r,y in ry]
     z_list = [z for r,z in rz]
 
-    r = [r for r,x in rx]
+    r_list = [r for r,x in rx]
 
-    plt.plot(r, [i*1000 for i in x_list], label = 'M_x')
-    plt.plot(r, [i*1000 for i in y_list], label = 'M_y')
-    plt.plot(r, [i*1000 for i in z_list], label = 'M_z')
+    plt.scatter(r_list, [i*1000 for i in x_list], label = 'M_x')
+    plt.scatter(r_list, [i*1000 for i in y_list], label = 'M_y')
+    plt.scatter(r_list, [i*1000 for i in z_list], label = 'M_z')
     plt.xlabel('r [m]')
     plt.ylabel('Magnetic Moment [mA*m**2]')
     plt.legend(loc='best')
