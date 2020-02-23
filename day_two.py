@@ -105,26 +105,32 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
         x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
         fs = sampling_freq
         #f, Pxx = sps.periodogram(x,fs)
+        """
         f, t, Sxx = sps.spectrogram(x,fs)#,nperseg=700)
         ax = plt.figure()
-        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.05)
+        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.1)
         plt.semilogy()
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [sec]')
         plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
-        plt.ylim((10**0,5*10**2))
+        plt.ylim((10**0,2*10**1))
         plt.clim()
         fig = plt.gcf()
         cbar = plt.colorbar()
         #cbar.ax.set_yticklabels(fontsize=8)
         cbar.set_label('Power/Frequency [deciBels/Hz]')#, rotation=270)  
+        """
+        fig, ax2 = plt.subplots()
+        Pxx, freqs, bins, im = ax2.specgram(x, Fs=sampling_freq)#, noverlap=900)
+        ax2.set_yscale('log')
+        ax2.set_ylim((10**0,10**2))
         plt.show()
 
 
 if __name__ == "__main__":
     
     windows = True
-    probe_num_list = [2] #['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI', 'EUI', 'SWA', 'EPD']
+    probe_num_list = [7] #['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI', 'EUI', 'SWA', 'EPD']
     # METIS - 10:10-10:56
     # EUI - 9:24-10:09
     # SPICE - 10:57-11:18
@@ -139,9 +145,9 @@ if __name__ == "__main__":
     end_dt = datetime(2019,6,24,8,00) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
     #start and end dt now in MFSA (German UT) time - as MFSA in that time
     day = 2
-        
+    
     alt = False #if want powerspec from `brute force' method - or inbuilt scipy periodogram method
-    tmp = day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = 1000, plot = False) #pass through the list containing the file paths
+    tmp = day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = 200, plot = False) #pass through the list containing the file paths
     
     """
     b_noise.extend(tmp)
