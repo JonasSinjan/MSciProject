@@ -33,13 +33,14 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
     print(len(df))
     
-    plot = True
+    plot = False
     df2 = df.between_time(start_dt.time(), end_dt.time())
-    df3 = df2.resample('1s').mean()
+    
     #print(df2.head())
 
     if plot: #plotting the raw probes results
         #plt.figure()
+        df3 = df2.resample('1s').mean()
         tmp = []
         for col in collist[1:]:
             #plt.plot(df2.index.time, df2[col], label=str(col))
@@ -77,6 +78,13 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     plt.colorbar()  
     plt.show()
     """
+    x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
+    fig, ax2 = plt.subplots()
+    Pxx, freqs, bins, im = ax2.specgram(x, Fs=sampling_freq)#, noverlap=900)
+    ax2.set_yscale('log')
+    ax2.set_ylim((10**0,5*10**1))
+    plt.show()
+
     return tmp
 
 
@@ -94,7 +102,7 @@ if __name__ == "__main__":
     alt = False #set to true if you want to see power spec using the stnadard method - not the inbuilt funciton
     #num = 5
     b_noise = []
-    for num in range(1,13):
+    for num in [9]:
         print('num = ', num)
         if num < 9:
             soloA_bool = True
@@ -106,11 +114,11 @@ if __name__ == "__main__":
             num_str = num
         collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
-        start_dt = datetime(2019,6,21,9,45)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-        end_dt = datetime(2019,6,21,10,0)# this is the end
+        start_dt = datetime(2019,6,21,7,0)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+        end_dt = datetime(2019,6,21,14,30)# this is the end
 
         day = 1
-        start_csv, end_csv = processing.which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
+        start_csv, end_csv = processing.which_csvs(soloA_bool, day ,start_dt, end_dt, tz_MAG = True) #this function (in processing.py) finds the number at the end of the csv files we want
         print(start_csv, end_csv)
 
         all_files = [0]*(end_csv + 1 - start_csv)
@@ -128,10 +136,10 @@ if __name__ == "__main__":
                 else:
                     all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{i}.csv') #need to change path_fol_B to the path where your B folder is
 
-        tmp = day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 1000) #pass through the list containing the file paths
+        tmp = day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 100) #pass through the list containing the file paths
         b_noise.extend(tmp)
 
-    
+    """
     w = csv.writer(open(f"day1_mfsa_probe_vars.csv", "w"))
     w.writerow(["Probe","Bx_var","By_var","Bz_var","Bx_var_1k","By_var_1k","Bz_var_1k"])
     val = b_noise
@@ -139,5 +147,6 @@ if __name__ == "__main__":
     for i in range(12):
         w.writerow([i+1,val[j],val[j+2],val[j+4],val[j+1],val[j+3],val[j+5]])#,val[9],val[10],val[11]])
         j += 6
+    """
     
 
