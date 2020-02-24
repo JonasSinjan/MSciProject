@@ -37,6 +37,8 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
             day = datetime(2019,6,21,0,0,0)
         if daynumber == 2:
             day = datetime(2019,6,24,0,0,0)
+
+        #.diff() finds difference between each row as it goes - change in I per sample     
         diff = df[col].diff()
         df['Current Dif'] = diff
         current_dif = np.array(diff)
@@ -50,6 +52,7 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
 
         #removing unwanted peaks
         remove_list = []
+        #removing peaks that are too close to each other
         for j in range(len(peak_datetimes)-1):
             if (peak_datetimes[j+1]-peak_datetimes[j]).total_seconds() < 50:
                 dict_tmp = {'j': abs(current_dif[index_list[j]]), 'j+1': abs(current_dif[index_list[j+1]])}

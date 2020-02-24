@@ -36,6 +36,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             path_fol_A = os.path.expanduser("~/Documents/MSciProject/Data/day_two/A")
             path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_two/B")
     
+    #set start and end time to first and last current jump time with a 3 minute buffer either side
     start_dt = peak_datetimes[0] - pd.Timedelta(minutes = 3)
     end_dt = peak_datetimes[-1] + pd.Timedelta(minutes = 3)
 
@@ -93,6 +94,8 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
         
         collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
             
+        
+        #reads csv files and rotates to spacecraft frame
         if soloA_bool:
             df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=day, start_dt = start_dt, end_dt = end_dt)
             if day == 1:
@@ -111,14 +114,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
     
         df = processing.shifttime(df, soloA_bool, day) # must shift MFSA data to MAG/spacecraft time
         
-        print(df.head())
-        print(df.tail())
-        
         df = df.between_time(start_dt.time(), end_dt.time())
         
-        #print(df.head())
-        #print(df.tail())
-        
+        #lowpass filter to remove high frequency signals
         if lowpass:
             def butter_lowpass(cutoff, fs, order=10):
                 nyq = 0.5 * fs
@@ -142,9 +140,10 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
         step_dict = processing.calculate_dB(df, peak_datetimes)
 
-
+        #get data for dI
         xdata = list(current_dif[:len(peak_datetimes)])
         
+        #get data for dB
         probe_x_tmp = step_dict.get(f'Probe{num_str}_X')
         probe_y_tmp = step_dict.get(f'Probe{num_str}_Y')
         probe_z_tmp = step_dict.get(f'Probe{num_str}_Z')
@@ -153,6 +152,8 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
         probe_y_tmp_err = step_dict.get(f'Probe{num_str}_Y err')
         probe_z_tmp_err = step_dict.get(f'Probe{num_str}_Z err')
         
+        
+        #force zero forces the fir through the origin by adding this as a point - should theoretically go through the origin
         force_zero = False
         if force_zero:
             xdata.append(0.0)
@@ -166,6 +167,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             probe_z_tmp_err.append(0.0)
 
         if rand_noise:
+            #takes random noise and adds it in quadrature with the standard error of averaging 
             if day == 1:
                     err_path = f'..\\day1_mfsa_probe_vars.csv'
             elif day == 2:
