@@ -40,21 +40,32 @@ for index in [0,1,2]:
     probe_11[index] = probe_11[index] - y_panel[index]
     probe_12[index] = probe_12[index] - y_panel[index]
 """
-
-if __name__ == "__main__":
+def return_ypanel_loc(): #x,y,z distance from centre of -y panel
     probe_list = probe_loc()
     y_panel = [0.045, 1, -0.326]
     
     for probe in probe_list:
         for index in [0,1,2]:
             probe[index] = probe[index] - y_panel[index]
-    
-    j = 0
+    return probe_list
+
+def return_ypanel_dist(probe_list):
     distance = []
+    factor = []
     for i in probe_list:
         tmp_dist, tmp_factor = dist(i)
-        print('Probe no.', j+1, 'dist = ', round(tmp_dist,3), 'factor = ', round(tmp_factor,5))
         distance.append(tmp_dist)
+        factor.append(tmp_factor)
+    return distance, factor
+
+if __name__ == "__main__":
+    probe_list = return_ypanel_loc()
+    distance, factor = return_ypanel_dist(probe_list)
+
+    j = 0
+    for i in range(len(probe_list)):
+        tmp_dist, tmp_factor = distance[i], factor[i]
+        print('Probe no.', j+1, 'dist = ', round(tmp_dist,3), 'factor = ', round(tmp_factor,5))
         j += 1
-    print(distance)
+ 
     

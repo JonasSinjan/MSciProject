@@ -189,6 +189,11 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
 if __name__ == "__main__":
     windows = True
     daynumber = 2
-    dict = current_peaks(windows, daynumber, plot = False)
-    print(dict['EUI Current [A]'])
-    print(dict['METIS Current [A]'])
+    dict_cur = current_peaks(windows, daynumber, plot = True)
+    #print(dict_cur['EUI Current [A]'])
+    #print(dict_cur['METIS Current [A]'])
+
+    for inst in ['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI', 'EUI', 'SWA', 'EPD']:
+        peak_datetimes = dict_cur.get(f'{inst} Current [A]')
+        print(peak_datetimes[0], peak_datetimes[-1])
+
