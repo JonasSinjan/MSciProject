@@ -58,7 +58,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
         plt.show()
         """
     #power spectrum
-    fs = sampling_freq
+    #fs = sampling_freq
     #processing.powerspecplot(df, fs, collist, alt)
 
     """
@@ -77,6 +77,23 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     plt.colorbar()  
     plt.show()
     """
+    x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
+    fs = sampling_freq
+    #f, Pxx = sps.periodogram(x,fs)
+    f, t, Sxx = sps.spectrogram(x,fs)#,nperseg=700)
+    ax = plt.figure()
+    plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.05)
+    plt.semilogy()
+    plt.ylabel('Frequency [Hz]')
+    plt.xlabel('Time [sec]')
+    plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
+    plt.ylim((10**0,5*10**2))
+    plt.clim()
+    fig = plt.gcf()
+    cbar = plt.colorbar()
+    #cbar.ax.set_yticklabels(fontsize=8)
+    cbar.set_label('Power/Frequency [deciBels/Hz]')#, rotation=270)  
+    plt.show()
     return tmp
 
 
@@ -94,7 +111,7 @@ if __name__ == "__main__":
     alt = False #set to true if you want to see power spec using the stnadard method - not the inbuilt funciton
     #num = 5
     b_noise = []
-    for num in range(1,13):
+    for num in [9]:
         print('num = ', num)
         if num < 9:
             soloA_bool = True
@@ -106,8 +123,8 @@ if __name__ == "__main__":
             num_str = num
         collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
-        start_dt = datetime(2019,6,21,9,45)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-        end_dt = datetime(2019,6,21,10,0)# this is the end
+        start_dt = datetime(2019,6,21,15,31)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+        end_dt = datetime(2019,6,21,16,0)# this is the end
 
         day = 1
         start_csv, end_csv = processing.which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
@@ -131,7 +148,7 @@ if __name__ == "__main__":
         tmp = day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 1000) #pass through the list containing the file paths
         b_noise.extend(tmp)
 
-    
+    """
     w = csv.writer(open(f"day1_mfsa_probe_vars.csv", "w"))
     w.writerow(["Probe","Bx_var","By_var","Bz_var","Bx_var_1k","By_var_1k","Bz_var_1k"])
     val = b_noise
@@ -139,5 +156,5 @@ if __name__ == "__main__":
     for i in range(12):
         w.writerow([i+1,val[j],val[j+2],val[j+4],val[j+1],val[j+3],val[j+5]])#,val[9],val[10],val[11]])
         j += 6
-    
+    """
 
