@@ -99,11 +99,12 @@ def day_one(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
             
             return tmp
             """
+        """
         #power spectrum
         #fs = sampling_freq
         #processing.powerspecplot(df, fs, collist, alt)
 
-        """
+        
         #spectogram    
         x = df2[collist[1]]
         fs = sampling_freq
