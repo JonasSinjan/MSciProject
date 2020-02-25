@@ -33,7 +33,7 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
     print(len(df))
     
-    plot = True
+    plot = False
     df2 = df.between_time(start_dt.time(), end_dt.time())
     df3 = df2.resample('1s').mean()
     #print(df2.head())
@@ -56,6 +56,8 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
         plt.title(f'Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
         plt.legend(loc="best")
         plt.show()
+        
+        return tmp
         """
     #power spectrum
     #fs = sampling_freq
@@ -80,21 +82,24 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
     fs = sampling_freq
     #f, Pxx = sps.periodogram(x,fs)
-    f, t, Sxx = sps.spectrogram(x,fs)#,nperseg=700)
+    div = 450
+    nff = 2666810//div
+    wind = sps.hamming(int(2666810//div))
+    f, t, Sxx = sps.spectrogram(x,fs, window=wind, noverlap = int(2666810//(2*div)), nfft = nff)#,nperseg=700)
     ax = plt.figure()
     plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.05)
     plt.semilogy()
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
     plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
-    plt.ylim((10**0,5*10**2))
+    plt.ylim((10**-1,5*10**2))
     plt.clim()
     fig = plt.gcf()
     cbar = plt.colorbar()
     #cbar.ax.set_yticklabels(fontsize=8)
     cbar.set_label('Power/Frequency [deciBels/Hz]')#, rotation=270)  
     plt.show()
-    return tmp
+    
 
 
 if __name__ == "__main__":
@@ -110,7 +115,7 @@ if __name__ == "__main__":
 
     alt = False #set to true if you want to see power spec using the stnadard method - not the inbuilt funciton
     #num = 5
-    b_noise = []
+    #b_noise = []
     for num in [9]:
         print('num = ', num)
         if num < 9:
@@ -146,7 +151,7 @@ if __name__ == "__main__":
                     all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{i}.csv') #need to change path_fol_B to the path where your B folder is
 
         tmp = day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 1000) #pass through the list containing the file paths
-        b_noise.extend(tmp)
+        #b_noise.extend(tmp)
 
     """
     w = csv.writer(open(f"day1_mfsa_probe_vars.csv", "w"))

@@ -107,7 +107,7 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
         #f, Pxx = sps.periodogram(x,fs)
         f, t, Sxx = sps.spectrogram(x,fs)#,nperseg=700)
         ax = plt.figure()
-        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.05)
+        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.1)
         plt.semilogy()
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [sec]')
