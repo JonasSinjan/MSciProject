@@ -74,6 +74,7 @@ def day_one(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
         print(len(df))
         
         df2 = df.between_time(start_dt.time(), end_dt.time())
+        print(len(df2))
       
         #print(df2.head())
 
@@ -124,7 +125,7 @@ def day_one(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
         fs = sampling_freq
         #f, Pxx = sps.periodogram(x,fs)
         div = 450
-        nff = 2666810//div
+        nff = 2666810//div #5700
         wind = sps.hamming(int(2666810//div))
         f, t, Sxx = sps.spectrogram(x,fs, window=wind, noverlap = int(2666810//(2*div)), nfft = nff)#,nperseg=700)
         ax = plt.figure()
