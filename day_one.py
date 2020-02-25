@@ -13,7 +13,7 @@ import glob
 import csv
 
 
-def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = None):
+def day_one(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None, plot=False):
     """
     all_files - set this to the directory where the data is kept on your local computer
     collist - list of columns desired
@@ -24,88 +24,6 @@ def day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling
     alt - boolean - set to True if desire the 'brute force' method for power spectrum rather than periodogram method
     sampling_freq - set to desired sampling frequency - default = None
     """
-    if soloA_bool:
-        df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
-        rotate_mat = processing.rotate_21(soloA_bool)[num-1]
-    else:
-        df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
-        rotate_mat = processing.rotate_21(soloA_bool)[num-9]
-    df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
-    print(len(df))
-    
-    plot = False
-    df2 = df.between_time(start_dt.time(), end_dt.time())
-    df3 = df2.resample('1s').mean()
-    #print(df2.head())
-
-    if plot: #plotting the raw probes results
-        #plt.figure()
-        tmp = []
-        for col in collist[1:]:
-            #plt.plot(df2.index.time, df2[col], label=str(col))
-            #print(df2[col].abs().idxmax())
-            var_1hz = np.std(df3[col])
-            var_1khz = np.std(df2[col])
-            print('std - 1Hz', col, var_1hz)
-            print('std - 1kHz', col,  var_1khz)
-            tmp.append(var_1hz)
-            tmp.append(var_1khz)
-        """
-        plt.xlabel('Time (s)')
-        plt.ylabel('B (nT)')
-        plt.title(f'Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
-        plt.legend(loc="best")
-        plt.show()
-        
-        return tmp
-        """
-    #power spectrum
-    #fs = sampling_freq
-    #processing.powerspecplot(df, fs, collist, alt)
-
-    """
-    #spectogram    
-    x = df2[collist[1]]
-    fs = sampling_freq
-    #f, Pxx = sps.periodogram(x,fs)
-    f, t, Sxx = sps.spectrogram(x,fs)#,nperseg=700)
-    plt.figure()
-    plt.pcolormesh(t, f, Sxx,vmin = 0.,vmax = 0.1)
-    plt.ylabel('Frequency [Hz]')
-    plt.xlabel('Time [sec]')
-    plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
-    plt.clim()
-    fig = plt.gcf()
-    plt.colorbar()  
-    plt.show()
-    """
-    x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
-    fs = sampling_freq
-    #f, Pxx = sps.periodogram(x,fs)
-    div = 450
-    nff = 2666810//div
-    wind = sps.hamming(int(2666810//div))
-    f, t, Sxx = sps.spectrogram(x,fs, window=wind, noverlap = int(2666810//(2*div)), nfft = nff)#,nperseg=700)
-    ax = plt.figure()
-    plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.05)
-    plt.semilogy()
-    plt.ylabel('Frequency [Hz]')
-    plt.xlabel('Time [sec]')
-    plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
-    plt.ylim((10**-1,5*10**2))
-    plt.clim()
-    fig = plt.gcf()
-    cbar = plt.colorbar()
-    #cbar.ax.set_yticklabels(fontsize=8)
-    cbar.set_label('Power/Frequency [deciBels/Hz]')#, rotation=270)  
-    plt.show()
-    
-
-
-if __name__ == "__main__":
-
-    windows = True
-
     if windows:
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_one\A'
         path_fol_B = r'C:\Users\jonas\MSci-Data\day_one\B'
@@ -113,10 +31,10 @@ if __name__ == "__main__":
         path_fol_A = os.path.expanduser("~/Documents/MSciProject/Data/day_one/A")
         path_fol_B = os.path.expanduser("~/Documents/MSciProject/Data/day_one/B")
 
-    alt = False #set to true if you want to see power spec using the stnadard method - not the inbuilt funciton
+    #alt - set to true if you want to see power spec using the stnadard method - not the inbuilt funciton
     #num = 5
     #b_noise = []
-    for num in [9]:
+    for num in probe_num_list:
         print('num = ', num)
         if num < 9:
             soloA_bool = True
@@ -127,9 +45,6 @@ if __name__ == "__main__":
         else: 
             num_str = num
         collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
-
-        start_dt = datetime(2019,6,21,15,31)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-        end_dt = datetime(2019,6,21,16,0)# this is the end
 
         day = 1
         start_csv, end_csv = processing.which_csvs(soloA_bool, day ,start_dt, end_dt) #this function (in processing.py) finds the number at the end of the csv files we want
@@ -149,9 +64,95 @@ if __name__ == "__main__":
                     all_files[index] = path_fol_B + f'\SoloB_2019-06-21--08-09-10_{i}.csv'
                 else:
                     all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-21--08-09-10_{i}.csv') #need to change path_fol_B to the path where your B folder is
+        if soloA_bool:
+            df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
+            rotate_mat = processing.rotate_21(soloA_bool)[num-1]
+        else:
+            df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=1, start_dt = start_dt, end_dt = end_dt)
+            rotate_mat = processing.rotate_21(soloA_bool)[num-9]
+        df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
+        print(len(df))
+        
+        df2 = df.between_time(start_dt.time(), end_dt.time())
+      
+        #print(df2.head())
 
-        tmp = day_one(all_files, collist, soloA_bool, num, start_dt, end_dt, alt, sampling_freq = 1000) #pass through the list containing the file paths
-        #b_noise.extend(tmp)
+        if plot: #plotting the raw probes results
+            #plt.figure()
+            tmp = []
+            df3 = df2.resample('1s').mean()
+            for col in collist[1:]:
+                #plt.plot(df2.index.time, df2[col], label=str(col))
+                #print(df2[col].abs().idxmax())
+                var_1hz = np.std(df3[col])
+                var_1khz = np.std(df2[col])
+                print('std - 1Hz', col, var_1hz)
+                print('std - 1kHz', col,  var_1khz)
+                tmp.append(var_1hz)
+                tmp.append(var_1khz)
+            """
+            plt.xlabel('Time (s)')
+            plt.ylabel('B (nT)')
+            plt.title(f'Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
+            plt.legend(loc="best")
+            plt.show()
+            
+            return tmp
+            """
+        #power spectrum
+        #fs = sampling_freq
+        #processing.powerspecplot(df, fs, collist, alt)
+
+        """
+        #spectogram    
+        x = df2[collist[1]]
+        fs = sampling_freq
+        #f, Pxx = sps.periodogram(x,fs)
+        f, t, Sxx = sps.spectrogram(x,fs)#,nperseg=700)
+        plt.figure()
+        plt.pcolormesh(t, f, Sxx,vmin = 0.,vmax = 0.1)
+        plt.ylabel('Frequency [Hz]')
+        plt.xlabel('Time [sec]')
+        plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
+        plt.clim()
+        fig = plt.gcf()
+        plt.colorbar()  
+        plt.show()
+        """
+        x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
+        fs = sampling_freq
+        #f, Pxx = sps.periodogram(x,fs)
+        div = 450
+        nff = 2666810//div
+        wind = sps.hamming(int(2666810//div))
+        f, t, Sxx = sps.spectrogram(x,fs, window=wind, noverlap = int(2666810//(2*div)), nfft = nff)#,nperseg=700)
+        ax = plt.figure()
+        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.05)
+        plt.semilogy()
+        plt.ylabel('Frequency [Hz]')
+        plt.xlabel('Time [sec]')
+        plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
+        plt.ylim((10**0,10**2))
+        plt.clim()
+        fig = plt.gcf()
+        cbar = plt.colorbar()
+        #cbar.ax.set_yticklabels(fontsize=8)
+        cbar.set_label('Normalised Power/Frequency')#, rotation=270)  
+        plt.show()
+        
+
+
+if __name__ == "__main__":
+
+    windows = True
+
+    probe_num_list = [9]
+    #in mfsa time
+    start_dt = datetime(2019,6,21,15,31)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,21,16,0)# this is the end
+        
+    tmp = day_one(windows, probe_num_list, start_dt, end_dt, alt=False, sampling_freq = 1000, plot=False) #pass through the list containing the file paths
+    #b_noise.extend(tmp)
 
     """
     w = csv.writer(open(f"day1_mfsa_probe_vars.csv", "w"))
