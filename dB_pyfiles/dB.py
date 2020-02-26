@@ -177,9 +177,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             df_err = df_err_correction.iloc[i]
             #print(df_err, i, num_str)
 
-            probe_x_tmp_err = [np.sqrt(k**2 + df_err['Bx_var']**2) for k in probe_x_tmp_err]
-            probe_y_tmp_err = [np.sqrt(k**2 + df_err['By_var']**2) for k in probe_y_tmp_err]
-            probe_z_tmp_err = [np.sqrt(k**2 + df_err['Bz_var']**2) for k in probe_z_tmp_err]
+            probe_x_tmp_err = [df_err['Bx_var'] for k in range(len(xdata))]#[np.sqrt(k**2 + df_err['Bx_var']**2) for k in probe_x_tmp_err]
+            probe_y_tmp_err = [df_err['By_var'] for k in range(len(xdata))]#[np.sqrt(k**2 + df_err['By_var']**2) for k in probe_y_tmp_err]
+            probe_z_tmp_err = [df_err['Bz_var'] for k in range(len(xdata))]#[np.sqrt(k**2 + df_err['Bz_var']**2) for k in probe_z_tmp_err]
 
             def line(x,a,b):
                 return a*x + b

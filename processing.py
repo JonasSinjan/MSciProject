@@ -41,16 +41,14 @@ class processing:
         #tqdm.pandas(desc="Progress Bar")
         df = pd.concat(li, ignore_index = True, sort=True)
 
-        #start = time.process_time()
-        #factor = int(1000/freq_max)
         """
+        #factor = int(1000/freq_max)
         if sampling_freq != None:
             factor = int(1000/sampling_freq)
             assert type(factor) == int
             print(factor)
             df = df.groupby(np.arange(len(df))//factor).mean()
         """    
-
         if soloA:
             if '21' in all_files[0]: #for day_one
                 df['time'] = df['time'] + 10.12
@@ -65,11 +63,11 @@ class processing:
             elif '24' in all_files[0]:
                 df['time'] = df['time'] + 24
                 df['time'] =  pd.to_datetime(df['time'], unit = 's', origin = '2019-06-24 08:14:00' )
-
+                
         df['time'] = df['time'].dt.round('ms')
         df = df.sort_values('time', ascending = True, kind = 'mergesort')
         df.set_index('time', inplace = True)
-        
+
         if sampling_freq < 1000:
             factor = int(1000/sampling_freq)
             if factor >= 0.001:
@@ -78,11 +76,7 @@ class processing:
                 print('The resampling is in the wrong units - must be factor*milliseconds')
         else:
             print('The desired sampling frequency is greater than the raw data available - defaulted to 1kHz')
-        
-        #print(time.process_time() - start)
-        #print(df.head())
-        #print(type(df.index))
-        
+
         return df
 
     @staticmethod
@@ -232,7 +226,7 @@ class processing:
         
         def plot_power(f,fs,Pxx,probe, col):
             plt.loglog(f,Pxx, f'{col}-') #sqrt required for power spectrum, and semi log y axis
-            plt.xlim(0,fs/2)
+            plt.xlim(right=fs/2)
             plt.ylim(10e-8, 10e-2)
             plt.xlabel('Frequency [Hz]')
             plt.ylabel('FFT magnitude')
@@ -267,7 +261,7 @@ class processing:
             freqs = np.fft.fftfreq(len(data), time_step)
             idx = np.argsort(freqs)
             plt.loglog(freqs[idx], ps[idx])
-            plt.xlim(0,fs/2)
+            plt.xlim(right=fs/2)
             plt.title(f'{probe}')
             plt.xlabel('Frequency [Hz]')
             plt.ylabel('abs(FFT(data)**2)')

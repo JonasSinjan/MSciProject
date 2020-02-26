@@ -67,11 +67,9 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
         df2 = df.between_time(start_dt.time(), end_dt.time()) 
         dfleng = len(df2)
         #df3 = df2.resample('1s').mean()
-        #print(df2.head())
         
         #shitfing time so the axes are in spacecraft time to compare with current data
         df2 = processing.shifttime(df2, soloA_bool, 2)
-        
         
         
         if plot: #plotting the raw probes results
@@ -123,7 +121,7 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
             fig, ax2 = plt.subplots()
             Pxx, freqs, bins, im = ax2.specgram(x, Fs=sampling_freq)#, noverlap=900)
             ax2.set_yscale('log')
-            ax2.set_ylim((10**0,10**2))
+            ax2.set_ylim((10**0,sampling_freq/2))
 
             plt.show()
             
