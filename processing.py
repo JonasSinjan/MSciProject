@@ -10,6 +10,7 @@ import scipy.stats as spstats
 from datetime import datetime, timedelta
 import time
 import math
+from tqdm import tqdm
 
 class processing:
 
@@ -18,7 +19,7 @@ class processing:
         #path - location of folder to concat
         #soloA - set to True if soloA, if soloB False
         li = [] 
-        for filename in all_files:   
+        for filename in tqdm(all_files):   
             if soloA:
                 if collist == None:
                     df =  pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';')
@@ -37,7 +38,7 @@ class processing:
                     df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';', usecols = collist)#, header = 170, nrows = rows)
                 
             li.append(df)
-            
+        tqdm.pandas(desc="Progress Bar")
         df = pd.concat(li, ignore_index = True, sort=True)
 
         #start = time.process_time()
