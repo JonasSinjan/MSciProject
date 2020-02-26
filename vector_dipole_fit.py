@@ -91,6 +91,7 @@ def solver(file_path, inst, day, variation_est=True):
     x_list = [x for r,x in rx]
     y_list = [y for r,y in ry]
     z_list = [z for r,z in rz]
+    
     x_list_err = [x for r,x in rx_err]
     y_list_err = [y for r,y in ry_err]
     z_list_err = [z for r,z in rz_err]
@@ -110,9 +111,9 @@ def solver(file_path, inst, day, variation_est=True):
     perr_z = np.sqrt(np.diag(cov_z))
 
     print(params_x[0],params_y[0],params_z[0])
-    plt.scatter(r_list, [i*1000 for i in x_list], label = 'M_x')
-    plt.scatter(r_list, [i*1000 for i in y_list], label = 'M_y')
-    plt.scatter(r_list, [i*1000 for i in z_list], label = 'M_z')
+    #plt.scatter(r_list, [i*1000 for i in x_list], label = 'M_x')
+    #plt.scatter(r_list, [i*1000 for i in y_list], label = 'M_y')
+    #plt.scatter(r_list, [i*1000 for i in z_list], label = 'M_z')
 
     plt.errorbar(r_list, [i*1000 for i in x_list], yerr = [i*1000 for i in x_list_err], fmt = 'bs', markeredgewidth = 2)
     plt.errorbar(r_list, [i*1000 for i in y_list], yerr = [i*1000 for i in y_list_err], fmt = 'rs', markeredgewidth = 2)
@@ -135,7 +136,7 @@ def solver(file_path, inst, day, variation_est=True):
 
 if __name__ == "__main__":
     windows = True
-    inst = 'METIS'
+    inst = 'SPICE'
     var = 1
     day = 2
     variation = False
