@@ -38,7 +38,7 @@ class processing:
                     df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';', usecols = collist)#, header = 170, nrows = rows)
                 
             li.append(df)
-        tqdm.pandas(desc="Progress Bar")
+        #tqdm.pandas(desc="Progress Bar")
         df = pd.concat(li, ignore_index = True, sort=True)
 
         #start = time.process_time()
