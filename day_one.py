@@ -123,7 +123,7 @@ def day_one(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
         """
         x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
         fs = sampling_freq
-        div = dflen/6000
+        div = dflen/1000
         #f, Pxx = sps.periodogram(x,fs)
         #div = 450
         nff = dflen//div #5700 - 2666810/450
@@ -150,10 +150,10 @@ if __name__ == "__main__":
 
     windows = True
 
-    probe_num_list = [7]
+    probe_num_list = [9]
     #in mfsa time
-    start_dt = datetime(2019,6,21,9,30)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,10,30)# this is the end
+    start_dt = datetime(2019,6,21,11,0)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,21,12,0)# this is the end
         
     tmp = day_one(windows, probe_num_list, start_dt, end_dt, alt=False, sampling_freq = 100, plot=False) #pass through the list containing the file paths
     #b_noise.extend(tmp)

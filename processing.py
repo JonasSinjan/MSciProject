@@ -213,7 +213,7 @@ class processing:
         return step_dict
 
     @staticmethod
-    def powerspecplot(df, fs, collist, alt, inst = " "):
+    def powerspecplot(df, fs, collist, alt, inst = " ", save = False):
         
         probe_x = collist[1]
         probe_y = collist[2]
@@ -222,20 +222,20 @@ class processing:
         x = df[probe_x]#[:20000]
         f_x, Pxx_x = sps.periodogram(x,fs, scaling='spectrum')
         x_y = df[probe_y]#[:20000]
-        f_y, Pxx_y = sps.periodogram(x,fs, scaling='spectrum')
+        f_y, Pxx_y = sps.periodogram(x_y,fs, scaling='spectrum')
         x_z = df[probe_z]#[:20000]
-        f_z, Pxx_z = sps.periodogram(x,fs, scaling='spectrum')
+        f_z, Pxx_z = sps.periodogram(x_z,fs, scaling='spectrum')
         #x = df[probe_m]#[:20000]
         #f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
         x_t = x + x_y + x_z #trace
         f_t, Pxx_t = sps.periodogram(x_t, fs, scaling ='spectrum')
         
-        def plot_power(f,fs,Pxx,probe):
-            plt.semilogy(f,Pxx) #sqrt required for power spectrum, and semi log y axis
+        def plot_power(f,fs,Pxx,probe, col):
+            plt.loglog(f,Pxx, f'{col}-') #sqrt required for power spectrum, and semi log y axis
             plt.xlim(0,fs/2)
             plt.ylim(10e-8, 10e-2)
             plt.xlabel('Frequency [Hz]')
-            plt.ylabel('Log(FFT magnitude)')
+            plt.ylabel('FFT magnitude')
             plt.title(f'{probe}')
             #peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 2)
             #print([round(i,1) for i in f[peaks] if i <= 20], len(peaks))
@@ -246,17 +246,17 @@ class processing:
         mpl.rcParams['agg.path.chunksize'] = 10000
         plt.title('Power Spectrum - Periodogram')
         plt.subplot(221)
-        plot_power(f_x, fs, Pxx_x, probe_x)
+        plot_power(f_x, fs, Pxx_x, probe_x, 'b')
         
         plt.subplot(222)
-        plot_power(f_y, fs, Pxx_y, probe_y)
+        plot_power(f_y, fs, Pxx_y, probe_y, 'r')
 
         plt.subplot(223)
-        plot_power(f_z, fs, Pxx_z, probe_z)
+        plot_power(f_z, fs, Pxx_z, probe_z, 'g')
         
         plt.subplot(224)
         Trace = 'Trace'
-        plot_power(f_t, fs, Pxx_t, Trace)
+        plot_power(f_t, fs, Pxx_t, Trace, 'y')
         #plot_power(f_m, Pxx_m, probe_m)
         
         plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
@@ -266,11 +266,11 @@ class processing:
             time_step = 1/fs
             freqs = np.fft.fftfreq(len(data), time_step)
             idx = np.argsort(freqs)
-            plt.semilogy(freqs[idx], ps[idx])
+            plt.loglog(freqs[idx], ps[idx])
             plt.xlim(0,fs/2)
             plt.title(f'{probe}')
             plt.xlabel('Frequency [Hz]')
-            plt.ylabel('Log(abs(FFT(sig)**2))')
+            plt.ylabel('abs(FFT(data)**2)')
             #plt.ylim(10e1,10e5)
             
         if alt:
@@ -287,8 +287,8 @@ class processing:
             probe_t = 'Trace'
             plt.subplot(224)
             alt_power_spec(x_t, fs, probe_t)
-
-        plt.savefig('(%s)_powerspec_mag' % inst)
+        if save:
+            plt.savefig('(%s)_powerspec_mag' % inst)
         plt.show()
 
     @staticmethod
