@@ -98,8 +98,6 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
 
             return tmp
 
-        
-
         #spectogram    
         if spectrogram:
             x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
