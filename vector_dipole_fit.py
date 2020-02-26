@@ -58,7 +58,7 @@ def solver(file_path, inst, day, variation_est=True):
 
     r_list = [r for r,x in rx]
 
-    plt.plot(r_list, [i*1000 for i in x_list], label = 'M_x')
+    plt.plot(r_list, [i*1000 for i in x_list], label = 'M_x') # x1000 to get milliAmps
     plt.plot(r_list, [i*1000 for i in y_list], label = 'M_y')
     plt.plot(r_list, [i*1000 for i in z_list], label = 'M_z')
     plt.xlabel('r [m]')

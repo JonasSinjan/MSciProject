@@ -49,7 +49,8 @@ def plot_b_var_est(file_path, inst, day, plot = False):
         xdata = np.linspace(1,4.5,100)
         plt.plot(xdata, params[0]*(xdata)**(-3) + params[1], 'b-',label= f'y = ({round(params[0],2)}±{round(perr[0],2)})/r^3 + {round(params[1],2)} ± {round(perr[1],2)}') 
         plt.xlabel('r (distance from centre of -Y instrument panel) [m]')
-        plt.ylabel('B_var [nT]')
+        plt.ylabel('B variation [nT]')
+        plt.title(f'1/r^3 Dipole Fit - {inst} - Day {day}')
         plt.legend(loc='best')
         print(params, perr)
         #plt.title(f'1/r^3 Dipole Fit -  {inst} - Day {day}')
@@ -81,14 +82,14 @@ def plot_b_var_est(file_path, inst, day, plot = False):
 
 
 if __name__ == "__main__":
-    windows = True
+    windows = False
     inst = 'METIS'
     var = 1
     day =  2
     if windows:
         file_path = f'.\\Results\\variation\\{inst}_var{var}_B_variation_estimated_day{day}.csv'
     else:
-        file_path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/Results/variation/{inst}_var{var}_B_variation_estimated.csv")
+        file_path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/Results/variation/{inst}_var{var}_B_variation_estimated_day{day}.csv")
 
     plot_b_var_est(file_path, inst, day, plot = True)
     

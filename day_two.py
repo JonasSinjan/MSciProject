@@ -14,7 +14,7 @@ import csv
 from current import current_peaks
 
 
-def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None, plot=True):
+def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None, plot = True, spectrogram = False, powerspec = False):
     if windows:
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_two\A'
         path_fol_B = r'C:\Users\jonas\MSci-Data\day_two\B'
@@ -38,7 +38,7 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
         collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
         #finding the correct MFSA data files
-        start_csv, end_csv = processing.which_csvs(soloA_bool, day, start_dt, end_dt, tz_MAG=False) #this function (in processing.py) finds the number at the end of the csv files we want
+        start_csv, end_csv = processing.which_csvs(soloA_bool, 2, start_dt, end_dt, tz_MAG=False) #this function (in processing.py) finds the number at the end of the csv files we want
         print(start_csv, end_csv)
 
         all_files = [0]*(end_csv + 1 - start_csv)
@@ -62,10 +62,10 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
             df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
             rotate_mat = processing.rotate_24(soloA_bool)[num-9]
         df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
-        print(len(df))
         
         #find the df of the exact time span desired
         df2 = df.between_time(start_dt.time(), end_dt.time()) 
+        dfleng = len(df2)
         #df3 = df2.resample('1s').mean()
         #print(df2.head())
         
@@ -98,34 +98,37 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
 
             return tmp
 
-        #fs = 50
-        #processing.powerspecplot(df2, sampling_freq, collist, alt)
+        if spectrogram:
+            x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
+            fs = sampling_freq
+            div = dfleng/1000
+            #f, Pxx = sps.periodogram(x,fs)
+            #div = 500
+            nff = dfleng//div
+            wind = sps.hamming(int(dfleng//div))
+            f, t, Sxx = sps.spectrogram(x,fs, window=wind, noverlap = int(dfleng//(2*div)), nfft = nff)#,nperseg=700)
+            ax = plt.figure()
+            plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.01)
+            plt.semilogy()
+            plt.ylabel('Frequency [Hz]')
+            plt.xlabel('Time [sec]')
+            plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
+            plt.ylim((10**0,sampling_freq/2))
+            plt.clim()
+            fig = plt.gcf()
+            cbar = plt.colorbar()
+            #cbar.ax.set_yticklabels(fontsize=8)
+            cbar.set_label('Normalised Power/Frequency')#, rotation=270)  
 
-        #spectogram    
-        x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
-        fs = sampling_freq
-        #f, Pxx = sps.periodogram(x,fs)
-        """
-        f, t, Sxx = sps.spectrogram(x,fs)#,nperseg=700)
-        ax = plt.figure()
-        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.1)
-        plt.semilogy()
-        plt.ylabel('Frequency [Hz]')
-        plt.xlabel('Time [sec]')
-        plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
-        plt.ylim((10**0,2*10**1))
-        plt.clim()
-        fig = plt.gcf()
-        cbar = plt.colorbar()
-        #cbar.ax.set_yticklabels(fontsize=8)
-        cbar.set_label('Power/Frequency [deciBels/Hz]')#, rotation=270)  
-        """
-        fig, ax2 = plt.subplots()
-        Pxx, freqs, bins, im = ax2.specgram(x, Fs=sampling_freq)#, noverlap=900)
-        ax2.set_yscale('log')
-        ax2.set_ylim((10**0,10**2))
-        plt.show()
+            fig, ax2 = plt.subplots()
+            Pxx, freqs, bins, im = ax2.specgram(x, Fs=sampling_freq)#, noverlap=900)
+            ax2.set_yscale('log')
+            ax2.set_ylim((10**0,10**2))
 
+            plt.show()
+            
+        if powerspec:
+            processing.powerspecplot(df2, sampling_freq, collist, alt, save = False)
 
 if __name__ == "__main__":
     
@@ -141,13 +144,12 @@ if __name__ == "__main__":
     # EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
 
     #the datetime we change here is in spacecraft time - used for if want probes for a certain current profile (which is in spacecraft time)
-    start_dt = datetime(2019,6,24,7,45) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,8,00) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
+    start_dt = datetime(2019,6,24,10,10) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,24,10,56) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
     #start and end dt now in MFSA (German UT) time - as MFSA in that time
-    day = 2
-    
+        
     alt = False #if want powerspec from `brute force' method - or inbuilt scipy periodogram method
-    tmp = day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = 200, plot = False) #pass through the list containing the file paths
+    tmp = day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = 100, plot = False, spectrogram = False, powerspec = True) #pass through the list containing the file paths
     
     """
     b_noise.extend(tmp)
