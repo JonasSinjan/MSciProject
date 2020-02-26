@@ -110,12 +110,12 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
         wind = sps.hamming(int(dfleng//div))
         f, t, Sxx = sps.spectrogram(x,fs, window=wind, noverlap = int(dfleng//(2*div)), nfft = nff)#,nperseg=700)
         ax = plt.figure()
-        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.03)
+        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.01)
         plt.semilogy()
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [sec]')
         plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
-        plt.ylim((3*10**0,2.5*10**1))
+        plt.ylim((10**0,sampling_freq/2))
         plt.clim()
         fig = plt.gcf()
         cbar = plt.colorbar()
@@ -138,12 +138,12 @@ if __name__ == "__main__":
     # EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
 
     #the datetime we change here is in spacecraft time - used for if want probes for a certain current profile (which is in spacecraft time)
-    start_dt = datetime(2019,6,24,10,57) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,11,18) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
+    start_dt = datetime(2019,6,24,11,44) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,24,12,17) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
     #start and end dt now in MFSA (German UT) time - as MFSA in that time
         
     alt = False #if want powerspec from `brute force' method - or inbuilt scipy periodogram method
-    tmp = day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = 50, plot = False) #pass through the list containing the file paths
+    tmp = day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = 100, plot = False) #pass through the list containing the file paths
     
     """
     b_noise.extend(tmp)

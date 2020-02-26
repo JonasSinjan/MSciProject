@@ -74,7 +74,7 @@ def day_one(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
         print(len(df))
         
         df2 = df.between_time(start_dt.time(), end_dt.time())
-        print(len(df2))
+        dflen = len(df2)
       
         #print(df2.head())
 
@@ -123,18 +123,20 @@ def day_one(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
         """
         x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
         fs = sampling_freq
+        div = dflen/6000
         #f, Pxx = sps.periodogram(x,fs)
-        div = 450
-        nff = 2666810//div #5700
-        wind = sps.hamming(int(2666810//div))
-        f, t, Sxx = sps.spectrogram(x,fs, window=wind, noverlap = int(2666810//(2*div)), nfft = nff)#,nperseg=700)
+        #div = 450
+        nff = dflen//div #5700 - 2666810/450
+        wind = sps.hamming(int(nff))
+        f, t, Sxx = sps.spectrogram(x,fs, window=wind, noverlap = int(nff//2), nfft = nff)#,nperseg=700)
         ax = plt.figure()
-        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.05)
+        print(type(Sxx))#,'Size = ' ,Sxx.shape())
+        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.01)
         plt.semilogy()
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [sec]')
         plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
-        plt.ylim((10**0,10**2))
+        plt.ylim((10**0,sampling_freq/2))
         plt.clim()
         fig = plt.gcf()
         cbar = plt.colorbar()
@@ -148,12 +150,12 @@ if __name__ == "__main__":
 
     windows = True
 
-    probe_num_list = [9]
+    probe_num_list = [7]
     #in mfsa time
-    start_dt = datetime(2019,6,21,15,31)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,16,0)# this is the end
+    start_dt = datetime(2019,6,21,9,30)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,21,10,30)# this is the end
         
-    tmp = day_one(windows, probe_num_list, start_dt, end_dt, alt=False, sampling_freq = 1000, plot=False) #pass through the list containing the file paths
+    tmp = day_one(windows, probe_num_list, start_dt, end_dt, alt=False, sampling_freq = 100, plot=False) #pass through the list containing the file paths
     #b_noise.extend(tmp)
 
     """
