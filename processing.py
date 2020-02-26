@@ -118,9 +118,14 @@ class processing:
                 time_delta = (start_dt - day_two_B_dt).total_seconds()
             start_csv = math.floor(time_delta / 658) # approx number of csv files
             end_csv = start_csv + math.ceil(length/658)
-            if end_csv > 48:
-                end_csv = 48
-                print('The desired time range may run outside the available data - check if so')
+            if day == 1:
+                if end_csv > 47:
+                    end_csv = 47
+                    print('The desired time range may run outside the available data - check if so')
+            else:
+                if end_csv > 48:
+                    end_csv = 48
+                    print('The desired time range may run outside the available data - check if so')
         
         #if start_csv == 0:
         #    start_csv = 1
@@ -207,7 +212,7 @@ class processing:
         return step_dict
 
     @staticmethod
-    def powerspecplot(df, fs, collist, alt, inst = " ", save = False):
+    def powerspecplot(df, fs, collist, alt, inst = None, save = False):
         
         probe_x = collist[1]
         probe_y = collist[2]
@@ -236,9 +241,9 @@ class processing:
             #plt.semilogy(f[peaks], np.sqrt(Pxx)[peaks], marker = 'x', markersize = 10, color='orange', linestyle = 'None')
         
 
-        plt.figure()
+        plt.figure(figsize = (10,8))
         mpl.rcParams['agg.path.chunksize'] = 10000
-        plt.title('Power Spectrum - Periodogram')
+        
         plt.subplot(221)
         plot_power(f_x, fs, Pxx_x, probe_x, 'b')
         
@@ -251,6 +256,7 @@ class processing:
         plt.subplot(224)
         Trace = 'Trace'
         plot_power(f_t, fs, Pxx_t, Trace, 'y')
+        plt.suptitle(f'{inst} - Power Spectrum')
         #plot_power(f_m, Pxx_m, probe_m)
         
         plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
@@ -281,9 +287,11 @@ class processing:
             probe_t = 'Trace'
             plt.subplot(224)
             alt_power_spec(x_t, fs, probe_t)
+
         if save:
             plt.savefig('(%s)_powerspec_mag' % inst)
-        plt.show()
+        else:
+            plt.show()
 
     @staticmethod
     def rotate_21(soloA_bool):

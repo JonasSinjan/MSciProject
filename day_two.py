@@ -14,7 +14,7 @@ import csv
 from current import current_peaks
 
 
-def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None, plot = True, spectrogram = False, powerspec = False):
+def day_two(windows, probe_num_list, start_dt, end_dt, alt = False, sampling_freq = None, plot = True, spectrogram = False, powerspec = False, inst_name=None):
     if windows:
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_two\A'
         path_fol_B = r'C:\Users\jonas\MSci-Data\day_two\B'
@@ -65,7 +65,7 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
         
         #find the df of the exact time span desired
         df2 = df.between_time(start_dt.time(), end_dt.time()) 
-        dfleng = len(df2)
+        dflen = len(df2)
         #df3 = df2.resample('1s').mean()
         
         #shitfing time so the axes are in spacecraft time to compare with current data
@@ -99,12 +99,12 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
         if spectrogram:
             x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
             fs = sampling_freq
-            div = dfleng/1000
+            div = dflen/1000
             #f, Pxx = sps.periodogram(x,fs)
             #div = 500
-            nff = dfleng//div
-            wind = sps.hamming(int(dfleng//div))
-            f, t, Sxx = sps.spectrogram(x,fs, window=wind, noverlap = int(dfleng//(2*div)), nfft = nff)#,nperseg=700)
+            nff = dflen//div
+            wind = sps.hamming(int(dflen//div))
+            f, t, Sxx = sps.spectrogram(x,fs, window=wind, noverlap = int(dflen//(2*div)), nfft = nff)#,nperseg=700)
             ax = plt.figure()
             plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.01)
             plt.semilogy()
@@ -126,7 +126,10 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
             plt.show()
             
         if powerspec:
-            processing.powerspecplot(df2, sampling_freq, collist, alt, save = False)
+            if inst_name == None:
+                processing.powerspecplot(df2, sampling_freq, collist, alt, save = False)
+            else:
+                processing.powerspecplot(df2, sampling_freq, collist, alt, inst = inst_name, save = True)
 
 if __name__ == "__main__":
     
@@ -142,13 +145,24 @@ if __name__ == "__main__":
     # EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
 
     #the datetime we change here is in spacecraft time - used for if want probes for a certain current profile (which is in spacecraft time)
-    start_dt = datetime(2019,6,24,10,10) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,10,56) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
+    #start_dt = datetime(2019,6,24,10,10) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    #end_dt = datetime(2019,6,24,10,56) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
     #start and end dt now in MFSA (German UT) time - as MFSA in that time
         
-    alt = False #if want powerspec from `brute force' method - or inbuilt scipy periodogram method
-    tmp = day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = 100, plot = False, spectrogram = False, powerspec = True) #pass through the list containing the file paths
+    #alt = False #if want powerspec from `brute force' method - or inbuilt scipy periodogram method
+    #tmp = day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = 100, plot = False, spectrogram = False, powerspec = True) #pass through the list containing the file paths
     
+    
+    inst_hour_times = [10,10,9,10,10,11,11,12,12,13,8,8,11,11,14,14]
+    inst_min_times = [10,56,24,9,57,18,44,17,18,52,4,40,19,44,43,59]
+    inst_names = ['METIS', 'EUI', 'SPICE', 'STIX', 'SWA', 'PHI', 'SoloHI', 'EPD']
+    i = 0
+    for k in inst_names:
+        start_dt = datetime(2019,6,24,inst_hour_times[i],inst_min_times[i]) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+        end_dt = datetime(2019,6,24,inst_hour_times[i+1],inst_min_times[i+1]) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
+        i = i + 2
+        tmp = day_two(windows, probe_num_list, start_dt, end_dt, sampling_freq = 100, plot = False, spectrogram = False, powerspec = True, inst_name = k)
+
     """
     b_noise.extend(tmp)
     w = csv.writer(open(f"day2_mfsa_probe_vars.csv", "w"))

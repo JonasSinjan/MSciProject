@@ -13,7 +13,7 @@ import glob
 import csv
 
 
-def day_one(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None, plot=False):
+def day_one(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None, plot = False, spectrogram = False, powerspec = False):
     """
     all_files - set this to the directory where the data is kept on your local computer
     collist - list of columns desired
@@ -75,11 +75,9 @@ def day_one(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
         
         df2 = df.between_time(start_dt.time(), end_dt.time())
         dflen = len(df2)
-      
-        #print(df2.head())
 
         if plot: #plotting the raw probes results
-            #plt.figure()
+            plt.figure()
             tmp = []
             df3 = df2.resample('1s').mean()
             for col in collist[1:]:
@@ -91,7 +89,7 @@ def day_one(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
                 print('std - 1kHz', col,  var_1khz)
                 tmp.append(var_1hz)
                 tmp.append(var_1khz)
-            """
+        
             plt.xlabel('Time (s)')
             plt.ylabel('B (nT)')
             plt.title(f'Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
@@ -99,50 +97,38 @@ def day_one(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
             plt.show()
             
             return tmp
-            """
-        """
-        #power spectrum
-        #fs = sampling_freq
-        #processing.powerspecplot(df, fs, collist, alt)
 
-        
-        #spectogram    
-        x = df2[collist[1]]
-        fs = sampling_freq
-        #f, Pxx = sps.periodogram(x,fs)
-        f, t, Sxx = sps.spectrogram(x,fs)#,nperseg=700)
-        plt.figure()
-        plt.pcolormesh(t, f, Sxx,vmin = 0.,vmax = 0.1)
-        plt.ylabel('Frequency [Hz]')
-        plt.xlabel('Time [sec]')
-        plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
-        plt.clim()
-        fig = plt.gcf()
-        plt.colorbar()  
-        plt.show()
-        """
-        x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
-        fs = sampling_freq
-        div = dflen/1000
-        #f, Pxx = sps.periodogram(x,fs)
-        #div = 450
-        nff = dflen//div #5700 - 2666810/450
-        wind = sps.hamming(int(nff))
-        f, t, Sxx = sps.spectrogram(x,fs, window=wind, noverlap = int(nff//2), nfft = nff)#,nperseg=700)
-        ax = plt.figure()
-        print(type(Sxx))#,'Size = ' ,Sxx.shape())
-        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.01)
-        plt.semilogy()
-        plt.ylabel('Frequency [Hz]')
-        plt.xlabel('Time [sec]')
-        plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
-        plt.ylim((10**0,sampling_freq/2))
-        plt.clim()
-        fig = plt.gcf()
-        cbar = plt.colorbar()
-        #cbar.ax.set_yticklabels(fontsize=8)
-        cbar.set_label('Normalised Power/Frequency')#, rotation=270)  
-        plt.show()
+        if spectrogram:
+            x = np.sqrt(df2[collist[1]]**2 + df2[collist[2]]**2 + df2[collist[3]]**2)
+            fs = sampling_freq
+            div = dflen/1000
+            #f, Pxx = sps.periodogram(x,fs)
+            #div = 500
+            nff = dflen//div
+            wind = sps.hamming(int(dflen//div))
+            f, t, Sxx = sps.spectrogram(x,fs, window=wind, noverlap = int(dflen//(2*div)), nfft = nff)#,nperseg=700)
+            ax = plt.figure()
+            plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.01)
+            plt.semilogy()
+            plt.ylabel('Frequency [Hz]')
+            plt.xlabel('Time [sec]')
+            plt.title(f'Spectrogram: Probe {num} @ {sampling_freq}Hz, {start_dt.date()}')
+            plt.ylim((10**0,sampling_freq/2))
+            plt.clim()
+            fig = plt.gcf()
+            cbar = plt.colorbar()
+            #cbar.ax.set_yticklabels(fontsize=8)
+            cbar.set_label('Normalised Power/Frequency')#, rotation=270)  
+
+            fig, ax2 = plt.subplots()
+            Pxx, freqs, bins, im = ax2.specgram(x, Fs=sampling_freq)#, noverlap=900)
+            ax2.set_yscale('log')
+            ax2.set_ylim((10**0,sampling_freq/2))
+
+            plt.show()
+            
+        if powerspec:
+            processing.powerspecplot(df2, sampling_freq, collist, alt, save = False)
         
 
 
@@ -152,10 +138,10 @@ if __name__ == "__main__":
 
     probe_num_list = [9]
     #in mfsa time
-    start_dt = datetime(2019,6,21,11,0)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,21,12,0)# this is the end
+    start_dt = datetime(2019,6,21,9,0)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,21,16,0)# this is the end
         
-    tmp = day_one(windows, probe_num_list, start_dt, end_dt, alt=False, sampling_freq = 100, plot=False) #pass through the list containing the file paths
+    tmp = day_one(windows, probe_num_list, start_dt, end_dt, alt=False, sampling_freq = 100, plot=False, spectrogram = False, powerspec = True) #pass through the list containing the file paths
     #b_noise.extend(tmp)
 
     """
