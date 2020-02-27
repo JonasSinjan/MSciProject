@@ -106,7 +106,7 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt = False, sampling_fre
             wind = sps.hamming(int(dflen//div))
             f, t, Sxx = sps.spectrogram(x,fs, window=wind, noverlap = int(dflen//(2*div)), nfft = nff)#,nperseg=700)
             ax = plt.figure()
-            plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.01)
+            plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = 0.03)
             plt.semilogy()
             plt.ylabel('Frequency [Hz]')
             plt.xlabel('Time [sec]')
@@ -118,10 +118,10 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt = False, sampling_fre
             #cbar.ax.set_yticklabels(fontsize=8)
             cbar.set_label('Normalised Power/Frequency')#, rotation=270)  
 
-            fig, ax2 = plt.subplots()
-            Pxx, freqs, bins, im = ax2.specgram(x, Fs=sampling_freq)#, noverlap=900)
-            ax2.set_yscale('log')
-            ax2.set_ylim((10**0,sampling_freq/2))
+            #fig, ax2 = plt.subplots()
+            #Pxx, freqs, bins, im = ax2.specgram(x, Fs=sampling_freq)#, noverlap=900)
+            #ax2.set_yscale('log')
+            #ax2.set_ylim((10**0,sampling_freq/2))
 
             plt.show()
             
@@ -145,14 +145,14 @@ if __name__ == "__main__":
     # EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
 
     #the datetime we change here is in spacecraft time - used for if want probes for a certain current profile (which is in spacecraft time)
-    #start_dt = datetime(2019,6,24,10,10) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    #end_dt = datetime(2019,6,24,10,56) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
+    start_dt = datetime(2019,6,24,8,20) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,24,15,00) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
     #start and end dt now in MFSA (German UT) time - as MFSA in that time
         
     #alt = False #if want powerspec from `brute force' method - or inbuilt scipy periodogram method
-    #tmp = day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = 100, plot = False, spectrogram = False, powerspec = True) #pass through the list containing the file paths
+    tmp = day_two(windows, probe_num_list, start_dt, end_dt, sampling_freq = 100, plot = False, spectrogram = True, powerspec = False) #pass through the list containing the file paths
     
-    
+    """
     inst_hour_times = [10,10,9,10,10,11,11,12,12,13,8,8,11,11,14,14]
     inst_min_times = [10,56,24,9,57,18,44,17,18,52,4,40,19,44,43,59]
     inst_names = ['METIS', 'EUI', 'SPICE', 'STIX', 'SWA', 'PHI', 'SoloHI', 'EPD']
@@ -163,6 +163,7 @@ if __name__ == "__main__":
         i = i + 2
         tmp = day_two(windows, probe_num_list, start_dt, end_dt, sampling_freq = 100, plot = False, spectrogram = False, powerspec = True, inst_name = k)
 
+    """
     """
     b_noise.extend(tmp)
     w = csv.writer(open(f"day2_mfsa_probe_vars.csv", "w"))
