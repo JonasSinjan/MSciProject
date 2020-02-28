@@ -167,7 +167,7 @@ if __name__ == "__main__":
     #start and end dt now in MFSA (German UT) time - as MFSA in that time
         
     #alt = False #if want powerspec from `brute force' method - or inbuilt scipy periodogram method
-    tmp = day_two(windows, probe_num_list, start_dt, end_dt, sampling_freq = 100, plot = False, spectrogram = True, powerspec = False) #pass through the list containing the file paths
+    day_two(windows, probe_num_list, start_dt, end_dt, sampling_freq = 100, plot = False, spectrogram = True, powerspec = False) #pass through the list containing the file paths
     
     """
     inst_hour_times = [10,10,9,10,10,11,11,12,12,13,8,8,11,11,14,14]
