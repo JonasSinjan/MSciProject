@@ -14,7 +14,22 @@ import csv
 from current import current_peaks
 
 
-def day_two(windows, probe_num_list, start_dt, end_dt, alt = False, sampling_freq = None, plot = True, spectrogram = False, powerspec = False, inst_name=None):
+def day_two(windows, probe_num_list, start_dt, end_dt, *, alt = False, sampling_freq = None, plot = True, spectrogram = False, powerspec = False, inst_name=None):
+    """day_two(windows, probe_num_list, start_dt, end_dt, *, alt = False, sampling_freq = None, plot = True, spectrogram = False, powerspec = False, inst_name=None) --> used to analyse day 2 MFSA data
+    
+    Parameters:
+    windows: first arg. Determines if using Windows or Mac path
+    probe_num_list: second arg. List of probe numbers as integers that are desired
+    start_dt: third arg. Start datetime for timespan interested in
+    end_dt: fourth arg. End datetime for timespan interested in
+    Keyword Args:
+    alt: fifth arg. If True uses brute force fft method rather than inbuilt scipy periodogram to compute power spectra
+    sampling_freq: sixth arg. Determines the desired sampling freqeuncy.  If None defaults to 1kHz native.
+    plot: seventh arg. If true plots timeseries of the desired data
+    spectrogram: eigth arg. If true plots spectrogram of the desired data
+    powerspec: ninth arg. If true plots powerspectrum, x,y,z and trace of desired data
+    inst_name: tenth arg. Provides the name of the instrument to go in powerspec suptitle
+    """
     if windows:
         path_fol_A = r'C:\Users\jonas\MSci-Data\day_two\A'
         path_fol_B = r'C:\Users\jonas\MSci-Data\day_two\B'
@@ -144,9 +159,11 @@ if __name__ == "__main__":
     # SoloHI - 11:19-11;44
     # EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
 
+    #print(day_two.__doc__)
+
     #the datetime we change here is in spacecraft time - used for if want probes for a certain current profile (which is in spacecraft time)
     start_dt = datetime(2019,6,24,8,20) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,15,00) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
+    end_dt = datetime(2019,6,24,9,00) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
     #start and end dt now in MFSA (German UT) time - as MFSA in that time
         
     #alt = False #if want powerspec from `brute force' method - or inbuilt scipy periodogram method
