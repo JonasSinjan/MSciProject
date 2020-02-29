@@ -111,7 +111,10 @@ class mfsa_object:
         plt.semilogy()
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [sec]')
-        plt.title(f'Spectrogram: Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
+        if hasattr(self, 'name'):
+            plt.title(f'Spectrogram: {self.name} - Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
+        else:
+            plt.title(f'Spectrogram: Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
         plt.ylim((10**0,self.fs/2))
         plt.clim()
         fig = plt.gcf()
@@ -154,14 +157,16 @@ class mfsa_object:
         plt.show()
 
 if __name__ == "__main__":
-    # METIS - 10:10-10:56
-    # EUI - 9:24-10:09
-    # SPICE - 10:57-11:18
-    # STIX - 11:44-12:17
-    # SWA - 12:18-13:52
-    # PHI - 8:05-8:40
-    # SoloHI - 11:19-11;44
-    # EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
+    """
+    METIS - 10:10-10:56
+    EUI - 9:24-10:09
+    SPICE - 10:57-11:18
+    STIX - 11:44-12:17
+    SWA - 12:18-13:52
+    PHI - 8:05-8:40
+    SoloHI - 11:19-11;44
+    EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
+    """
     day = 2
     start_dt = datetime(2019,6,24,9,24) #in spacecraft time
     end_dt = datetime(2019,6,24,10,9)
@@ -170,4 +175,4 @@ if __name__ == "__main__":
 
     eui = mfsa_object(day, start_dt, end_dt, probe, sampling_fs, timezone = 'MAG', name = 'EUI')
     eui.get_data()
-    eui.plot()
+    eui.spectrogram()
