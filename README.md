@@ -78,7 +78,7 @@ Finds the datetime objects for each current step change for day 1 & 2. Found by 
 processing.py
 ```
 
-Contains class `processing` that contains many methods which reads in, cleans the csv raw data files (changes to correct timezone and creates datetimeindex) from MFSA. Also rotates the axis into the desired reference frame and contains the `calculate_db` method that the core of finding dB.
+Contains class `processing` that contains many methods which reads in, cleans the csv raw data files (changes to correct timezone and creates datetimeindex - datetimeindex must time consuming operation for entire code, cannot use faster parser method as raw data time just in seconds as a float, not close to required ISO8601 format) from MFSA. Also rotates the axis into the desired reference frame and contains the `calculate_db` method that the core of finding dB.
 
 
 ### Analysis/Plotting Files
