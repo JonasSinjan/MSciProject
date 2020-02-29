@@ -53,7 +53,7 @@ def vector_linalg_lstsq(file_path, inst, day):
     
     r_2 = 1 - rss / np.sum((b**2))
     print(r_2)
-    r_2_adj = 1 - ((1-r_2)*(10)/6)
+    r_2_adj = 1 - ((1-r_2)*(10)/6) #3 or 1 independent variable? I think 3
     print(r_2_adj)
     return m, rss
 
