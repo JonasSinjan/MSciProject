@@ -120,10 +120,10 @@ def day_one(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
             #cbar.ax.set_yticklabels(fontsize=8)
             cbar.set_label('Normalised Power/Frequency')#, rotation=270)  
 
-            fig, ax2 = plt.subplots()
-            Pxx, freqs, bins, im = ax2.specgram(x, Fs=sampling_freq)#, noverlap=900)
-            ax2.set_yscale('log')
-            ax2.set_ylim((10**0,sampling_freq/2))
+            # fig, ax2 = plt.subplots()
+            # Pxx, freqs, bins, im = ax2.specgram(x, Fs=sampling_freq)#, noverlap=900)
+            # ax2.set_yscale('log')
+            # ax2.set_ylim((10**0,sampling_freq/2))
 
             plt.show()
             
