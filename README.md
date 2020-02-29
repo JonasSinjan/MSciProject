@@ -84,9 +84,9 @@ Contains class `processing` that contains many methods which reads in, cleans th
 ### Analysis/Plotting Files
 
 ```python
-day_one.py, day_two.py
+mfsa_object.py, deprecated(day_one.py, day_two.py) 
 ```
-Used to plot, calculate powerspectrum & noise level of MFSA probes for a given timespan, probe and instrument
+Updated class to better organise code (supersedes day_one and day_two). Used to plot, calculate powerspectrum & noise level of MFSA probes for a given timespan, probe and instrument 
 
 ```python
 check_vect_dicts.py
