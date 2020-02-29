@@ -71,10 +71,10 @@ def day_two(windows, probe_num_list, start_dt, end_dt, *, alt = False, sampling_
                     all_files[index] = path_fol_B + os.path.expanduser(f'/SoloB_2019-06-24--08-14-24_{i}.csv') #need to change path_fol_B to the path where your B folder is
     #set this to the directory where the data is kept on your local computer
         if soloA_bool:
-            df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
+            df = processing.read_files(all_files, soloA_bool, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
             rotate_mat = processing.rotate_24(soloA_bool)[num-1]
         else:
-            df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
+            df = processing.read_files(all_files, soloA_bool, sampling_freq, collist, day=2, start_dt = start_dt, end_dt = end_dt)
             rotate_mat = processing.rotate_24(soloA_bool)[num-9]
         df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
         

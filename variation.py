@@ -279,10 +279,10 @@ if __name__ == "__main__":
 #         collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
             
 #         if soloA_bool:
-#             df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=day, start_dt = start_times[i], end_dt = end_times[i])
+#             df = processing.read_files(all_files, soloA_bool, sampling_freq, collist, day=day, start_dt = start_times[i], end_dt = end_times[i])
 #             rotate_mat = processing.rotate_24(soloA_bool)[j]
 #         else:
-#             df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=day, start_dt = start_times[i], end_dt = end_times[i])
+#             df = processing.read_files(all_files, soloA_bool, sampling_freq, collist, day=day, start_dt = start_times[i], end_dt = end_times[i])
 #             rotate_mat = processing.rotate_24(soloA_bool)[j-8]
 #         df.iloc[:,0:3] = np.matmul(rotate_mat, df.iloc[:,0:3].values.T).T
         

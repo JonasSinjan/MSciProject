@@ -97,13 +97,13 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
         
         #reads csv files and rotates to spacecraft frame
         if soloA_bool:
-            df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=day, start_dt = start_dt, end_dt = end_dt)
+            df = processing.read_files(all_files, soloA_bool, sampling_freq, collist, day=day, start_dt = start_dt, end_dt = end_dt)
             if day == 1:
                 rotate_mat = processing.rotate_21(soloA_bool)[i]
             else:
                 rotate_mat = processing.rotate_24(soloA_bool)[i]
         else:
-            df = processing.read_files(all_files, soloA_bool, windows, sampling_freq, collist, day=day, start_dt = start_dt, end_dt = end_dt)
+            df = processing.read_files(all_files, soloA_bool, sampling_freq, collist, day=day, start_dt = start_dt, end_dt = end_dt)
             if day == 1:
                 rotate_mat = processing.rotate_21(soloA_bool)[i-8]
             else:
