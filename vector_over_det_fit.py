@@ -27,7 +27,7 @@ def vector_linalg_lstsq(file_path, inst, day):
        
         loc = probe_loc_list[i]
         x, y, z = loc[0], loc[1], loc[2]
-        print('x,y,z = ', x,y,z)
+        print('x,y,z = ', x, ',', y, ',', z)
         r = probe_dist_list[i]
         print('r = ', r)
         
@@ -45,7 +45,7 @@ def vector_linalg_lstsq(file_path, inst, day):
         
     a = 10**(-7)*a
     b = 10**-9*b #get in units of Tesla
-    m, rss, rank, s = np.linalg.lstsq(a,b)
+    m, rss, rank, s = np.linalg.lstsq(a,b, rcond=None)
     print(m)
     print(rss)
     print(rank)
@@ -59,7 +59,7 @@ def vector_linalg_lstsq(file_path, inst, day):
 
 if __name__ == "__main__":
     windows = True
-    inst = 'METIS'
+    inst = 'EUI'
     day = 2
 
     if windows:

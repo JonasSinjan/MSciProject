@@ -144,6 +144,15 @@ vect_map.py
 ```
 Plots 3D map showing the vectors of the proportionality constants calculated at every probe for a given instrument. Probe 12 not shown as too far awawy and often dominates the plot.
 
+```python
+vect_dipole_fit.py
+```
+Calculates magnetic moment in x,y,z for each probes' prop. const. and fits line through, if dipole should be flat line
+
+```python
+vect_over_det_fit.py
+```
+Uses `numpy.linalg.lstsq` least squares regression to solve over determined system, 33 equations with 3 unknowns, also caculates r_2 to indicate fit.  (Fits data from 11 probes in 3 directions to find one set of magnetic moments for each instrument).
 
 ```python
 lowpassdif.py
