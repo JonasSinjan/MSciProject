@@ -254,7 +254,8 @@ class processing:
             fig = plt.figure()
             plot_power(f, fs, Pxx, Probe, 'b')
             plt.xlim(left = 10e-1)
-            plt.ylim(bottom = 10e-2, top = 10e-1)
+            plt.ylim(bottom = 10e-2, top = 10e0)
+            mpl.rcParams['agg.path.chunksize'] = 10000
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
 
@@ -263,7 +264,7 @@ class processing:
         try:
             probe = probe_x.split('_')[0]
             print(probe, inst)
-            with open(f'.\\{probe}_{inst}_powerspectra_2.csv') as f:
+            with open(f'.\\{probe}_{inst}_powerspectra.csv') as f:
                 clicks1, clicks2, clicks3, clicks4 = [], [], [], []
                 for i, line in enumerate(f):
                     nums = line.split(',')
