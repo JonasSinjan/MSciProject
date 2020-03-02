@@ -253,7 +253,7 @@ class processing:
         def get_clicks(f, Pxx, Probe):
             fig = plt.figure()
             plot_power(f, fs, Pxx, Probe, 'b')
-            plt.xlim(left = 10e-1)
+            plt.xlim(left = 5*10e-2)
             plt.ylim(bottom = 10e-2, top = 10e0)
             mpl.rcParams['agg.path.chunksize'] = 10000
             fig.canvas.mpl_connect('button_press_event', onclick)
@@ -264,7 +264,7 @@ class processing:
         try:
             probe = probe_x.split('_')[0]
             print(probe, inst)
-            with open(f'.\\{probe}_{inst}_powerspectra.csv') as f:
+            with open(f'.\\{probe}_{inst}_powerspectra_2.csv') as f:
                 clicks1, clicks2, clicks3, clicks4 = [], [], [], []
                 for i, line in enumerate(f):
                     nums = line.split(',')
@@ -311,7 +311,7 @@ class processing:
                     i += 2
 
             probe = probe_x.split('_')[0]
-            w = csv.writer(open(f".\\{probe}_{inst}_powerspectra.csv", "w", newline=''))
+            w = csv.writer(open(f".\\Results\\PwerSpectrum\Peak_files\\{probe}_{inst}_powerspectra.csv", "w", newline=''))
             #w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
             w.writerow(["Dir", "Xdata", "Ydata"])
             write_peaks(clicks1, "X")
@@ -389,7 +389,7 @@ class processing:
             alt_power_spec(x_t, fs, probe_t)
 
         if save:
-            plt.savefig('(%s)_powerspec_mag' % inst)
+            plt.savefig(f'.\\Results\\PowerSpectrum\\Day_2\\{probe}_{inst}_powerspec')
         # else:
         #     plt.show()
 

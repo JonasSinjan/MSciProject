@@ -131,7 +131,7 @@ class mfsa_object:
 
     def powerspectra(self):
         if hasattr(self, 'name'):
-            processing.powerspecplot(self.df, self.fs, self.collist, alt=False, inst = self.name, save = False)
+            processing.powerspecplot(self.df, self.fs, self.collist, alt=False, inst = self.name, save = True)
         else:
             processing.powerspecplot(self.df, self.fs, self.collist, alt=False, save = False)
 
@@ -168,17 +168,17 @@ if __name__ == "__main__":
     EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
     """
     day = 2
-    probe = 10 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
+    probe = 9 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
     sampling_fs = 100
 
     # eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
     # eui.get_data()
     # eui.powerspectra()
 
-    daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full Day 2')
-    daytwo.get_data()
-    daytwo.powerspectra()
+    #daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full Day 2')
+    #daytwo.get_data()
+    #daytwo.powerspectra()
 
-    #metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
-    #metis.get_data()
-    #metis.powerspectra()
+    metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
+    metis.get_data()
+    metis.powerspectra()
