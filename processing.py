@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 import time
 import math
 from tqdm import tqdm
+import csv
 
 class processing:
 
@@ -214,52 +215,150 @@ class processing:
     @staticmethod
     def powerspecplot(df, fs, collist, alt, inst = None, save = False):
         
+        clicks = []
+        def onclick(event):
+            print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+                ('double' if event.dblclick else 'single', event.button, event.x, event.y, event.xdata, event.ydata))
+            clicks.append(event.xdata)
+            clicks.append(event.ydata)
+
         probe_x = collist[1]
         probe_y = collist[2]
         probe_z = collist[3]
         #probe_m = collist[4]
         x = df[probe_x]#[:20000]
-        f_x, Pxx_x = sps.periodogram(x,fs, scaling='spectrum')
+        scaling = 'density'
+        f_x, Pxx_x = sps.periodogram(x, fs, scaling=f'{scaling}')
         x_y = df[probe_y]#[:20000]
-        f_y, Pxx_y = sps.periodogram(x_y,fs, scaling='spectrum')
+        f_y, Pxx_y = sps.periodogram(x_y, fs, scaling=f'{scaling}')
         x_z = df[probe_z]#[:20000]
-        f_z, Pxx_z = sps.periodogram(x_z,fs, scaling='spectrum')
+        f_z, Pxx_z = sps.periodogram(x_z, fs, scaling=f'{scaling}')
         #x = df[probe_m]#[:20000]
         #f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
         x_t = x + x_y + x_z #trace
-        f_t, Pxx_t = sps.periodogram(x_t, fs, scaling ='spectrum')
+        f_t, Pxx_t = sps.periodogram(x_t, fs, scaling =f'{scaling}')
         
-        def plot_power(f,fs,Pxx,probe, col):
-            plt.loglog(f,Pxx, f'{col}-') #sqrt required for power spectrum, and semi log y axis
+        def plot_power(f,fs,Pxx, probe, col):
+            plt.loglog(f,np.sqrt(Pxx), f'{col}-', picker=100) #sqrt required for power spectrum, and semi log y axis
             plt.xlim(right=fs/2)
-            plt.ylim(10e-8, 10e-2)
             plt.xlabel('Frequency [Hz]')
-            plt.ylabel('FFT magnitude')
+            plt.ylabel('Amplitude Power Spectrum [np.sqrt(dB/Hz)]')
             plt.title(f'{probe}')
-            #peaks, _ = sps.find_peaks(np.log10(np.sqrt(Pxx)), prominence = 2)
-            #print([round(i,1) for i in f[peaks] if i <= 20], len(peaks))
-            #plt.semilogy(f[peaks], np.sqrt(Pxx)[peaks], marker = 'x', markersize = 10, color='orange', linestyle = 'None')
-        
+            peaks, _ = sps.find_peaks(np.log10(Pxx), prominence = 6)
+            #print(peaks)
+            
+            #peaks = peaks[np.where(f[peaks] > 0)]
+            print(probe, [round(i,1) for i in f[peaks] if i <= fs/2], len(peaks))
+            
+        def get_clicks(f, Pxx, Probe):
+            fig = plt.figure()
+            plot_power(f, fs, Pxx, Probe, 'b')
+            plt.xlim(left = 10e-1)
+            plt.ylim(bottom = 10e-2, top = 10e-1)
+            fig.canvas.mpl_connect('button_press_event', onclick)
+            plt.show()
 
-        plt.figure(figsize = (10,8))
+            return clicks
+
+        try:
+            probe = probe_x.split('_')[0]
+            print(probe, inst)
+            with open(f'.\\{probe}_{inst}_powerspectra_2.csv') as f:
+                clicks1, clicks2, clicks3, clicks4 = [], [], [], []
+                for i, line in enumerate(f):
+                    nums = line.split(',')
+                    nums1 = nums[1]
+                    nums2 = nums[2]
+                    if line[0] == 'X':
+                        clicks1.append(float(nums1))
+                        clicks1.append(float(nums2))
+                    if line[0] == 'Y':
+                        clicks2.append(float(nums1))
+                        clicks2.append(float(nums2))
+                    if line[0] == 'Z':
+                        clicks3.append(float(nums1))
+                        clicks3.append(float(nums2))
+                    if line[0] == 'T':
+                        clicks4.append(float(nums1))
+                        clicks4.append(float(nums2))
+
+        except IOError:
+            print("File does not exist - Now will be created")    
+            
+            clicks1 = get_clicks(f_x, Pxx_x, probe_x)
+            clicks = []
+
+            clicks2 = get_clicks(f_y, Pxx_y, probe_y)
+            clicks = []
+
+            clicks3 = get_clicks(f_z, Pxx_z, probe_z)
+            clicks = []
+
+            clicks4 = get_clicks(f_t, Pxx_t, 'T')
+            clicks = []
+
+            print(clicks1, type(clicks1))
+            print(clicks2, type(clicks2))
+            print(clicks3, type(clicks3))
+            print(clicks4, type(clicks4))
+
+            def write_peaks(clicks, dir):
+                clicks = [round(j,2) for j in clicks]
+                i = 0
+                for k in range(int(len(clicks)/2)):
+                    w.writerow([dir, clicks[i], clicks[i+1]])
+                    i += 2
+
+            probe = probe_x.split('_')[0]
+            w = csv.writer(open(f".\\{probe}_{inst}_powerspectra.csv", "w", newline=''))
+            #w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
+            w.writerow(["Dir", "Xdata", "Ydata"])
+            write_peaks(clicks1, "X")
+            write_peaks(clicks2, "Y")
+            write_peaks(clicks3, "Z")
+            write_peaks(clicks4, "T")
+
+        def plot_peaks(clicks, axis):
+            j = 0
+            peaks = clicks
+            for i in range(int(len(peaks)/2)):
+                axis.loglog(peaks[j], peaks[j+1], marker = 's', markersize = 5, color='orange', linestyle = 'None', markeredgecolor='black')
+                #axis.annotate(f'{round(peaks[j],2)}', (peaks[j], peaks[j+1]), xytext = (peaks[j] - 10**0.6, peaks[j+1] + 1), wrap = True)
+                j += 2
+
+        fig = plt.figure(figsize = (10,8))#, ax = plt.subplots(2, 2, figsize = (10,8))
         mpl.rcParams['agg.path.chunksize'] = 10000
         
-        plt.subplot(221)
+        ax1 = plt.subplot(221)
         plot_power(f_x, fs, Pxx_x, probe_x, 'b')
+        plt.ylim(10e-2, 11)
+        #plt.xlim(left = 0.5*10e0)
+        plot_peaks(clicks1, ax1)
         
-        plt.subplot(222)
+        
+        ax2 = plt.subplot(222)
         plot_power(f_y, fs, Pxx_y, probe_y, 'r')
-
-        plt.subplot(223)
-        plot_power(f_z, fs, Pxx_z, probe_z, 'g')
+        plt.ylim(10e-2, 11)
+        #plt.xlim(left = 0.5*10e0)
+        plot_peaks(clicks2, ax2)
         
-        plt.subplot(224)
+        ax3 = plt.subplot(223)
+        plot_power(f_z, fs, Pxx_z, probe_z, 'g')
+        plt.ylim(10e-2, 11)
+        #plt.xlim(left = 0.5*10e0)
+        plot_peaks(clicks3, ax3)
+        
+        ax4 = plt.subplot(224)
         Trace = 'Trace'
         plot_power(f_t, fs, Pxx_t, Trace, 'y')
+        plt.ylim(10e-2, 11)
+        #plt.xlim(left = 0.5*10e0)
+        plot_peaks(clicks4, ax4)
+       
         plt.suptitle(f'{inst} - Power Spectrum')
-        #plot_power(f_m, Pxx_m, probe_m)
-        
         plt.subplots_adjust(top=0.92, bottom=0.08, left=0.10, right=0.95, hspace=0.25, wspace=0.35)
+        plt.show()
+        
 
         def alt_power_spec(data, fs, probe):
             ps = np.abs(np.fft.fft(data))**2
@@ -290,8 +389,8 @@ class processing:
 
         if save:
             plt.savefig('(%s)_powerspec_mag' % inst)
-        else:
-            plt.show()
+        # else:
+        #     plt.show()
 
     @staticmethod
     def rotate_21(soloA_bool):

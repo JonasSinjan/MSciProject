@@ -52,15 +52,15 @@ class mfsa_object:
             os.environ['MFSA_raw'] = os.path.expanduser('~/Documents/MsciProject/Data')
 
         mfsa_init_path = os.environ.get('MFSA_raw')
-        print(mfsa_init_path)
+        #print(mfsa_init_path)
         if self.day == 1:
             mfsa_init_path = os.path.join(mfsa_init_path, 'day_one')
         elif self.day == 2:
             mfsa_init_path = os.path.join(mfsa_init_path, 'day_two')
-        print(mfsa_init_path)
+        #print(mfsa_init_path)
         mfsa_fol_A = os.path.join(mfsa_init_path, 'A')
         mfsa_fol_B = os.path.join(mfsa_init_path, 'B')
-        print(mfsa_fol_A)
+        #print(mfsa_fol_A)
         if self.probe < 9:
             soloA_bool = True
         else:
@@ -131,7 +131,7 @@ class mfsa_object:
 
     def powerspectra(self):
         if hasattr(self, 'name'):
-            processing.powerspecplot(self.df, self.fs, self.collist, alt=False, inst = self.name, save = True)
+            processing.powerspecplot(self.df, self.fs, self.collist, alt=False, inst = self.name, save = False)
         else:
             processing.powerspecplot(self.df, self.fs, self.collist, alt=False, save = False)
 
@@ -168,11 +168,13 @@ if __name__ == "__main__":
     EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
     """
     day = 2
-    start_dt = datetime(2019,6,24,9,24) #in spacecraft time
-    end_dt = datetime(2019,6,24,10,9)
-    probe = 9
+    probe = 7
     sampling_fs = 100
 
-    eui = mfsa_object(day, start_dt, end_dt, probe, sampling_fs, timezone = 'MAG', name = 'EUI')
+    eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
     eui.get_data()
-    eui.spectrogram()
+    eui.powerspectra()
+
+    #metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
+    #metis.get_data()
+    #metis.powerspectra()
