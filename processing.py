@@ -254,7 +254,7 @@ class processing:
             fig = plt.figure()
             plot_power(f, fs, Pxx, Probe, 'b')
             plt.xlim(left = 5*10e-2)
-            plt.ylim(bottom = 10e-2, top = 10e0)
+            plt.ylim(bottom = 10e-2, top = 10e1)
             mpl.rcParams['agg.path.chunksize'] = 10000
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
@@ -264,7 +264,7 @@ class processing:
         try:
             probe = probe_x.split('_')[0]
             print(probe, inst)
-            with open(f'.\\{probe}_{inst}_powerspectra_2.csv') as f:
+            with open(f'.\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra.csv') as f:
                 clicks1, clicks2, clicks3, clicks4 = [], [], [], []
                 for i, line in enumerate(f):
                     nums = line.split(',')
@@ -311,7 +311,7 @@ class processing:
                     i += 2
 
             probe = probe_x.split('_')[0]
-            w = csv.writer(open(f".\\Results\\PwerSpectrum\Peak_files\\{probe}_{inst}_powerspectra.csv", "w", newline=''))
+            w = csv.writer(open(f".\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra.csv", "w", newline=''))
             #w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
             w.writerow(["Dir", "Xdata", "Ydata"])
             write_peaks(clicks1, "X")
@@ -329,30 +329,30 @@ class processing:
 
         fig = plt.figure(figsize = (10,8))#, ax = plt.subplots(2, 2, figsize = (10,8))
         mpl.rcParams['agg.path.chunksize'] = 10000
-        
+        uplim = 50 #11 otherwise, 50 only for probe 12
         ax1 = plt.subplot(221)
         plot_power(f_x, fs, Pxx_x, probe_x, 'b')
-        plt.ylim(10e-2, 11)
+        plt.ylim(10e-2, uplim)
         #plt.xlim(left = 0.5*10e0)
         plot_peaks(clicks1, ax1)
         
         
         ax2 = plt.subplot(222)
         plot_power(f_y, fs, Pxx_y, probe_y, 'r')
-        plt.ylim(10e-2, 11)
+        plt.ylim(10e-2, uplim)
         #plt.xlim(left = 0.5*10e0)
         plot_peaks(clicks2, ax2)
         
         ax3 = plt.subplot(223)
         plot_power(f_z, fs, Pxx_z, probe_z, 'g')
-        plt.ylim(10e-2, 11)
+        plt.ylim(10e-2, uplim)
         #plt.xlim(left = 0.5*10e0)
         plot_peaks(clicks3, ax3)
         
         ax4 = plt.subplot(224)
         Trace = 'Trace'
         plot_power(f_t, fs, Pxx_t, Trace, 'y')
-        plt.ylim(10e-2, 11)
+        plt.ylim(10e-2, uplim)
         #plt.xlim(left = 0.5*10e0)
         plot_peaks(clicks4, ax4)
        
@@ -389,7 +389,7 @@ class processing:
             alt_power_spec(x_t, fs, probe_t)
 
         if save:
-            plt.savefig(f'.\\Results\\PowerSpectrum\\Day_2\\{probe}_{inst}_powerspec')
+            plt.savefig(f'.\\Results\\PowerSpectrum\\Day_2\\{probe}_{inst}_powerspec.png')
         # else:
         #     plt.show()
 
