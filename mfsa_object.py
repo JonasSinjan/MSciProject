@@ -100,27 +100,28 @@ class mfsa_object:
 
     def spectrogram(self, *, uplimit=0.1):
         x = np.sqrt(self.df[self.collist[1]]**2 + self.df[self.collist[2]]**2 + self.df[self.collist[3]]**2)
+        y = (self.df[self.collist[1]] + self.df[self.collist[2]] + self.df[self.collist[3]])
         div = (self.dflen)/1000
         #f, Pxx = sps.periodogram(x,fs)
         #div = 500
         nff = self.dflen//div
         wind = sps.hamming(int(self.dflen//div))
-        f, t, Sxx = sps.spectrogram(x,self.fs, window=wind, noverlap = int(self.dflen//(2*div)), nfft = nff)#,nperseg=700)
+        f, t, Sxx = sps.spectrogram(y, self.fs, window=wind, noverlap = int(self.dflen//(2*div)), nfft = nff)#,nperseg=700)
         ax = plt.figure()
-        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = uplimit)
+        plt.pcolormesh(t, f, np.sqrt(Sxx), vmin = 0.,vmax = uplimit, cmap = 'cool')
         plt.semilogy()
         plt.ylabel('Frequency [Hz]')
-        plt.xlabel('Time [sec]')
+        plt.xlabel('Time [s]')
         if hasattr(self, 'name'):
-            plt.title(f'Spectrogram: {self.name} - Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
+            plt.title(f'{self.name} - Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
         else:
-            plt.title(f'Spectrogram: Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
+            plt.title(f'Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
         plt.ylim((10**0,self.fs/2))
         plt.clim()
         fig = plt.gcf()
         cbar = plt.colorbar()
         #cbar.ax.set_yticklabels(fontsize=8)
-        cbar.set_label('Normalised Power/Frequency')#, rotation=270)  
+        cbar.set_label('Normalised Amplitude Power Spectral Density')#, rotation=270)  
 
         #fig, ax2 = plt.subplots()
         #Pxx, freqs, bins, im = ax2.specgram(x, Fs=sampling_freq)#, noverlap=900)
@@ -168,17 +169,18 @@ if __name__ == "__main__":
     EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
     """
     day = 2
-    probe = 12 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
+    probe = 10 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
     sampling_fs = 100
 
     # eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
     # eui.get_data()
     # eui.powerspectra()
 
-    daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
-    daytwo.get_data()
-    daytwo.powerspectra()
+    #daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
+    #daytwo.get_data()
+    #daytwo.spectrogram()
 
-    # metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
-    # metis.get_data()
+    metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
+    metis.get_data()
+    metis.spectrogram(uplimit=0.4) #need 0.4 for trace, 0.1 for absolute magnitude
     # metis.powerspectra()

@@ -242,7 +242,7 @@ class processing:
             plt.loglog(f,np.sqrt(Pxx), f'{col}-', picker=100) #sqrt required for power spectrum, and semi log y axis
             plt.xlim(right=fs/2)
             plt.xlabel('Frequency [Hz]')
-            plt.ylabel('Amplitude Power Spectrum [np.sqrt(dB/Hz)]')
+            plt.ylabel('Amplitude Power Spectral Density [np.sqrt(dB/Hz)]')
             plt.title(f'{probe}')
             peaks, _ = sps.find_peaks(np.log10(Pxx), prominence = 6)
             #print(peaks)
