@@ -330,6 +330,8 @@ class processing:
         fig = plt.figure(figsize = (10,8))#, ax = plt.subplots(2, 2, figsize = (10,8))
         mpl.rcParams['agg.path.chunksize'] = 10000
         uplim = 10 #11 otherwise, 50 only for probe 12
+        if probe_x == 'Probe12_X':
+            uplim = 50
         ax1 = plt.subplot(221)
         plot_power(f_x, fs, Pxx_x, probe_x, 'b')
         plt.ylim(10e-2, uplim)

@@ -129,7 +129,7 @@ class mfsa_object:
 
     def powerspectra(self):
         if hasattr(self, 'name'):
-            processing.powerspecplot(self.df, self.fs, self.collist, alt=False, inst = self.name, save = True)
+            processing.powerspecplot(self.df, self.fs, self.collist, alt=False, inst = self.name, save = False)
         else:
             processing.powerspecplot(self.df, self.fs, self.collist, alt=False, save = False)
 
