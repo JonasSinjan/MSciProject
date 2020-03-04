@@ -108,7 +108,7 @@ class mfsa_object:
         wind = sps.hamming(int(self.dflen//div))
         f, t, Sxx = sps.spectrogram(y, self.fs, window=wind, noverlap = int(self.dflen//(2*div)), nfft = nff)#,nperseg=700)
         ax = plt.figure()
-        plt.pcolormesh(t, f, np.sqrt(Sxx), vmin = 0.,vmax = uplimit, cmap = 'cool')
+        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = uplimit)#, cmap = 'cool') #sqrt? 
         plt.semilogy()
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [s]')
@@ -182,5 +182,5 @@ if __name__ == "__main__":
 
     metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
     metis.get_data()
-    metis.spectrogram(uplimit=0.4) #need 0.4 for trace, 0.1 for absolute magnitude
+    metis.spectrogram(uplimit=0.2) #need 0.4 for trace, 0.1 for absolute magnitude
     # metis.powerspectra()
