@@ -98,7 +98,7 @@ class mfsa_object:
         self.df = processing.shifttime(self.df, soloA_bool, 2)
         self.dflen = len(self.df) 
 
-    def spectrogram(self, *, uplimit=0.1):
+    def spectrogram(self, *, downlimit = 0, uplimit=0.1):
         x = np.sqrt(self.df[self.collist[1]]**2 + self.df[self.collist[2]]**2 + self.df[self.collist[3]]**2)
         y = (self.df[self.collist[1]] + self.df[self.collist[2]] + self.df[self.collist[3]])
         div = (self.dflen)/1000
@@ -108,7 +108,7 @@ class mfsa_object:
         wind = sps.hamming(int(self.dflen//div))
         f, t, Sxx = sps.spectrogram(y, self.fs, window=wind, noverlap = int(self.dflen//(2*div)), nfft = nff)#,nperseg=700)
         ax = plt.figure()
-        normalize = mpl.colors.Normalize(vmin=0, vmax=uplimit,  clip = True)
+        normalize = mpl.colors.Normalize(vmin=downlimit, vmax=uplimit,  clip = True)
         plt.pcolormesh(t, f, Sxx, norm = normalize, cmap = 'viridis') #sqrt? 
         #plt.pcolormesh(t, f, Sxx, clim = (0,uplimit))
         plt.semilogy()
@@ -166,19 +166,19 @@ if __name__ == "__main__":
     EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
     """
     day = 2
-    probe = 12 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
+    probe = 10 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
     sampling_fs = 100
 
-    # eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
-    # eui.get_data()
-    # eui.powerspectra()
+    #eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
+    #eui.get_data()
+    #eui.spectrogram()
 
     daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
     daytwo.get_data()
-    #daytwo.spectrogram()
-    daytwo.powerspectra()
+    daytwo.spectrogram(downlimit = 0.5, uplimit = 1.0)
+    #daytwo.powerspectra()
 
     #metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
     #metis.get_data()
-    #metis.spectrogram(uplimit=0.1) #need 0.4 for trace, 0.1 for absolute magnitude
+    #metis.spectrogram(downlimit = 0.1, uplimit = 0.4) #need 0.4 for trace, 0.1 for absolute magnitude
     #metis.powerspectra()
