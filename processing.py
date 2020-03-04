@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 import time
 import math
 
+
 class processing:
 
     @staticmethod
@@ -122,7 +123,7 @@ class processing:
             else:
                 time_delta = (start_dt - day_two_B_dt).total_seconds()
             start_csv = math.floor(time_delta / 658) # approx number of csv files
-            end_csv = start_csv + math.ceil(length/658)
+            end_csv = start_csv + math.ceil(length/658) 
             if end_csv > 48:
                 end_csv = 48
                 print('The desired time range may run outside the available data - check if so')

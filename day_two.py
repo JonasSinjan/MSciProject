@@ -123,8 +123,8 @@ def day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = None
 
 if __name__ == "__main__":
     
-    windows = True
-    probe_num_list = [2] #['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI', 'EUI', 'SWA', 'EPD']
+    windows = False
+    probe_num_list = [1] #['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI', 'EUI', 'SWA', 'EPD']
     # METIS - 10:10-10:56
     # EUI - 9:24-10:09
     # SPICE - 10:57-11:18
@@ -135,13 +135,13 @@ if __name__ == "__main__":
     # EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
 
     #the datetime we change here is in spacecraft time - used for if want probes for a certain current profile (which is in spacecraft time)
-    start_dt = datetime(2019,6,24,7,45) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,8,00) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
+    start_dt = datetime(2019,6,24,7,0) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,24,7,30) + pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)# this is the end
     #start and end dt now in MFSA (German UT) time - as MFSA in that time
     day = 2
         
     alt = False #if want powerspec from `brute force' method - or inbuilt scipy periodogram method
-    tmp = day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = 1000, plot = False) #pass through the list containing the file paths
+    tmp = day_two(windows, probe_num_list, start_dt, end_dt, alt, sampling_freq = 1000, plot = True) #pass through the list containing the file paths
     
     """
     b_noise.extend(tmp)

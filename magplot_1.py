@@ -158,7 +158,7 @@ def compar(file_1, file_2, start_var, end_var, plot=True):
     
 if __name__ == "__main__":
     day = 1
-    windows = True
+    windows = False
     
     if day == 1:
         if windows:

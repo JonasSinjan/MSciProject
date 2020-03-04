@@ -82,11 +82,18 @@ def plot_new_curve(windows, day, instruments, probes, sample):
         vect_dict = {}
         for probe in probes:
 
+            """
             if windows:
                 path = f'.\\Results\\dBdI_data\\Day{day}\\{sample}Hz_with_err\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz_day{day}.csv'
 
             else:
                 path = os.path.expanduser(f"~/Documents/MSciProject/NewCode//Results/dBdI_data/Day{day}/{sample}Hz_with_err/{inst}/{inst}_probe{probe}_vect_dict_{sample}Hz_day{day}.csv")
+            """
+
+            if windows:
+                path = f'.\\Results\\dBdI_data\\Day{day}\\{sample}Hz_with_err\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz_day{day}.csv'
+            else:
+                path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/Results/dBdI_data/Day{day}/{sample}Hz_with_err/subsystems/{inst}/{inst}_probe{str(probe).zfill(2)}_vect_dict_{sample}Hz_day{day}.csv")
         
             df = pd.read_csv(path)
             xdata = df['dI']
@@ -138,8 +145,9 @@ def plot_new_curve(windows, day, instruments, probes, sample):
         for key, val in vect_dict.items():
             w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9],val[10],val[11]])
         """
-        
+"""      
 if __name__ == "__main__":
+    
     windows = False
     day = 2
     instruments = ['EUI']#['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
@@ -149,3 +157,16 @@ if __name__ == "__main__":
     #plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate)
 
     plot_new_curve(windows, day, instruments, probes, sample_rate)
+    """
+
+windows = False
+day = 2
+instruments = ['SSMM-IO', 'WDE-3']
+#['SSMM-IO', 'SSMM-MC', 'WDE-3']
+#['SSMM-IO', 'STR', 'WDE-1', 'WDE-2', 'WDE-3', 'WDE-4', 'IMU-1 Ch-1', 'IMU-1 Ch-2', 'IMU-1 Ch-3', 'IMU-1 Ch-4', 'SADE', 'DST-1', 'EPC-1_1', 'EPC-1_2', 'HTR3_GR4', 'HTR3_GR5', 'HTR3_GR6']
+probes = range(1,13)
+sample_rate = 1
+
+#plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate)
+
+plot_new_curve(windows, day, instruments, probes, sample_rate)

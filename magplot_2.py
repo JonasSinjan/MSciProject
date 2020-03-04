@@ -11,9 +11,13 @@ import time
 import math
 import csv
 
-def mag(filepath, start_dt=None, end_dt=None):
+def mag(day,filepath, start_dt=None, end_dt=None):
     
-    origin = datetime(2019, 6, 24, hour = 7, minute = 48, second = 19)
+    if day == 1:
+        origin = datetime(2019,6,21, hour = 8, minute = 57, second = 4)
+    elif day == 2:
+        origin = datetime(2019,6,24, hour = 7, minute = 48, second = 19)
+
 
     if start_dt == None:
         start_dt = origin
@@ -82,8 +86,8 @@ def mag(filepath, start_dt=None, end_dt=None):
     return tmp
     
 if __name__ == "__main__":
-    day = 2
-    windows = True
+    day = 1
+    windows = False
     
 
     if day == 1:
@@ -98,13 +102,17 @@ if __name__ == "__main__":
         else:
             filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay2.csv.txt")
         
-    start_dt = datetime(2019,6,24,7,55)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,8,0)# this is the end
+    #start_dt = datetime(2019,6,24,7,55)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    #end_dt = datetime(2019,6,24,8,0)# this is the end
 
-    b_noise = mag(filepath, start_dt=start_dt, end_dt=end_dt)
+    start_dt = datetime(2019,6,21,9,0)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    end_dt = datetime(2019,6,21,15,0)# this is the end
 
+    b_noise = mag(day,filepath, start_dt=start_dt, end_dt=end_dt)
+    """
     w = csv.writer(open(f"day2_mag_vars.csv", "w"))
     w.writerow(["Bx_var","By_var","Bz_var"])
     val = b_noise
     w.writerow([val[0],val[1],val[2]])#,val[9],val[10],val[11]])
+    """
         

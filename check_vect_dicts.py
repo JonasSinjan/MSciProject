@@ -1,11 +1,12 @@
 import pandas as pd
 import glob
+import os
+import csv
 
 def check_grads(folder_path, day):
 
     int_thresh = 0.1
     sig_thresh = 2
-    #print(glob.glob(f'{folder_path}*.csv'))
     for file in glob.glob(f'{folder_path}*.csv'):
         df = pd.read_csv(file)
         df.set_index('Probe', inplace=True)
@@ -17,12 +18,13 @@ def check_grads(folder_path, day):
             df['Y_int_bool'] = abs(df['Y_zero_int']) - df['Y_zero_int_err'] > 0
             df['Z_int_bool'] = abs(df['Z_zero_int']) - df['Z_zero_int_err'] > 0
 
-            inst = file.split('\\cur\\')[1]
+            #inst = file.split('\\cur\\')[1]
+            inst = file.split(os.path.expanduser('/subsystems/'))[1]
             if day == 1:
+                #inst = inst[0:-38]
                 inst = inst[0:-38]
             elif day == 2:
                 inst = inst[0:-38]
-            print(inst)
 
         else:
             tmp = 'lin'
@@ -52,12 +54,29 @@ def check_grads(folder_path, day):
         df['Y_sig_level'] = df['Y_sig_level'].where(df['Y_sig_level'] > 2, other = 0)
         df['Z_sig_level'] = df['Z_sig_level'].where(df['Z_sig_level'] > 2, other = 0)
         
+
+        #df.to_csv(f'.\\Results\\Gradient_dicts\\Day_{day}\\bool_check_grads_{tmp}\\{inst}_bool_check_day{day}_{tmp}.csv')
+        tempdic = {}
+        for probe in range(12):
+            tempdic[f'{probe+1}'] = [df.iloc[probe]["X_bool_sig"],df.iloc[probe]["X_sig_level"],df.iloc[probe]["Y_bool_sig"],df.iloc[probe]["Y_sig_level"],df.iloc[probe]["Z_bool_sig"],df.iloc[probe]["Z_sig_level"],df.iloc[probe]["X_int_bool"],df.iloc[probe]["Y_int_bool"],df.iloc[probe]["Z_int_bool"]]
+
         
-        df.to_csv(f'.\\Results\\Gradient_dicts\\Day_{day}\\bool_check_grads_{tmp}\\{inst}_bool_check_day{day}_{tmp}.csv')
+        w = csv.writer(open(f"{inst}_bool_check_day{day}_{tmp}.csv", "w"))
+        w.writerow(["Probe", "X_bool_sig", "X_sig_level", "Y_bool_sig", "Y_sig_level", "Z_bool_sig", "Z_sig_level", "X_int_bool", "Y_int_bool", "Z_int_bool"])
+        for key,val in tempdic.items():
+            w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8]])
+        
+
+        
         
 if __name__ == "__main__":
     day = 1
     line_fit_type = 'cur'
     fol_path = f'.\\Results\\Gradient_dicts\\Day_{day}\\1hz_noorigin\\{line_fit_type}\\'
+    check_grads(fol_path, day)
+else:
+    day = 1
+    line_fit_type = 'cur'
+    fol_path = os.path.expanduser(f'~/Documents/MSciProject/NewCode/Results/Gradient_dicts/Day_{day}/1hz_noorigin/{line_fit_type}/subsystems/')
     check_grads(fol_path, day)
     

@@ -46,6 +46,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
     start_csv_B, end_csv_B = processing.which_csvs(False, day ,start_dt, end_dt, tz_MAG = True)
 
     print(start_csv_A, end_csv_A)
+    print(start_csv_B, end_csv_B)
 
     all_files_A = [0]*(end_csv_A + 1 - start_csv_A)
 
@@ -142,6 +143,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
         #get data for dI
         xdata = list(current_dif[:len(peak_datetimes)])
+        print("xdata",xdata)
         
         #get data for dB
         probe_x_tmp = step_dict.get(f'Probe{num_str}_X')
@@ -175,11 +177,10 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             
             df_err_correction = pd.read_csv(err_path)
             df_err = df_err_correction.iloc[i]
-            #print(df_err, i, num_str)
 
-            probe_x_tmp_err = [np.sqrt(k**2 + df_err['Bx_var']**2) for k in probe_x_tmp_err]
-            probe_y_tmp_err = [np.sqrt(k**2 + df_err['By_var']**2) for k in probe_y_tmp_err]
-            probe_z_tmp_err = [np.sqrt(k**2 + df_err['Bz_var']**2) for k in probe_z_tmp_err]
+            probe_x_tmp_err = [df_err['Bx_var'] for k in range(len(xdata))]
+            probe_y_tmp_err = [df_err['By_var'] for k in range(len(xdata))]
+            probe_z_tmp_err = [df_err['Bz_var'] for k in range(len(xdata))]
 
             print(probe_x_tmp[:])
             print(probe_x_tmp_err[:])
@@ -216,9 +217,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             plt.figure()
             
             if rand_noise:
-                plt.plot(xdata, params_x[0]*xdata + params_x[1], 'b:', label = f'curve_fit - X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
-                plt.plot(xdata, params_y[0]*xdata + params_y[1], 'r:', label = f'curve_fit - Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
-                plt.plot(xdata, params_z[0]*xdata + params_z[1], 'g:', label = f'curve_fit - Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
+                plt.plot(xdata, [params_x[0]*data + params_x[1] for data in xdata], 'b:', label = f'curve_fit - X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
+                plt.plot(xdata, [params_y[0]*data + params_y[1] for data in xdata], 'r:', label = f'curve_fit - Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
+                plt.plot(xdata, [params_z[0]*data + params_z[1] for data in xdata], 'g:', label = f'curve_fit - Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
             
             elif rand_noise == False:
                 plt.plot(xdata, X.intercept + X.slope*np.array(xdata), 'b-', label = f'X grad: {round(X.slope,2)} ± {round(X.stderr,2)} int: {round(X.intercept, 2)}')
@@ -241,10 +242,12 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             for dI in range(len(xdata)):
                 dBdI[f'{dI+1}'] = [xdata[dI],probe_x_tmp[dI],probe_x_tmp_err[dI],probe_y_tmp[dI],probe_y_tmp_err[dI],probe_z_tmp[dI],probe_z_tmp_err[dI]]
             
-            w = csv.writer(os.path.expanduser("~/Documents/MSciProject/NewCode/Results/dBdI_data/Day{day_number}/1Hz_with_err/subsystems/{instrument}/{instrument}_probe{i+1}_vect_dict_1Hz_day{day_number}.csv", "w"))
+            
+            w = csv.writer(open(f"{instrument}_probe{num_str}_vect_dict_1Hz_day{day_number}.csv", "w"))
             w.writerow(["key","dI","dB_X","dB_X_err","dB_Y","dB_Y_err","dB_Z","dB_Z_err"])
             for key, val in dBdI.items():
                 w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6]])#,val[9],val[10],val[11]])
+            
 
         if rand_noise:
             vect_dict[f'{i+1}'] = [params_x[0], params_y[0], params_z[0], perr_x[0], perr_y[0], perr_z[0], params_x[1], params_y[1], params_z[1], perr_x[1], perr_y[1], perr_z[1]]
@@ -258,11 +261,11 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 if __name__ == "__main__":
     #these 3 factors need to be set 
     windows = False
-    probes = range(12)#range(8,12) #what probes are desired
-    day_number = 2
-    instru_list = ['SSMM-IO', 'SSMM-MC', 'WDE-3']
+    probes = range(12) #what probes are desired
+    day_number = 1
+    instru_list = ['HTR3_GR4', 'HTR3_GR5', 'HTR3_GR6']
     #['SSMM-IO', 'SSMM-MC', 'WDE-3']
-    #['SSMM-IO', 'STR', 'WDE-1', 'WDE-2', 'WDE-3', 'WDE-4', 'IMU-1 Ch-1', 'IMU-1 Ch-2', 'IMU-1 Ch-3', 'IMU-1 Ch-4', 'SADE', 'DST-1', 'EPC-1_1', 'EPC-1_2', 'HTR3_GR4', 'HTR3_GR5', 'HTR3_GR6']
+    #['SSMM-IO', 'SSMM-MC', 'STR', 'WDE-1', 'WDE-2', 'WDE-3', 'WDE-4', 'IMU-1 Ch-1', 'IMU-1 Ch-2', 'IMU-1 Ch-3', 'IMU-1 Ch-4', 'SADE', 'DST-1', 'EPC-1_1', 'EPC-1_2', 'HTR3_GR4', 'HTR3_GR5', 'HTR3_GR6']
 
 
     #create dictionary with all current peaks for every instrument (v. fast)
@@ -283,9 +286,11 @@ if __name__ == "__main__":
         
         #write the Magnetic Field/Amp proportionality to csv
         
-        w = csv.writer(os.path.expanduser("~/Documents/MSciProject/NewCode/Results/Gradient_dicts/Day_{day_number}/1hz_noorigin/cur/subsystems/{instrument}_vect_dict_NOORIGIN_Day{day_number}_curve_fit.csv", "w"))
+        w = csv.writer(open(f"{instrument}_vect_dict_NOORIGIN_Day{day_number}_curve_fit.csv", "w"))
         #w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
         w.writerow(["Probe","X.slope_cur", "Y.slope_cur", "Z.slope_cur","X.slope_cur_err", "Y.slope_cur_err", "Z.slope_cur_err","X_zero_int","Y_zero_int","Z_zero_int", "X_zero_int_err","Y_zero_int_err","Z_zero_int_err"])
         for key, val in vect_dict.items():
             w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9],val[10],val[11]])
+        
+        
         

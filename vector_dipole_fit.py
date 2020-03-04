@@ -37,28 +37,29 @@ def solver(file_path, inst, day, variation_est=True):
         print('r = ', r)
 
         xa = ((3*(x**2)/r**5)-(1/r**3))*10**(-7)
-        xb = (3*y*z/r**5)*10**(-7)
+        xb = (3*y*x/r**5)*10**(-7)
         xc = (3*z*x/r**5)*10**(-7)
         xd = (3*x*y/r**5)*10**(-7)
-        xe = (3*(y**2)/r**5-1/r**3)*10**(-7)
+        xe = ((3*(y**2)/r**5)-(1/r**3))*10**(-7)
         xf = (3*z*y/r**5)*10**(-7)
         xg = (3*x*z/r**5)*10**(-7)
         xh = (3*y*z/r**5)*10**(-7)
         xi = ((3*(z**2)/r**5)-(1/r**3))*10**(-7)
         
-        a = np.array([[(3*(x**2)/r**5)-(1/r**3), 3*y*z/r**5, 3*z*x/r**5],[3*x*y/r**5, 3*(y**2)/r**5-1/r**3, 3*z*y/r**5],[3*x*z/r**5, 3*y*z/r**5, (3*(z**2)/r**5)-(1/r**3)]])
-        a = 10**(-7)*a
+        a = np.array([[(3*(x**2)/r**5)-(1/r**3), 3*y*x/r**5, 3*z*x/r**5],[3*x*y/r**5, (3*(y**2)/r**5)-(1/r**3), 3*z*y/r**5],[3*x*z/r**5, 3*y*z/r**5, (3*(z**2)/r**5)-(1/r**3)]])
+        a = 10**(-7)*a #multiply by mu0
         b = 10**-9*b #get in units of Tesla
         b_err = 10**-9*b_err
         m = np.linalg.solve(a,b)
 
 
-        detA = xa*((xe*xi)-(xf*xh)) - xb*((xd*xi)-(xf*xg)) + xc*((xd*xh)-(xe*xg))
+        detA = (xa*((xe*xi)-(xf*xh))) - (xb*((xd*xi)-(xf*xg))) + (xc*((xd*xh)-(xe*xg)))
 
 
-        mx_err = ((1/detA)*(((((xe*xi)-(xf*xh))*b_err[0])**2)+((((xc*xh)-(xb*xi))*b_err[1])**2)+((((xb*xf)-(xc*xe))*b_err[2])**2))**0.5)*10**(7)
-        my_err = ((1/detA)*(((((xf*xg)-(xd*xi))*b_err[0])**2)+((((xa*xi)-(xc*xg))*b_err[1])**2)+((((xc*xd)-(xa*xf))*b_err[2])**2))**0.5)*10**(7)
-        mz_err = ((1/detA)*(((((xd*xh)-(xe*xg))*b_err[0])**2)+((((xb*xg)-(xa*xh))*b_err[1])**2)+((((xa*xe)-(xb*xd))*b_err[2])**2))**0.5)*10**(7)
+        mx_err = (1/detA)*(((((xe*xi)-(xf*xh))*b_err[0])**2)+((((xc*xh)-(xb*xi))*b_err[1])**2)+((((xb*xf)-(xc*xe))*b_err[2])**2))**0.5
+        my_err = (1/detA)*(((((xf*xg)-(xd*xi))*b_err[0])**2)+((((xa*xi)-(xc*xg))*b_err[1])**2)+((((xc*xd)-(xa*xf))*b_err[2])**2))**0.5
+        mz_err = (1/detA)*(((((xd*xh)-(xe*xg))*b_err[0])**2)+((((xb*xg)-(xa*xh))*b_err[1])**2)+((((xa*xe)-(xb*xd))*b_err[2])**2))**0.5
+
 
         print(m) #m in units of Amp*m**2
         mx_list[i] = m[0]
@@ -84,43 +85,58 @@ def solver(file_path, inst, day, variation_est=True):
     ry_err = zip(probe_dist_list, my_list_err)
     rz_err = zip(probe_dist_list, mz_list_err)
 
-    rx_err = sorted(rx)
-    ry_err = sorted(ry)
-    rz_err = sorted(rz)
+    rx_err = sorted(rx_err)
+    ry_err = sorted(ry_err)
+    rz_err = sorted(rz_err)
     
     x_list = [x for r,x in rx]
     y_list = [y for r,y in ry]
     z_list = [z for r,z in rz]
-    x_list_err = [x for r,x in rx_err]
-    y_list_err = [y for r,y in ry_err]
-    z_list_err = [z for r,z in rz_err]
+    x_list_err = [x_err for r,x_err in rx_err]
+    y_list_err = [y_err for r,y_err in ry_err]
+    z_list_err = [z_err for r,z_err in rz_err]
 
     r_list = [r for r,x in rx]
+
+    print ("LIST",x_list)
+    print(x_list[:4])
 
 
     def line(x,a,b):
         return a*x + b
 
+
     params_x,cov_x = spo.curve_fit(line, r_list, [i*1000 for i in x_list], sigma = [i*1000 for i in x_list_err], absolute_sigma = True)
     params_y,cov_y = spo.curve_fit(line, r_list, [i*1000 for i in y_list], sigma = [i*1000 for i in y_list_err], absolute_sigma = True)
     params_z,cov_z = spo.curve_fit(line, r_list, [i*1000 for i in z_list], sigma = [i*1000 for i in z_list_err], absolute_sigma = True)
+
+    params_x_4,cov_x_4 = spo.curve_fit(line, r_list[:4], [i*1000 for i in x_list[:4]], sigma = [i*1000 for i in x_list_err[:4]], absolute_sigma = True)
+    params_y_4,cov_y_4 = spo.curve_fit(line, r_list[:4], [i*1000 for i in y_list[:4]], sigma = [i*1000 for i in y_list_err[:4]], absolute_sigma = True)
+    params_z_4,cov_z_4 = spo.curve_fit(line, r_list[:4], [i*1000 for i in z_list[:4]], sigma = [i*1000 for i in z_list_err[:4]], absolute_sigma = True)
 
     perr_x = np.sqrt(np.diag(cov_x))
     perr_y = np.sqrt(np.diag(cov_y))
     perr_z = np.sqrt(np.diag(cov_z))
 
+    perr_x_4 = np.sqrt(np.diag(cov_x_4))
+    perr_y_4 = np.sqrt(np.diag(cov_y_4))
+    perr_z_4 = np.sqrt(np.diag(cov_z_4))
+
     print(params_x[0],params_y[0],params_z[0])
-    plt.scatter(r_list, [i*1000 for i in x_list], label = 'M_x')
-    plt.scatter(r_list, [i*1000 for i in y_list], label = 'M_y')
-    plt.scatter(r_list, [i*1000 for i in z_list], label = 'M_z')
+
 
     plt.errorbar(r_list, [i*1000 for i in x_list], yerr = [i*1000 for i in x_list_err], fmt = 'bs', markeredgewidth = 2)
     plt.errorbar(r_list, [i*1000 for i in y_list], yerr = [i*1000 for i in y_list_err], fmt = 'rs', markeredgewidth = 2)
     plt.errorbar(r_list, [i*1000 for i in z_list], yerr = [i*1000 for i in z_list_err], fmt = 'gs', markeredgewidth = 2)
 
-    plt.plot(r_list, [params_x[0]*x + params_x[1] for x in r_list], 'b:', label = f'curve_fit - X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
-    plt.plot(r_list, [params_y[0]*y + params_y[1] for y in r_list], 'r:', label = f'curve_fit - Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
-    plt.plot(r_list, [params_z[0]*z + params_z[1] for z in r_list], 'g:', label = f'curve_fit - Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
+
+    plt.plot(r_list, [params_x[0]*x + params_x[1] for x in r_list], 'b', label = f'curve_fit - X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
+    plt.plot(r_list, [params_y[0]*y + params_y[1] for y in r_list], 'r', label = f'curve_fit - Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
+    plt.plot(r_list, [params_z[0]*z + params_z[1] for z in r_list], 'g', label = f'curve_fit - Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
+
+    plt.plot(r_list, [params_x_4[0]*x + params_x_4[1] for x in r_list], 'b:', label = f'curve_fit - X grad: {round(params_x_4[0],2)} ± {round(perr_x_4[0],2)} int: {round(params_x_4[1],2)} ± {round(perr_x_4[1],2)}')
+    plt.plot(r_list, [params_y_4[0]*y + params_y_4[1] for y in r_list], 'r:', label = f'curve_fit - Y grad: {round(params_y_4[0],2)} ± {round(perr_y_4[0],2)} int: {round(params_y_4[1],2)} ± {round(perr_y_4[1],2)}')
+    plt.plot(r_list, [params_z_4[0]*z + params_z_4[1] for z in r_list], 'g:', label = f'curve_fit - Z grad: {round(params_z_4[0],2)} ± {round(perr_z_4[0],2)} int: {round(params_z_4[1],2)} ± {round(perr_z_4[1],2)}')
 
 
     plt.xlabel('r [m]')
@@ -138,7 +154,7 @@ if __name__ == "__main__":
     inst = 'METIS'
     var = 1
     day = 2
-    variation = False
+    variation = True
 
     if variation:
         if windows:
