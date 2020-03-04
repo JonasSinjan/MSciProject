@@ -108,7 +108,9 @@ class mfsa_object:
         wind = sps.hamming(int(self.dflen//div))
         f, t, Sxx = sps.spectrogram(y, self.fs, window=wind, noverlap = int(self.dflen//(2*div)), nfft = nff)#,nperseg=700)
         ax = plt.figure()
-        plt.pcolormesh(t, f, Sxx, vmin = 0.,vmax = uplimit)#, cmap = 'cool') #sqrt? 
+        normalize = mpl.colors.Normalize(vmin=0, vmax=uplimit,  clip = True)
+        plt.pcolormesh(t, f, Sxx, norm = normalize, cmap = 'viridis') #sqrt? 
+        #plt.pcolormesh(t, f, Sxx, clim = (0,uplimit))
         plt.semilogy()
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [s]')
@@ -117,17 +119,12 @@ class mfsa_object:
         else:
             plt.title(f'Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
         plt.ylim((10**0,self.fs/2))
-        plt.clim()
+        #plt.clim()
         fig = plt.gcf()
-        cbar = plt.colorbar()
+        cbar = plt.colorbar(ticks = [0, 0.05, 0.1, 0.15, 0.2, 0.5, 1])
         #cbar.ax.set_yticklabels(fontsize=8)
-        cbar.set_label('Normalised Amplitude Power Spectral Density')#, rotation=270)  
-
-        #fig, ax2 = plt.subplots()
-        #Pxx, freqs, bins, im = ax2.specgram(x, Fs=sampling_freq)#, noverlap=900)
-        #ax2.set_yscale('log')
-        #ax2.set_ylim((10**0,sampling_freq/2))
-
+        cbar.set_label('Normalised Power Spectral Density of the Trace')#, rotation=270)
+        
         plt.show()
 
     def powerspectra(self):
@@ -169,7 +166,7 @@ if __name__ == "__main__":
     EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
     """
     day = 2
-    probe = 10 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
+    probe = 7 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
     sampling_fs = 100
 
     # eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
@@ -182,5 +179,5 @@ if __name__ == "__main__":
 
     metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
     metis.get_data()
-    metis.spectrogram(uplimit=0.2) #need 0.4 for trace, 0.1 for absolute magnitude
-    # metis.powerspectra()
+    metis.spectrogram(uplimit=0.1) #need 0.4 for trace, 0.1 for absolute magnitude
+    #metis.powerspectra()

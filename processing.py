@@ -240,7 +240,7 @@ class processing:
         
         def plot_power(f,fs,Pxx, probe, col):
             plt.loglog(f,np.sqrt(Pxx), f'{col}-', picker=100) #sqrt required for power spectrum, and semi log y axis
-            plt.xlim(right=fs/2)
+            plt.xlim(left = 10e-4, right=fs/2)
             plt.xlabel('Frequency [Hz]')
             plt.ylabel('Amplitude Power Spectral Density [np.sqrt(dB/Hz)]')
             plt.title(f'{probe}')
@@ -329,7 +329,7 @@ class processing:
 
         fig = plt.figure(figsize = (10,8))#, ax = plt.subplots(2, 2, figsize = (10,8))
         mpl.rcParams['agg.path.chunksize'] = 10000
-        uplim = 50 #11 otherwise, 50 only for probe 12
+        uplim = 10 #11 otherwise, 50 only for probe 12
         ax1 = plt.subplot(221)
         plot_power(f_x, fs, Pxx_x, probe_x, 'b')
         plt.ylim(10e-2, uplim)
