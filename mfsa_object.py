@@ -166,19 +166,20 @@ if __name__ == "__main__":
     EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
     """
     day = 2
-    probe = 10 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
+    probe = 12 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
     sampling_fs = 100
 
-    #eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
-    #eui.get_data()
-    #eui.spectrogram()
+    eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
+    eui.get_data()
+    eui.spectrogram()
+    eui.powerspectra()
 
-    daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
-    daytwo.get_data()
-    daytwo.spectrogram(downlimit = 0.5, uplimit = 1.0)
+    #daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
+    #daytwo.get_data()
+    #daytwo.spectrogram(downlimit = 0.5, uplimit = 1.0)
     #daytwo.powerspectra()
 
     #metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
     #metis.get_data()
-    #metis.spectrogram(downlimit = 0.1, uplimit = 0.4) #need 0.4 for trace, 0.1 for absolute magnitude
+    #metis.spectrogram(downlimit = 0, uplimit = 0.1) #need 0.4 for trace, 0.1 for absolute magnitude
     #metis.powerspectra()
