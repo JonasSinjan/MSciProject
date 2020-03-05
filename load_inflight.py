@@ -60,7 +60,7 @@ def heater_data(windows):
     print(mat.keys())
 
     heater = mat['ddOBS'][0][0]
-    print(len(heater)))
+    print(len(heater))
 
     timeseries = heater[9]
     y = timeseries[:,0]
