@@ -2,7 +2,7 @@ import scipy.io
 import os
 import matplotlib.pyplot as plt
 
-def data_burst(windows):
+def burst_data(windows):
     if windows:
         os.environ['MFSA_raw'] = 'C:\\Users\\jonas\\MSci-Data'
     else:
@@ -89,4 +89,4 @@ def heater_data(windows):
 
 if __name__ == "__main__":
     windows = True
-    heater_data(windows)
+    burst_data(windows)
