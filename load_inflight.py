@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import time
 
 def get_burst_data(windows):
+    start = time.time()
     if windows:
         os.environ['MFSA_raw'] = 'C:\\Users\\jonas\\MSci-Data'
     else:
@@ -14,7 +15,7 @@ def get_burst_data(windows):
         
     project_data = os.environ.get('MFSA_raw')
     flight_data_path = os.path.join(project_data, 'BurstSpectral.mat')
-    print(flight_data_path)
+    #print(flight_data_path)
 
     mat = scipy.io.loadmat(flight_data_path)
     #print(mat.keys())
@@ -44,17 +45,16 @@ def get_burst_data(windows):
 
     x = [round(x/128,3) for x in range(len(y))] #missing y data
    
-
     dict_d = {'OBS_X': y, 'OBS_Y': y1, 'OBS_Z': y2, 'OBS_MAGNITUDE': y3, 'IBS_X': ibs_y, 'IBS_Y': ibs_y1, 'IBS_Z': ibs_y2, 'IBS_MAGNITUDE': ibs_y3 }
     df = pd.DataFrame(data=dict_d, dtype = np.float64)
     end = datetime(2020,3,3,15,58,46) + timedelta(seconds = 42463, microseconds=734375)
-    print(len(y)/128)
-    print(end)
-    start = time.time()
+    
     date_range = pd.date_range(start = datetime(2020,3,3,15,58,46,0), end = end, freq='7812500ns')
-    df.set_index(date_range[:-1], inplace=True)
-    print(time.time() - start)
+    df.set_index(date_range[:-1], inplace=True) #for some reason, one extra time created
     print(df.head())
+
+    print('df successfully loaded\nExecution time: ', round(time.time() - start,3), ' seconds')
+
     return df
     
 
