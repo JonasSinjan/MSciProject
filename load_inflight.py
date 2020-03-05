@@ -59,6 +59,8 @@ def burst_data(windows):
     #fig.tight_layout()
     plt.figure()
     plt.plot(x, y3)
+    plt.ylabel('Current [A]')
+    plt.xlabel('Time [Hours]')
     plt.show()
 
 
@@ -102,7 +104,10 @@ def heater_data(windows):
     print(heater_cur)
 
     plt.figure()
-    plt.plot(range(len(heater_cur[-1])), heater_cur[-1])
+    x = [x/3600 for x in range(len(heater_cur[-1]))]
+    plt.plot(x, heater_cur[-1])
+    plt.ylabel('Current [A]')
+    plt.xlabel('Time [Hours]')
     plt.show()
 
 if __name__ == "__main__":
