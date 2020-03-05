@@ -3,6 +3,8 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from datetime import datetime, timedelta
+import time
 
 def get_burst_data(windows):
     if windows:
@@ -15,17 +17,17 @@ def get_burst_data(windows):
     print(flight_data_path)
 
     mat = scipy.io.loadmat(flight_data_path)
-    print(mat.keys())
-    print(type(mat['ddIBS']))
-    print(mat['ddIBS'].shape)
+    #print(mat.keys())
+    #print(type(mat['ddIBS']))
+    #print(mat['ddIBS'].shape)
     void_arr = mat['ddOBS'][0][0] #plot obs on top of ibs to show deviation more clearly
     void_ibs = mat['ddIBS'][0][0]
     timeseries = void_arr[9]
     ibs_timeseries = void_ibs[9]
-    print(ibs_timeseries.shape)
+    #print(ibs_timeseries.shape)
 
-    print(timeseries.shape)
-    print(len(void_arr))
+    #print(timeseries.shape)
+    #print(len(void_arr))
     #print(mat['ddOBS'].shape)
     
     y = timeseries[:,0] #x
@@ -40,11 +42,19 @@ def get_burst_data(windows):
     #print(np.sqrt(y[0]**2 + y1[0]**2 + y2[0]**2), y3[0]) - confirms suspicion 4th column is B mag
     #print(np.sqrt(ibs_y[0]**2 + ibs_y1[0]**2 + ibs_y2[0]**2), ibs_y3[0])
 
-    x = [x/128 for x in range(len(y))] #missing y data
+    x = [round(x/128,3) for x in range(len(y))] #missing y data
+   
 
-    dict_d = {'Time': x, 'OBS_X': y, 'OBS_Y': y1, 'OBS_Z': y2, 'OBS_MAGNITUDE': y3, 'IBS_X': ibs_y, 'IBS_Y': ibs_y1, 'IBS_Z': ibs_y2, 'IBS_MAGNITUDE': ibs_y3 }
+    dict_d = {'OBS_X': y, 'OBS_Y': y1, 'OBS_Z': y2, 'OBS_MAGNITUDE': y3, 'IBS_X': ibs_y, 'IBS_Y': ibs_y1, 'IBS_Z': ibs_y2, 'IBS_MAGNITUDE': ibs_y3 }
     df = pd.DataFrame(data=dict_d, dtype = np.float64)
-    df.set_index(df['Time'], inplace=True)
+    end = datetime(2020,3,3,15,58,46) + timedelta(seconds = 42463, microseconds=734375)
+    print(len(y)/128)
+    print(end)
+    start = time.time()
+    date_range = pd.date_range(start = datetime(2020,3,3,15,58,46,0), end = end, freq='7812500ns')
+    df.set_index(date_range[:-1], inplace=True)
+    print(time.time() - start)
+    print(df.head())
     return df
     
 
@@ -80,7 +90,7 @@ def plot_burst(df):
     plt.show()
 
     
-def burst_powerspectra(df, OBS=True):
+def burst_powerspectra(df, OBS):
     if OBS:
         collist = ['Time', 'OBS_X', 'OBS_Y', 'OBS_Z']
         name_str = 'OBS_burst'
@@ -89,7 +99,7 @@ def burst_powerspectra(df, OBS=True):
         name_str = 'IBS_burst'
 
     processing.powerspectrum(df, 128, collist, False, probe = 'MAG', inst = name_str)
-    
+
 
 def heater_data(windows):
     if windows:
@@ -139,4 +149,4 @@ def heater_data(windows):
 
 if __name__ == "__main__":
     windows = True
-    burst_data(windows)
+    df = get_burst_data(windows)
