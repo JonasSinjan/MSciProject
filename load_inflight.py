@@ -49,7 +49,7 @@ def get_burst_data(windows):
     df = pd.DataFrame(data=dict_d, dtype = np.float64)
     end = datetime(2020,3,3,15,58,46) + timedelta(seconds = 42463, microseconds=734375)
     
-    date_range = pd.date_range(start = datetime(2020,3,3,15,58,46,0), end = end, freq='7812500ns')
+    date_range = pd.date_range(start = datetime(2020,3,3,15,58,46,0), end = end, freq='7812500ns') #1/128 seconds exactly for 1/16 just need microseconds 'ms'
     df.set_index(date_range[:-1], inplace=True) #for some reason, one extra time created
     print(df.head())
 
