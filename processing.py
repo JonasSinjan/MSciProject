@@ -213,7 +213,7 @@ class processing:
         return step_dict
 
     @staticmethod
-    def powerspecplot(df, fs, collist, alt, inst = None, save = False):
+    def powerspecplot(df, fs, collist, alt, inst = None, save = False, *, probe=None, inflight = False):
         
         clicks = []
         def onclick(event):
@@ -241,6 +241,10 @@ class processing:
         def plot_power(f,fs,Pxx, probe, col):
             plt.loglog(f,np.sqrt(Pxx), f'{col}-', picker=100) #sqrt required for power spectrum, and semi log y axis
             plt.xlim(left = 10e-4, right=fs/2)
+            if inflight:
+                plt.ylim(bottom = 10e-4, top = 10e1)
+            else:
+                plt.ylim(bottom = 10e-2, top = 10e1)
             plt.xlabel('Frequency [Hz]')
             plt.ylabel('Amplitude Power Spectral Density [np.sqrt(dB/Hz)]')
             plt.title(f'{probe}')
@@ -254,7 +258,7 @@ class processing:
             fig = plt.figure()
             plot_power(f, fs, Pxx, Probe, 'b')
             plt.xlim(left = 5*10e-2)
-            plt.ylim(bottom = 10e-2, top = 10e1)
+            
             mpl.rcParams['agg.path.chunksize'] = 10000
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
@@ -262,8 +266,9 @@ class processing:
             return clicks
 
         try:
-            probe = probe_x.split('_')[0]
-            print(probe, inst)
+            if probe == None:
+                probe = probe_x.split('_')[0]
+                print(probe, inst)
             with open(f'.\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra.csv') as f:
                 clicks1, clicks2, clicks3, clicks4 = [], [], [], []
                 for i, line in enumerate(f):
@@ -332,29 +337,33 @@ class processing:
         uplim = 10 #11 otherwise, 50 only for probe 12
         if probe_x == 'Probe12_X':
             uplim = 50
+        elif inflight == True:
+            downlim = 10e-3
+        else:
+            downlim = 10e-2
         ax1 = plt.subplot(221)
         plot_power(f_x, fs, Pxx_x, probe_x, 'b')
-        plt.ylim(10e-2, uplim)
+        plt.ylim(downlim, uplim)
         #plt.xlim(left = 0.5*10e0)
         plot_peaks(clicks1, ax1)
         
         
         ax2 = plt.subplot(222)
         plot_power(f_y, fs, Pxx_y, probe_y, 'r')
-        plt.ylim(10e-2, uplim)
+        plt.ylim(downlim, uplim)
         #plt.xlim(left = 0.5*10e0)
         plot_peaks(clicks2, ax2)
         
         ax3 = plt.subplot(223)
         plot_power(f_z, fs, Pxx_z, probe_z, 'g')
-        plt.ylim(10e-2, uplim)
+        plt.ylim(downlim, uplim)
         #plt.xlim(left = 0.5*10e0)
         plot_peaks(clicks3, ax3)
         
         ax4 = plt.subplot(224)
         Trace = 'Trace'
         plot_power(f_t, fs, Pxx_t, Trace, 'y')
-        plt.ylim(10e-2, uplim)
+        plt.ylim(downlim, uplim)
         #plt.xlim(left = 0.5*10e0)
         plot_peaks(clicks4, ax4)
        

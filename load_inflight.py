@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 import time
+from processing import processing
 
 def get_burst_data(windows):
     start = time.time()
@@ -26,10 +27,6 @@ def get_burst_data(windows):
     timeseries = void_arr[9]
     ibs_timeseries = void_ibs[9]
     #print(ibs_timeseries.shape)
-
-    #print(timeseries.shape)
-    #print(len(void_arr))
-    #print(mat['ddOBS'].shape)
     
     y = timeseries[:,0] #x
     y1 = timeseries[:,1] #y
@@ -98,7 +95,7 @@ def burst_powerspectra(df, OBS):
         collist = ['Time', 'IBS_X', 'IBS_Y', 'IBS_Z']
         name_str = 'IBS_burst'
 
-    processing.powerspectrum(df, 128, collist, False, probe = 'MAG', inst = name_str)
+    processing.powerspecplot(df, 128, collist, False, probe = 'MAG', inst = name_str, inflight = True)
 
 
 def heater_data(windows):
@@ -150,3 +147,5 @@ def heater_data(windows):
 if __name__ == "__main__":
     windows = True
     df = get_burst_data(windows)
+    OBS = False
+    burst_powerspectra(df, OBS)
