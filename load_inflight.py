@@ -147,5 +147,5 @@ def heater_data(windows):
 if __name__ == "__main__":
     windows = True
     df = get_burst_data(windows)
-    OBS = False
+    OBS = True
     burst_powerspectra(df, OBS)

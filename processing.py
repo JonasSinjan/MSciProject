@@ -264,11 +264,10 @@ class processing:
             plt.show()
 
             return clicks
-
-        try:
-            if probe == None:
+        if probe == None:
                 probe = probe_x.split('_')[0]
                 print(probe, inst)
+        try:
             with open(f'.\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra.csv') as f:
                 clicks1, clicks2, clicks3, clicks4 = [], [], [], []
                 for i, line in enumerate(f):
@@ -309,13 +308,13 @@ class processing:
             print(clicks4, type(clicks4))
 
             def write_peaks(clicks, dir):
-                clicks = [round(j,2) for j in clicks]
+                clicks = [round(j,4) for j in clicks]
                 i = 0
                 for k in range(int(len(clicks)/2)):
                     w.writerow([dir, clicks[i], clicks[i+1]])
                     i += 2
 
-            probe = probe_x.split('_')[0]
+            #probe = probe_x.split('_')[0]
             w = csv.writer(open(f".\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra.csv", "w", newline=''))
             #w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
             w.writerow(["Dir", "Xdata", "Ydata"])
@@ -338,7 +337,7 @@ class processing:
         if probe_x == 'Probe12_X':
             uplim = 50
         elif inflight == True:
-            downlim = 10e-3
+            downlim = 10e-4
         else:
             downlim = 10e-2
         ax1 = plt.subplot(221)
