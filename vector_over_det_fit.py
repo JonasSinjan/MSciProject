@@ -50,17 +50,28 @@ def vector_linalg_lstsq(file_path, inst, day):
     print(rss)
     print(rank)
     print(s)
-    
-    r_2 = 1 - rss / np.sum((b**2))
-    print(r_2)
+    mean_bx = np.mean([b for b in b[::3,0]])
+    mean_by = np.mean([b for b in b[1::3,0]])
+    mean_bz = np.mean([b for b in b[2::3,0]])
+    print(mean_bx, mean_by, mean_bz)
+
+    tss_x = sum([(b_i - mean_bx)**2 for b_i in b[::3,0]])
+    tss_y = sum([(b_i - mean_by)**2 for b_i in b[1::3,0]])
+    tss_z = sum([(b_i - mean_bz)**2 for b_i in b[2::3,0]]) 
+    r_2 = 1 - rss / np.sqrt(tss_x**2+tss_y**2 + tss_z**2)#np.sum((b**2))
+    N = np.identity(33) - 1/33 * np.ones((33,33))
+    test_tss = b.T @ N @ b 
+    print('r_2 = ', r_2)
+    print(1-rss/np.sum((b**2)))
+    print(1-rss/test_tss)
     r_2_adj = 1 - ((1-r_2)*(10)/6) #3 or 1 independent variable? I think 3
-    print(r_2_adj)
+    #print(r_2_adj)
     return m, rss
 
 if __name__ == "__main__":
     windows = True
-    inst = 'EUI'
-    day = 2
+    inst = 'PHI'
+    day = 1
 
     if windows:
         file_path = f'.\\Results\\Gradient_dicts\\Day_{day}\\1hz_noorigin\\cur\\{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv'
