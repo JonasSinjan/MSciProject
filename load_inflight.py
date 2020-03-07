@@ -1,11 +1,14 @@
 import scipy.io
 import os
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
 import time
 from processing import processing
+import scipy.signal as sps
+from fast_histogram import histogram1d
 
 def get_burst_data(windows):
     start = time.time()
@@ -86,7 +89,7 @@ def plot_burst(df):
     plt.suptitle('Magnetic Field with means removed')
     plt.show()
 
-    
+
 def burst_powerspectra(df, OBS):
     if OBS:
         collist = ['Time', 'OBS_X', 'OBS_Y', 'OBS_Z']
@@ -96,6 +99,50 @@ def burst_powerspectra(df, OBS):
         name_str = 'IBS_burst'
 
     processing.powerspecplot(df, 128, collist, False, probe = 'MAG', inst = name_str, inflight = True)
+
+
+def spectrogram(df, OBS, *, downlimit = 0, uplimit=0.001):
+    if OBS:
+        collist = ['Time', 'OBS_X', 'OBS_Y', 'OBS_Z']
+        name_str = 'OBS_burst'
+    else:
+        collist = ['Time', 'IBS_X', 'IBS_Y', 'IBS_Z']
+        name_str = 'IBS_burst'
+        #x = np.sqrt(df[self.collist[1]]**2 + self.df[self.collist[2]]**2 + self.df[self.collist[3]]**2)
+    y = (df[collist[1]] + df[collist[2]] + df[collist[3]])
+    dflen = len(df)
+    div = (dflen)/1000
+    #f, Pxx = sps.periodogram(x,fs)
+    #div = 500
+    fs = 128
+    nff = dflen//div
+    wind = sps.hamming(int(dflen//div))
+    f, t, Sxx = sps.spectrogram(y, fs, window=wind, noverlap = int(dflen//(2*div)), nfft = nff)#,nperseg=700)
+    print(type(Sxx))
+    #plt.figure()
+    #
+    #plt.hist(Sxx)
+    ax = plt.figure()
+    #Sxx = np.where(Sxx<5)
+    normalize = mpl.colors.Normalize(vmin=downlimit, vmax=uplimit,  clip = True)
+    lognorm = mpl.colors.LogNorm(vmin=downlimit, vmax = uplimit, clip=True)
+    plt.pcolormesh(t, f, Sxx, norm = lognorm, cmap = 'viridis') #sqrt? 
+    #plt.pcolormesh(t, f, Sxx, clim = (0,uplimit))
+    plt.semilogy()
+    plt.ylabel('Frequency [Hz]')
+    plt.xlabel('Time [s]')
+    
+    plt.title(f'MAG {name_str} Spectrogram @ {fs}Hz, {df.index[0].date()}')
+    plt.ylim((10**0,fs/2))
+    #plt.clim()
+    fig = plt.gcf()
+    ticks = [0, 0.05, 0.1, 0.15, 0.2, 0.5, 1]
+    if OBS:
+        ticks = [0, 10e-6,10e-5,10e-4,10e-3,10e-2]
+    cbar = plt.colorbar(ticks = ticks)
+    #cbar.ax.set_yticklabels(fontsize=8)
+    cbar.set_label('Normalised Power Spectral Density of the Trace')#, rotation=270)
+    plt.show()
 
 
 def heater_data(windows):
@@ -148,4 +195,25 @@ if __name__ == "__main__":
     windows = True
     df = get_burst_data(windows)
     OBS = True
-    burst_powerspectra(df, OBS)
+    """
+    collist = ['Time', 'IBS_X', 'IBS_Y', 'IBS_Z']
+    y = (df[collist[1]] + df[collist[2]] + df[collist[3]])
+    dflen = len(df)
+    div = (dflen)/1000
+    fs = 128
+    wind = sps.hamming(int(dflen//div))
+    nff = dflen//div
+    f, t, Sxx = sps.spectrogram(y, fs, window=wind, noverlap = int(dflen//(2*div)), nfft = nff)#,nperseg=700)
+    print(type(Sxx), Sxx.shape)
+    plt.hist(Sxx.flatten(), histtype='step', bins = 50)
+    plt.show()
+    Sxx_5 = np.where(Sxx<5)
+    plt.hist(Sxx_5, histtype='step', bins = 50)
+    plt.show()
+    Sxx_10 = np.where(Sxx<10)
+    plt.hist(Sxx_10, histtype='step', bins = 50)
+    plt.show()  
+    #plt.hist(Sxx, bins = 50)
+    """
+    #burst_powerspectra(df, OBS)
+    spectrogram(df, OBS, downlimit = 10e-4, uplimit=3)
