@@ -126,7 +126,7 @@ def spectrogram(df, OBS, *, downlimit = 0, uplimit=0.001):
     #Sxx = np.where(Sxx<5)
     normalize = mpl.colors.Normalize(vmin=downlimit, vmax=uplimit,  clip = True)
     lognorm = mpl.colors.LogNorm(vmin=downlimit, vmax = uplimit, clip=True)
-    plt.pcolormesh(t, f, Sxx, norm = lognorm, cmap = 'viridis') #sqrt? 
+    plt.pcolormesh(t, f, Sxx, norm = normalize, cmap = 'viridis') #sqrt? 
     #plt.pcolormesh(t, f, Sxx, clim = (0,uplimit))
     plt.semilogy()
     plt.ylabel('Frequency [Hz]')
@@ -143,6 +143,19 @@ def spectrogram(df, OBS, *, downlimit = 0, uplimit=0.001):
     #cbar.ax.set_yticklabels(fontsize=8)
     cbar.set_label('Normalised Power Spectral Density of the Trace')#, rotation=270)
     plt.show()
+
+
+def get_df_between_seconds(df, start, end):
+
+    time_1 = timedelta(seconds = start)
+    time_2 = timedelta(seconds = end)
+    
+    time_start = pd.to_datetime(df.index[0], infer_datetime_format=True)
+    time_1 = time_start + time_1 
+    time_2 = time_start + time_2
+    df2 = df.between_time(time_1.time(), time_2.time())
+
+    return df2
 
 
 def heater_data(windows):
@@ -194,7 +207,13 @@ def heater_data(windows):
 if __name__ == "__main__":
     windows = True
     df = get_burst_data(windows)
-    OBS = True
+    OBS = False
+
+    df2 = get_df_between_seconds(33000, 33400)
+
+    spectrogram(df2, OBS, downlimit = 0, uplimit=0.001)
+    #burst_powerspectra(df2, OBS)
+
     """
     collist = ['Time', 'IBS_X', 'IBS_Y', 'IBS_Z']
     y = (df[collist[1]] + df[collist[2]] + df[collist[3]])
@@ -215,5 +234,3 @@ if __name__ == "__main__":
     plt.show()  
     #plt.hist(Sxx, bins = 50)
     """
-    #burst_powerspectra(df, OBS)
-    spectrogram(df, OBS, downlimit = 10e-4, uplimit=3)
