@@ -213,8 +213,8 @@ class processing:
         return step_dict
 
     @staticmethod
-    def powerspecplot(df, fs, collist, alt, inst = None, save = False, *, probe=None, inflight = False):
-        
+    def powerspecplot(df, fs, collist, alt, inst = None, save = False, *, probe=None, inflight = False, scaling = 'density'):
+        start = time.time()
         clicks = []
         def onclick(event):
             print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
@@ -227,7 +227,6 @@ class processing:
         probe_z = collist[3]
         #probe_m = collist[4]
         x = df[probe_x]#[:20000]
-        scaling = 'density'
         f_x, Pxx_x = sps.periodogram(x, fs, scaling=f'{scaling}')
         x_y = df[probe_y]#[:20000]
         f_y, Pxx_y = sps.periodogram(x_y, fs, scaling=f'{scaling}')
@@ -337,9 +336,14 @@ class processing:
         if probe_x == 'Probe12_X':
             uplim = 50
         elif inflight == True:
-            downlim = 10e-4
+            downlim = 10e-7
         else:
             downlim = 10e-2
+        """
+        elif scaling == 'spectrum':
+            downlim = 10e-7
+        """
+        
         ax1 = plt.subplot(221)
         plot_power(f_x, fs, Pxx_x, probe_x, 'b')
         plt.ylim(downlim, uplim)
@@ -402,6 +406,7 @@ class processing:
             plt.savefig(f'.\\Results\\PowerSpectrum\\Day_2\\{probe}_{inst}_powerspec.png')
         # else:
         #     plt.show()
+        print('Power Spectrum successfully completed\nExecution time: ', round(time.time() - start,3), ' seconds')
 
     @staticmethod
     def rotate_21(soloA_bool):
