@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 import time
 from processing import processing
 import scipy.signal as sps
-from fast_histogram import histogram1d
+#from fast_histogram import histogram1d
 
 def get_burst_data(windows):
     start = time.time()
@@ -99,7 +99,23 @@ def burst_powerspectra(df, OBS):
         name_str = 'IBS_burst'
 
     processing.powerspecplot(df, 128, collist, False, probe = 'MAG', inst = name_str, inflight = True)
-
+    
+def power_proportionality(df):
+    fs = 128
+    x = df['OBS_MAGNITUDE'] 
+    f_obs, Pxx_obs = sps.periodogram(x, fs, scaling='spectrum')
+    y = df['IBS_MAGNITUDE'] 
+    f_ibs, Pxx_ibs = sps.periodogram(y, fs, scaling='spectrum')
+    
+    division = Pxx_ibs/Pxx_obs
+    division = division[division < 1000]
+    
+    print(division)
+    print(np.median(division))
+    n, bins, patches = plt.hist(division.flatten(), bins = 10000)
+    plt.show()
+    print(n)
+    print(bins)
 
 def spectrogram(df, OBS, *, downlimit = 0, uplimit=0.001):
     if OBS:
@@ -144,6 +160,7 @@ def spectrogram(df, OBS, *, downlimit = 0, uplimit=0.001):
     cbar.set_label('Normalised Power Spectral Density of the Trace')#, rotation=270)
     plt.show()
 
+    return t,f,Sxx
 
 def get_df_between_seconds(df, start, end):
 
@@ -209,9 +226,32 @@ if __name__ == "__main__":
     df = get_burst_data(windows)
     OBS = False
 
-    df2 = get_df_between_seconds(33000, 33400)
-
-    spectrogram(df2, OBS, downlimit = 0, uplimit=0.001)
+    #df2 = get_df_between_seconds(df, 33000, 33400)
+    #w0 = 8/(128/2)
+    #b,a = sps.iirnotch(w0, Q=30)
+    power_proportionality(df)
+    """
+    t,f,Sxx_ibs = spectrogram(df, OBS, downlimit = 0, uplimit=0.001)
+    t,f,Sxx_obs = spectrogram(df, True, downlimit = 0, uplimit=0.001)
+    Sxx_dif = Sxx_ibs - Sxx_obs
+    plt.pcolormesh(t, f, Sxx_dif, vmin = 0, vmax = 0.001, cmap = 'viridis') #sqrt? 
+    #plt.pcolormesh(t, f, Sxx, clim = (0,uplimit))
+    plt.semilogy()
+    plt.ylabel('Frequency [Hz]')
+    plt.xlabel('Time [s]')
+    
+    plt.title(f'IBS-OBS Sxx Spectrogram @ 128Hz')
+    plt.ylim((10**0,128/2))
+    #plt.clim()
+    fig = plt.gcf()
+    ticks = [0, 0.05, 0.1, 0.15, 0.2, 0.5, 1]
+    if OBS:
+        ticks = [0, 10e-6,10e-5,10e-4,10e-3,10e-2]
+    cbar = plt.colorbar(ticks = ticks)
+    #cbar.ax.set_yticklabels(fontsize=8)
+    cbar.set_label('Normalised Power Spectral Density of the Trace')#, rotation=270)
+    plt.show()
+    """
     #burst_powerspectra(df2, OBS)
 
     """
