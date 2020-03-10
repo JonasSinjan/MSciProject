@@ -233,7 +233,7 @@ def heater_data(windows):
 if __name__ == "__main__":
     windows = True
     burst_object = burst_data(windows = True)
-    OBS = True
+    OBS = False
 
     burst_object.get_df_between_seconds(33000, 33400)
     #w0 = 8/(128/2)
