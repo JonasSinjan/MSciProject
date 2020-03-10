@@ -106,15 +106,19 @@ class burst_data:
         plt.show()
 
 
-    def burst_powerspectra(self, OBS):
+    def burst_powerspectra(self, OBS, *, df2 = False):
         if OBS:
             collist = ['Time', 'OBS_X', 'OBS_Y', 'OBS_Z']
             name_str = 'OBS_burst'
         else:
             collist = ['Time', 'IBS_X', 'IBS_Y', 'IBS_Z']
             name_str = 'IBS_burst'
+        if df2:
+            df = self.df2
+        else:
+            df = self.df
 
-        processing.powerspecplot(self.df, 128, collist, False, probe = 'MAG', inst = name_str, inflight = True, scaling = 'spectrum')
+        processing.powerspecplot(df, 128, collist, False, probe = 'MAG', inst = name_str, inflight = True, scaling = 'spectrum')
 
         
     def power_proportionality(self):
@@ -229,12 +233,12 @@ def heater_data(windows):
 if __name__ == "__main__":
     windows = True
     burst_object = burst_data(windows = True)
-    OBS = False
+    OBS = True
 
-    #df2 = get_df_between_seconds(df, 33000, 33400)
+    burst_object.get_df_between_seconds(33000, 33400)
     #w0 = 8/(128/2)
     #b,a = sps.iirnotch(w0, Q=30)
-    burst_object.burst_powerspectra(OBS)
+    burst_object.burst_powerspectra(OBS, df2 = True)
 
     """
     t,f,Sxx_ibs = spectrogram(df, OBS, downlimit = 0, uplimit=0.001)
