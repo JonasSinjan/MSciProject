@@ -213,8 +213,8 @@ class processing:
         return step_dict
 
     @staticmethod
-    def powerspecplot(df, fs, collist, alt, inst = None, save = False, *, probe=None, inflight = False):
-        
+    def powerspecplot(df, fs, collist, alt, inst = None, save = False, *, probe=None, inflight = False, scaling = 'density'):
+        start = time.time()
         clicks = []
         def onclick(event):
             print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
@@ -227,7 +227,6 @@ class processing:
         probe_z = collist[3]
         #probe_m = collist[4]
         x = df[probe_x]#[:20000]
-        scaling = 'density'
         f_x, Pxx_x = sps.periodogram(x, fs, scaling=f'{scaling}')
         x_y = df[probe_y]#[:20000]
         f_y, Pxx_y = sps.periodogram(x_y, fs, scaling=f'{scaling}')
@@ -240,13 +239,13 @@ class processing:
         
         def plot_power(f,fs,Pxx, probe, col):
             plt.loglog(f,np.sqrt(Pxx), f'{col}-', picker=100) #sqrt required for power spectrum, and semi log y axis
-            plt.xlim(left = 10e-4, right=fs/2)
+            plt.xlim(left = 5*10e-2, right=fs/2)
             if inflight:
-                plt.ylim(bottom = 10e-4, top = 10e1)
+                plt.ylim(bottom = 10e-6, top = 10e-3)
             else:
                 plt.ylim(bottom = 10e-2, top = 10e1)
             plt.xlabel('Frequency [Hz]')
-            plt.ylabel('Amplitude Power Spectral Density [np.sqrt(dB/Hz)]')
+            plt.ylabel('Amplitude Power Spectral Density [sqrt(dB/Hz)]')
             plt.title(f'{probe}')
             peaks, _ = sps.find_peaks(np.log10(Pxx), prominence = 6)
             #print(peaks)
@@ -268,7 +267,7 @@ class processing:
                 probe = probe_x.split('_')[0]
                 print(probe, inst)
         try:
-            with open(f'.\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra.csv') as f:
+            with open(f'.\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra_33000_33400.csv') as f:
                 clicks1, clicks2, clicks3, clicks4 = [], [], [], []
                 for i, line in enumerate(f):
                     nums = line.split(',')
@@ -315,7 +314,7 @@ class processing:
                     i += 2
 
             #probe = probe_x.split('_')[0]
-            w = csv.writer(open(f".\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra.csv", "w", newline=''))
+            w = csv.writer(open(f".\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra_33000_33400.csv", "w", newline=''))
             #w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
             w.writerow(["Dir", "Xdata", "Ydata"])
             write_peaks(clicks1, "X")
@@ -333,13 +332,18 @@ class processing:
 
         fig = plt.figure(figsize = (10,8))#, ax = plt.subplots(2, 2, figsize = (10,8))
         mpl.rcParams['agg.path.chunksize'] = 10000
-        uplim = 10 #11 otherwise, 50 only for probe 12
+        uplim = 10e-3 #11 otherwise, 50 only for probe 12
         if probe_x == 'Probe12_X':
             uplim = 50
         elif inflight == True:
-            downlim = 10e-4
+            downlim = 10e-6
         else:
-            downlim = 10e-2
+            downlim = 10e-3
+        """
+        elif scaling == 'spectrum':
+            downlim = 10e-7
+        """
+        
         ax1 = plt.subplot(221)
         plot_power(f_x, fs, Pxx_x, probe_x, 'b')
         plt.ylim(downlim, uplim)
@@ -402,6 +406,7 @@ class processing:
             plt.savefig(f'.\\Results\\PowerSpectrum\\Day_2\\{probe}_{inst}_powerspec.png')
         # else:
         #     plt.show()
+        print('Power Spectrum successfully completed\nExecution time: ', round(time.time() - start,3), ' seconds')
 
     @staticmethod
     def rotate_21(soloA_bool):
