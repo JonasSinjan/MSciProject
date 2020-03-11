@@ -12,15 +12,17 @@ import scipy.signal as sps
 
 class burst_data:
 
-    def __init__(self, *, windows):
-        start = time.time()
-        if windows:
-            os.environ['MFSA_raw'] = 'C:\\Users\\jonas\\MSci-Data'
-        else:
-            os.environ['MFSA_raw'] = os.path.expanduser('~/Documents/MsciProject/Data')
-            
+    def __init__(self, *, file_one = True, start = 0, end = 128*3600*10):
+        start_time = time.time()
+        
+        os.environ['MFSA_raw'] = 'C:\\Users\\jonas\\MSci-Data'
         project_data = os.environ.get('MFSA_raw')
-        flight_data_path = os.path.join(project_data, 'BurstSpectral.mat')
+        
+        if file_one:
+            flight_data_path = os.path.join(project_data, 'BurstSpectral.mat')
+            end = 5435358
+        else:
+            flight_data_path = os.path.join(project_data, 'BurstSpectral2.mat')
         #print(flight_data_path)
 
         mat = scipy.io.loadmat(flight_data_path)
@@ -32,33 +34,36 @@ class burst_data:
         timeseries = void_arr[9]
         ibs_timeseries = void_ibs[9]
         #print(ibs_timeseries.shape)
-        
-        y = timeseries[:,0] #x
-        y1 = timeseries[:,1] #y
-        y2 = timeseries[:,2] #z 
-        y3 = timeseries[:,3] #total B  OBS
-        ibs_y = ibs_timeseries[:,0] #x
-        ibs_y1 = ibs_timeseries[:,1] #y
-        ibs_y2 = ibs_timeseries[:,2] #z 
-        ibs_y3 = ibs_timeseries[:,3] #total B IBS
+        print
+        y = timeseries[start:end,0] #x
+        #print(len(y)) # file 2 has 72 hours
+        y1 = timeseries[start:end,1] #y
+        y2 = timeseries[start:end,2] #z 
+        y3 = timeseries[start:end,3] #total B  OBS
+        ibs_y = ibs_timeseries[start:end,0] #x
+        ibs_y1 = ibs_timeseries[start:end,1] #y
+        ibs_y2 = ibs_timeseries[start:end,2] #z 
+        ibs_y3 = ibs_timeseries[start:end,3] #total B IBS
 
         #print(np.sqrt(y[0]**2 + y1[0]**2 + y2[0]**2), y3[0]) - confirms suspicion 4th column is B mag
         #print(np.sqrt(ibs_y[0]**2 + ibs_y1[0]**2 + ibs_y2[0]**2), ibs_y3[0])
 
-        x = [round(x/128,3) for x in range(len(y))] #missing y data
+        #x = [round(x/128,3) for x in range(len(y))] #missing y data
     
         dict_d = {'OBS_X': y, 'OBS_Y': y1, 'OBS_Z': y2, 'OBS_MAGNITUDE': y3, 'IBS_X': ibs_y, 'IBS_Y': ibs_y1, 'IBS_Z': ibs_y2, 'IBS_MAGNITUDE': ibs_y3 }
         df = pd.DataFrame(data=dict_d, dtype = np.float64)
-        end = datetime(2020,3,3,15,58,46) + timedelta(seconds = 42463, microseconds=734375)
-        
-        date_range = pd.date_range(start = datetime(2020,3,3,15,58,46,0), end = end, freq='7812500ns') #1/128 seconds exactly for 1/16 just need microseconds 'ms'
-        df.set_index(date_range[:-1], inplace=True) #for some reason, one extra time created
+        if file_one:
+            end_time = datetime(2020,3,3,15,58,46) + timedelta(seconds = 42463, microseconds=734375)
+            date_range = pd.date_range(start = datetime(2020,3,3,15,58,46,0), end = end_time, freq='7812500ns') #1/128 seconds exactly for 1/16 just need microseconds 'ms'
+            df.set_index(date_range[:-1], inplace=True) #for some reason, one extra time created
+            
         print(df.head())
 
-        print('df successfully loaded\nExecution time: ', round(time.time() - start,3), ' seconds')
+        print('df successfully loaded\nExecution time: ', round(time.time() - start_time,3), ' seconds')
 
         self.df = df
         self.fs = 128
+        
 
 
     def get_df_between_seconds(self, start, end):
@@ -75,7 +80,7 @@ class burst_data:
     
 
     def plot_burst(self):
-        x = [x/(128*3600) for x in self.df.index] #128 vectors a second
+        x = [x/(128*3600) for x in range(len(self.df.index))] #128 vectors a second
         fig = plt.figure()
         plt.subplot(4,1,1)
         plt.plot(x, self.df['IBS_X'], label = 'IBS')
@@ -231,14 +236,14 @@ def heater_data(windows):
     plt.show()
 
 if __name__ == "__main__":
-    windows = True
-    burst_object = burst_data(windows = True)
+    burst_object = burst_data(file_one=False, start = int(128*3600*46), end = int(128*3600*72))
     OBS = False
-
-    burst_object.get_df_between_seconds(33000, 33400)
+    #thruster at start and at 48 hours
+    burst_object.plot_burst()
+    #burst_object.get_df_between_seconds(33000, 33400)
     #w0 = 8/(128/2)
     #b,a = sps.iirnotch(w0, Q=30)
-    burst_object.burst_powerspectra(OBS, df2 = True)
+    #burst_object.burst_powerspectra(OBS, df2 = True)
 
     """
     t,f,Sxx_ibs = spectrogram(df, OBS, downlimit = 0, uplimit=0.001)
