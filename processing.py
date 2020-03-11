@@ -213,7 +213,7 @@ class processing:
         return step_dict
 
     @staticmethod
-    def powerspecplot(df, fs, collist, alt, inst = None, save = False, *, probe=None, inflight = False, scaling = 'density'):
+    def powerspecplot(df, fs, collist, alt, inst = None, save = False, *, probe=None, inflight = False, scaling = 'density', name=''):
         start = time.time()
         clicks = []
         def onclick(event):
@@ -236,10 +236,24 @@ class processing:
         #f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
         x_t = x + x_y + x_z #trace
         f_t, Pxx_t = sps.periodogram(x_t, fs, scaling =f'{scaling}')
+
+        def filter_Pxx(f,Pxx, mask_frequencies, harmonics):
+            harmonics = range(3,400,2)#[3,5,7,8,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41]
+            dfreq = 0.02
+            #index = []
+
+            for i in range(len(harmonics)):
+                index_tmp = np.where((f >= mask_frequencies*harmonics[i] - dfreq/2 ) & (f <= mask_frequencies*harmonics[i] + dfreq/2))
+                Pxx[index_tmp] = 0
+
+            #Pxx[index] = 0
+
+            return Pxx
         
         def plot_power(f,fs,Pxx, probe, col):
+            #Pxx = filter_Pxx(f, Pxx, 0.119, 2)
             plt.loglog(f,np.sqrt(Pxx), f'{col}-', picker=100) #sqrt required for power spectrum, and semi log y axis
-            plt.xlim(left = 5*10e-2, right=fs/2)
+            plt.xlim(left = 10e-2, right=fs/2)
             if inflight:
                 plt.ylim(bottom = 10e-6, top = 10e-3)
             else:
@@ -256,8 +270,8 @@ class processing:
         def get_clicks(f, Pxx, Probe):
             fig = plt.figure()
             plot_power(f, fs, Pxx, Probe, 'b')
-            plt.xlim(left = 5*10e-2)
-            
+            plt.xlim(left = 10e-2)
+            plt.ylim(top = 10e-1)
             mpl.rcParams['agg.path.chunksize'] = 10000
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
@@ -267,7 +281,7 @@ class processing:
                 probe = probe_x.split('_')[0]
                 print(probe, inst)
         try:
-            with open(f'.\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra_33000_33400.csv') as f:
+            with open(f'.\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra{name}.csv') as f:
                 clicks1, clicks2, clicks3, clicks4 = [], [], [], []
                 for i, line in enumerate(f):
                     nums = line.split(',')
@@ -314,7 +328,7 @@ class processing:
                     i += 2
 
             #probe = probe_x.split('_')[0]
-            w = csv.writer(open(f".\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra_33000_33400.csv", "w", newline=''))
+            w = csv.writer(open(f".\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra{name}.csv", "w", newline=''))
             #w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
             w.writerow(["Dir", "Xdata", "Ydata"])
             write_peaks(clicks1, "X")

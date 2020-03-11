@@ -12,11 +12,26 @@ import scipy.signal as sps
 
 class burst_data:
 
-    def __init__(self, *, file_one = True, start = 0, end = 128*3600*10):
+    def __init__(self):
+        pass
+
+    def get_df_from_csv(self, day=1):
+        start_time = time.time()
+
+        assert day == 1 or day == 2 or day == 3
+        os.environ['MSci-Data'] = 'C:\\Users\\jonas\\MSci-Data'
+        project_data = os.environ.get('MSci-Data')
+        flight_data_path = os.path.join(project_data, f'burst_data_df_file_2_day_{day}.csv')
+        self.df = pd.read_csv(flight_data_path)
+        print(self.df.head())
+
+        print('df successfully loaded from csv\nExecution time: ', round(time.time() - start_time,3), ' seconds')
+
+    def get_df_from_mat(self, *, file_one = True, start = 0, end = 128*3600*10):
         start_time = time.time()
         
-        os.environ['MFSA_raw'] = 'C:\\Users\\jonas\\MSci-Data'
-        project_data = os.environ.get('MFSA_raw')
+        os.environ['MSci-Data'] = 'C:\\Users\\jonas\\MSci-Data'
+        project_data = os.environ.get('MSci-Data')
         
         if file_one:
             flight_data_path = os.path.join(project_data, 'BurstSpectral.mat')
@@ -34,7 +49,7 @@ class burst_data:
         timeseries = void_arr[9]
         ibs_timeseries = void_ibs[9]
         #print(ibs_timeseries.shape)
-        print
+        
         y = timeseries[start:end,0] #x
         #print(len(y)) # file 2 has 72 hours
         y1 = timeseries[start:end,1] #y
@@ -64,7 +79,9 @@ class burst_data:
         self.df = df
         self.fs = 128
         
-
+    def df_to_csv(self, name):
+        self.df = self.df.astype({'OBS_X': 'float32', 'OBS_Y': 'float32', 'OBS_Z': 'float32', 'OBS_MAGNITUDE': 'float32', 'IBS_X': 'float32', 'IBS_Y': 'float32', 'IBS_Z': 'float32', 'IBS_MAGNITUDE': 'float32'})
+        self.df.to_csv(f'C:\\Users\\jonas\\MSci-Data\\burst_data_df_{name}.csv')
 
     def get_df_between_seconds(self, start, end):
 
@@ -111,7 +128,7 @@ class burst_data:
         plt.show()
 
 
-    def burst_powerspectra(self, OBS, *, df2 = False):
+    def burst_powerspectra(self, OBS, *, df2 = False , name = ''):
         if OBS:
             collist = ['Time', 'OBS_X', 'OBS_Y', 'OBS_Z']
             name_str = 'OBS_burst'
@@ -123,7 +140,7 @@ class burst_data:
         else:
             df = self.df
 
-        processing.powerspecplot(df, 128, collist, False, probe = 'MAG', inst = name_str, inflight = True, scaling = 'spectrum')
+        processing.powerspecplot(df, 128, collist, False, probe = 'MAG', inst = name_str, inflight = True, scaling = 'spectrum', name = name)
 
         
     def power_proportionality(self):
@@ -153,7 +170,7 @@ class burst_data:
             #x = np.sqrt(df[self.collist[1]]**2 + self.df[self.collist[2]]**2 + self.df[self.collist[3]]**2)
         y = (self.df[collist[1]] + self.df[collist[2]] + self.df[collist[3]])
         dflen = len(self.df)
-        div = (dflen)/1000
+        div = (dflen)/20000
         #f, Pxx = sps.periodogram(x,fs)
         #div = 500
         nff = dflen//div
@@ -169,12 +186,12 @@ class burst_data:
         lognorm = mpl.colors.LogNorm(vmin=downlimit, vmax = uplimit, clip=True)
         plt.pcolormesh(t, f, Sxx, norm = normalize, cmap = 'viridis') #sqrt? 
         #plt.pcolormesh(t, f, Sxx, clim = (0,uplimit))
-        plt.semilogy()
+        #plt.semilogy()
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [s]')
         
-        plt.title(f'MAG {name_str} Spectrogram @ {self.fs}Hz, {self.df.index[0].date()}')
-        plt.ylim((10**0,self.fs/2))
+        plt.title(f'MAG {name_str} Spectrogram @ {self.fs}Hz')
+        plt.ylim((0,10))
         #plt.clim()
         fig = plt.gcf()
         ticks = [0, 0.05, 0.1, 0.15, 0.2, 0.5, 1]
@@ -186,7 +203,6 @@ class burst_data:
         plt.show()
 
         return t,f,Sxx
-
 
 
 def heater_data(windows):
@@ -236,10 +252,31 @@ def heater_data(windows):
     plt.show()
 
 if __name__ == "__main__":
-    burst_object = burst_data(file_one=False, start = int(128*3600*46), end = int(128*3600*72))
+    
+    burst_object = burst_data()
+    burst_object.get_df_from_mat(file_one=False, start = int(128*3600*48.3), end = int(128*3600*72)) #0.3 to 24, 24 to 47.6 and 48.3 to 72
+    #burst_object.plot_burst()
     OBS = False
+    #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.001) #0.005
+    burst_object.burst_powerspectra(OBS, name = '_file2_day2')
+
+    #burst_object.df_to_csv(name='file_2_day_1')
+
+
+    """
+    burst_object = burst_data()
+    burst_object.get_df_from_csv(day=1) #takes 64 seconds to read in day, reading mat is four times faster
+    """
+
+    #burst_object = burst_data(file_one=False, start = int(128*3600*0.1), end = int(128*3600*1))
+    #burst_object = burst_data()
+    #OBS = False
+
+    #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.005) #0.005
+
+    
     #thruster at start and at 48 hours
-    burst_object.plot_burst()
+    #burst_object.plot_burst()
     #burst_object.get_df_between_seconds(33000, 33400)
     #w0 = 8/(128/2)
     #b,a = sps.iirnotch(w0, Q=30)
