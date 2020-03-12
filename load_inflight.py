@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import time
 from processing import processing
 import scipy.signal as sps
+from collections import defaultdict
 #from fast_histogram import histogram1d
 
 class burst_data:
@@ -84,7 +85,7 @@ class burst_data:
         self.df.to_csv(f'C:\\Users\\jonas\\MSci-Data\\burst_data_df_{name}.csv')
 
     def get_df_between_seconds(self, start, end):
-
+        #only for original file that has datetimeindex
         time_1 = timedelta(seconds = start)
         time_2 = timedelta(seconds = end)
         
@@ -94,6 +95,7 @@ class burst_data:
         df2 = self.df.between_time(time_1.time(), time_2.time())
 
         self.df2 = df2
+        #return df2
     
 
     def plot_burst(self):
@@ -204,6 +206,100 @@ class burst_data:
 
         return t,f,Sxx
 
+    def moving_powerfreq(self, OBS, len_of_sections = 600, desired_freqs = [8.0], *, scaling = 'spectrum'):
+        if OBS:
+            collist = ['OBS_X', 'OBS_Y', 'OBS_Z', 'OBS_MAGNITUDE']
+            name_str = 'OBS_burst'
+        else:
+            collist = ['IBS_X', 'IBS_Y', 'IBS_Z', 'IBS_MAGNITUDE']
+            name_str = 'IBS_burst'
+        
+        probe_x = collist[0]
+        probe_y = collist[1]
+        probe_z = collist[2]
+        mag = collist[3]
+
+        self.df = self.df[collist] #reducing ram size
+
+        def get_powerspec_of_desired_freq(f, Pxx, desired_frequencies):
+            assert type(desired_frequencies) == list
+            dfreq = 0.02
+            mean_power_dict = defaultdict(list)
+
+            for i in desired_frequencies:
+                #print(i)
+                index_tmp = np.where((f >= i - dfreq/2 ) & (f <= i + dfreq/2))
+                #print(index_tmp)
+                mean_power = max(Pxx[index_tmp])
+                #print(mean_power)
+                mean_power_dict[str(i)] = [mean_power]
+                #print(mean_power_dict)
+
+            return mean_power_dict
+
+        sections = len(self.df)//(128*len_of_sections)
+        start = 0
+        end = len_of_sections*128
+
+        for i in range(sections):
+            df_tmp = self.df.iloc[start:end,:]
+            x = df_tmp[probe_x]#[:20000]
+            f_x, Pxx_x = sps.periodogram(x, self.fs, scaling = f'{scaling}')
+            x_y = df_tmp[probe_y]#[:20000]
+            f_y, Pxx_y = sps.periodogram(x_y, self.fs, scaling = f'{scaling}')
+            x_z = df_tmp[probe_z]#[:20000]
+            f_z, Pxx_z = sps.periodogram(x_z, self.fs, scaling = f'{scaling}')
+            x_t = x + x_y + x_z #trace
+            f_t, Pxx_t = sps.periodogram(x_t, self.fs, scaling = f'{scaling}')
+            x_m = df_tmp[mag]
+            f_m, Pxx_m = sps.periodogram(x_m, self.fs, scaling = f'{scaling}')
+
+            if i == 0:
+                x_dict = get_powerspec_of_desired_freq(f_x, Pxx_x, desired_freqs)
+                y_dict = get_powerspec_of_desired_freq(f_y, Pxx_y, desired_freqs)
+                z_dict = get_powerspec_of_desired_freq(f_z, Pxx_z, desired_freqs)
+                t_dict = get_powerspec_of_desired_freq(f_t, Pxx_t, desired_freqs)
+                m_dict = get_powerspec_of_desired_freq(f_m, Pxx_m, desired_freqs)
+                #print(type(x_dict))
+            else:
+                x_dict_tmp = get_powerspec_of_desired_freq(f_x, Pxx_x, desired_freqs)
+                y_dict_tmp = get_powerspec_of_desired_freq(f_y, Pxx_y, desired_freqs)
+                z_dict_tmp = get_powerspec_of_desired_freq(f_z, Pxx_z, desired_freqs)
+                t_dict_tmp = get_powerspec_of_desired_freq(f_t, Pxx_t, desired_freqs)
+                m_dict_tmp = get_powerspec_of_desired_freq(f_m, Pxx_m, desired_freqs)
+
+                for j in desired_freqs:
+                    x_dict[str(j)].append(x_dict_tmp[str(j)][0])
+                    y_dict[str(j)].append(y_dict_tmp[str(j)][0])
+                    z_dict[str(j)].append(z_dict_tmp[str(j)][0])
+                    t_dict[str(j)].append(t_dict_tmp[str(j)][0])
+                    m_dict[str(j)].append(m_dict_tmp[str(j)][0])
+            
+            start += len_of_sections
+            end += len_of_sections
+
+        #print(x_dict[str(8.0)])
+        
+        plt.figure()
+        #plt.plot(range(sections), x_dict[str(8.0)], label = 'X')
+        #plt.plot(range(sections), y_dict[str(8.0)], label = 'Y')
+        #plt.plot(range(sections), z_dict[str(8.0)], label = 'Z')
+        x = [i*len_of_sections/3600 for i in range(sections)]
+        plt.plot(x, t_dict[str(8.0)], label = 'T - 8Hz')
+        plt.plot(x, t_dict[str(16.0)], label = 'T - 16Hz')
+        plt.plot(x, t_dict[str(0.119)], label = 'T - 0.119Hz')
+        plt.plot(x, t_dict[str(0.238)], label = 'T - 0.238Hz')
+        plt.plot(x, t_dict[str(0.357)], label = 'T - 0.357Hz')
+        plt.plot(x, t_dict[str(0.596)], label = 'T - 0.596Hz')
+        
+        #plt.plot(range(sections), m_dict[str(8.0)], label = 'M')
+        plt.legend(loc='upper right')
+        plt.ylabel('Power [dB]')
+        plt.xlabel('Time [Hours]')
+        plt.title(f'{len_of_sections//60} min moving max Power')
+        plt.semilogy()
+        plt.show()
+        
 
 def heater_data(windows):
     if windows:
@@ -254,11 +350,14 @@ def heater_data(windows):
 if __name__ == "__main__":
     
     burst_object = burst_data()
-    burst_object.get_df_from_mat(file_one=False, start = int(128*3600*48.3), end = int(128*3600*72)) #0.3 to 24, 24 to 47.6 and 48.3 to 72
+    burst_object.get_df_from_mat(file_one=False, start = int(128*3600*0.3), end = int(128*3600*24)) #0.3 to 24, 24 to 47.6 and 48.3 to 72
     #burst_object.plot_burst()
-    OBS = False
+    OBS = True
+
+    burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0])
+
     #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.001) #0.005
-    burst_object.burst_powerspectra(OBS, name = '_file2_day2')
+    #burst_object.burst_powerspectra(OBS, name = '_file2_day2')
 
     #burst_object.df_to_csv(name='file_2_day_1')
 
