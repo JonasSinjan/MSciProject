@@ -262,7 +262,7 @@ if __name__ == "__main__":
     """
     day = 2
     probe = 9 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
-    sampling_fs = 50
+    sampling_fs = 100
 
     #eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
     #eui.get_data()
@@ -274,11 +274,11 @@ if __name__ == "__main__":
 
     daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
     daytwo.get_data()
-    daytwo.moving_powerfreq(True, len_of_sections=30, desired_freqs=[8.0, 16.667], scaling='density')
-    daytwo.moving_powerfreq(True, len_of_sections=30, desired_freqs=[8.0, 16.667], scaling='spectrum')
+    daytwo.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667], scaling='density')
+    daytwo.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667], scaling='spectrum')
 
-    daytwo.moving_powerfreq(True, len_of_sections=100, desired_freqs=[8.0, 16.667], scaling='density')
-    daytwo.moving_powerfreq(True, len_of_sections=100, desired_freqs=[8.0, 16.667], scaling='spectrum')
+    #daytwo.moving_powerfreq(True, len_of_sections=100, desired_freqs=[8.0, 16.667], scaling='density')
+    #daytwo.moving_powerfreq(True, len_of_sections=100, desired_freqs=[8.0, 16.667], scaling='spectrum')
     #daytwo.spectrogram(downlimit = 0.5, uplimit = 1.0)
     #daytwo.powerspectra()
 

@@ -290,12 +290,10 @@ class burst_data:
         #plt.plot(range(sections), y_dict[str(8.0)], label = 'Y')
         #plt.plot(range(sections), z_dict[str(8.0)], label = 'Z')
         x = [i*len_of_sections/3600 for i in range(sections)]
-        plt.plot(x, t_dict[str(8.0)], label = 'T - 8Hz')
-        plt.plot(x, t_dict[str(16.0)], label = 'T - 16Hz')
-        plt.plot(x, t_dict[str(0.119)], label = 'T - 0.119Hz')
-        plt.plot(x, t_dict[str(0.238)], label = 'T - 0.238Hz')
-        plt.plot(x, t_dict[str(0.357)], label = 'T - 0.357Hz')
-        plt.plot(x, t_dict[str(0.596)], label = 'T - 0.596Hz')
+        for j in desired_freqs:
+            plt.plot(x, t_dict[str(j)], label = f'T - {j}Hz')
+
+        print(max(t_dict[str(8.0)]))
         
         #plt.plot(range(sections), m_dict[str(8.0)], label = 'M')
         plt.legend(loc='upper right')
@@ -360,6 +358,7 @@ if __name__ == "__main__":
     OBS = True
 
     burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0])
+    #burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0], scaling='density')
 
     #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.001) #0.005
     #burst_object.burst_powerspectra(OBS, name = '_file2_day2')
