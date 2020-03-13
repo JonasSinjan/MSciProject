@@ -16,6 +16,7 @@ class burst_data:
     def __init__(self):
         pass
 
+
     def get_df_from_csv(self, day=1):
         start_time = time.time()
 
@@ -27,6 +28,7 @@ class burst_data:
         print(self.df.head())
 
         print('df successfully loaded from csv\nExecution time: ', round(time.time() - start_time,3), ' seconds')
+
 
     def get_df_from_mat(self, *, file_one = True, start = 0, end = 128*3600*10):
         start_time = time.time()
@@ -80,9 +82,11 @@ class burst_data:
         self.df = df
         self.fs = 128
         
+
     def df_to_csv(self, name):
         self.df = self.df.astype({'OBS_X': 'float32', 'OBS_Y': 'float32', 'OBS_Z': 'float32', 'OBS_MAGNITUDE': 'float32', 'IBS_X': 'float32', 'IBS_Y': 'float32', 'IBS_Z': 'float32', 'IBS_MAGNITUDE': 'float32'})
         self.df.to_csv(f'C:\\Users\\jonas\\MSci-Data\\burst_data_df_{name}.csv')
+
 
     def get_df_between_seconds(self, start, end):
         #only for original file that has datetimeindex
@@ -205,6 +209,7 @@ class burst_data:
         plt.show()
 
         return t,f,Sxx
+
 
     def moving_powerfreq(self, OBS, len_of_sections = 600, desired_freqs = [8.0], *, scaling = 'spectrum'):
         if OBS:

@@ -12,6 +12,7 @@ from datetime import datetime
 import glob
 import csv
 from current import current_peaks
+from collections import defaultdict
 
 class mfsa_object:
 
@@ -154,6 +155,100 @@ class mfsa_object:
         plt.legend(loc="best")
         plt.show()
 
+    def moving_powerfreq(self, OBS, len_of_sections = 600, desired_freqs = [8.0], *, scaling = 'spectrum'):
+        
+        probe_x = self.collist[1]
+        probe_y = self.collist[2]
+        probe_z = self.collist[3]
+        #mag = collist[3]
+
+        #self.df = self.df[collist]
+
+        def get_powerspec_of_desired_freq(f, Pxx, desired_frequencies):
+            assert type(desired_frequencies) == list
+            dfreq = 0.02
+            mean_power_dict = defaultdict(list)
+
+            for i in desired_frequencies:
+                #print(i)
+                index_tmp = np.where((f >= i - dfreq/2 ) & (f <= i + dfreq/2))
+                #print(index_tmp)
+                mean_power = max(Pxx[index_tmp])
+                #print(mean_power)
+                mean_power_dict[str(i)] = [mean_power]
+                #print(mean_power_dict)
+
+            return mean_power_dict
+
+        sections = len(self.df)//(self.fs*len_of_sections)
+        start = 0
+        end = len_of_sections*self.fs
+
+        for i in range(sections):
+            if end >= len(self.df):
+                end = len(self.df)
+            df_tmp = self.df.iloc[start:end,:]
+            x = df_tmp[probe_x]#[:20000]
+            f_x, Pxx_x = sps.periodogram(x, self.fs, scaling = f'{scaling}')
+            x_y = df_tmp[probe_y]#[:20000]
+            f_y, Pxx_y = sps.periodogram(x_y, self.fs, scaling = f'{scaling}')
+            x_z = df_tmp[probe_z]#[:20000]
+            f_z, Pxx_z = sps.periodogram(x_z, self.fs, scaling = f'{scaling}')
+            x_t = x + x_y + x_z #trace
+            f_t, Pxx_t = sps.periodogram(x_t, self.fs, scaling = f'{scaling}')
+            #x_m = df_tmp[mag]
+            #f_m, Pxx_m = sps.periodogram(x_m, self.fs, scaling = f'{scaling}')
+
+            if i == 0:
+                x_dict = get_powerspec_of_desired_freq(f_x, Pxx_x, desired_freqs)
+                y_dict = get_powerspec_of_desired_freq(f_y, Pxx_y, desired_freqs)
+                z_dict = get_powerspec_of_desired_freq(f_z, Pxx_z, desired_freqs)
+                t_dict = get_powerspec_of_desired_freq(f_t, Pxx_t, desired_freqs)
+                #m_dict = get_powerspec_of_desired_freq(f_m, Pxx_m, desired_freqs)
+                #print(type(x_dict))
+            else:
+                x_dict_tmp = get_powerspec_of_desired_freq(f_x, Pxx_x, desired_freqs)
+                y_dict_tmp = get_powerspec_of_desired_freq(f_y, Pxx_y, desired_freqs)
+                z_dict_tmp = get_powerspec_of_desired_freq(f_z, Pxx_z, desired_freqs)
+                t_dict_tmp = get_powerspec_of_desired_freq(f_t, Pxx_t, desired_freqs)
+                #m_dict_tmp = get_powerspec_of_desired_freq(f_m, Pxx_m, desired_freqs)
+
+                for j in desired_freqs:
+                    x_dict[str(j)].append(x_dict_tmp[str(j)][0])
+                    y_dict[str(j)].append(y_dict_tmp[str(j)][0])
+                    z_dict[str(j)].append(z_dict_tmp[str(j)][0])
+                    t_dict[str(j)].append(t_dict_tmp[str(j)][0])
+                    #m_dict[str(j)].append(m_dict_tmp[str(j)][0])
+            
+            start += len_of_sections
+            end += len_of_sections
+
+        #print(x_dict[str(8.0)])
+        
+        plt.figure()
+        #plt.plot(range(sections), x_dict[str(8.0)], label = 'X')
+        #plt.plot(range(sections), y_dict[str(8.0)], label = 'Y')
+        #plt.plot(range(sections), z_dict[str(8.0)], label = 'Z')
+        x = [i*len_of_sections/3600 for i in range(sections)]
+        for j in desired_freqs:
+            plt.plot(x, t_dict[str(j)], label = f'T - {j}Hz')
+            print(max(t_dict[str(j)]))
+            #plt.plot(x, t_dict[str(16.667)], label = 'T - 16.667Hz')
+        #plt.plot(x, t_dict[str(16.0)], label = 'T - 16Hz')
+        #plt.plot(x, t_dict[str(0.119)], label = 'T - 0.119Hz')
+        #plt.plot(x, t_dict[str(0.238)], label = 'T - 0.238Hz')
+        #plt.plot(x, t_dict[str(0.357)], label = 'T - 0.357Hz')
+        #plt.plot(x, t_dict[str(0.596)], label = 'T - 0.596Hz')
+        
+        #plt.plot(range(sections), m_dict[str(8.0)], label = 'M')
+        plt.legend(loc='upper right')
+        plt.ylabel('Power [dB]')
+        plt.xlabel('Time [Hours]')
+        plt.title(f'{len_of_sections//60} min moving max Power')
+        plt.semilogy()
+        plt.show()
+
+
 if __name__ == "__main__":
     """
     METIS - 10:10-10:56
@@ -166,16 +261,24 @@ if __name__ == "__main__":
     EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
     """
     day = 2
-    probe = 12 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
-    sampling_fs = 100
+    probe = 9 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
+    sampling_fs = 50
 
-    eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
-    eui.get_data()
-    eui.spectrogram()
-    eui.powerspectra()
+    #eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
+    #eui.get_data()
+    #eui.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667])
+    
+    #eui.spectrogram()
+    #eui.powerspectra()
 
-    #daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
-    #daytwo.get_data()
+
+    daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
+    daytwo.get_data()
+    daytwo.moving_powerfreq(True, len_of_sections=30, desired_freqs=[8.0, 16.667], scaling='density')
+    daytwo.moving_powerfreq(True, len_of_sections=30, desired_freqs=[8.0, 16.667], scaling='spectrum')
+
+    daytwo.moving_powerfreq(True, len_of_sections=100, desired_freqs=[8.0, 16.667], scaling='density')
+    daytwo.moving_powerfreq(True, len_of_sections=100, desired_freqs=[8.0, 16.667], scaling='spectrum')
     #daytwo.spectrogram(downlimit = 0.5, uplimit = 1.0)
     #daytwo.powerspectra()
 
