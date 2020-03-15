@@ -100,12 +100,12 @@ def dB(peak_datetimes, instrument, current_dif, windows): #for only one instrume
     plt.plot(current_dif, Y.intercept + Y.slope*current_dif, 'r-', label = f'Y grad: {round(Y.slope,2)} ± {round(Y.stderr,2)} int: {round(Y.intercept, 2)}')
     plt.plot(current_dif, Z.intercept + Z.slope*current_dif, 'g-', label = f'Z grad: {round(Z.slope,2)} ± {round(Z.stderr,2)} int: {round(Z.intercept, 2)}')
     """
-    plt.plot(current_dif, params_x[0]*current_dif + params_x[1], 'b-', label = f'X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)}, int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
-    plt.plot(current_dif, params_y[0]*current_dif + params_y[1], 'r-', label = f'Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)}, int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
-    plt.plot(current_dif, params_z[0]*current_dif + params_z[1], 'g-', label = f'Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)}, int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
+    plt.plot(current_dif, params_x[0]*current_dif + params_x[1], 'b-', label = f'X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} nT/A')#, int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
+    plt.plot(current_dif, params_y[0]*current_dif + params_y[1], 'r-', label = f'Y grad:  {round(params_y[0],2)} ± {round(perr_y[0],2)} nT/A')#, int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
+    plt.plot(current_dif, params_z[0]*current_dif + params_z[1], 'g-', label = f'Z grad:  {round(params_z[0],2)} ± {round(perr_z[0],2)} nT/A')#, int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
 
     plt.legend(loc="best")
-    #plt.title(f'{instrument} - MAG - Day 2')
+    plt.title(f'{instrument} - MAG - Day 2')
     plt.xlabel('dI [A]')
     plt.ylabel('dB [nT]')
     plt.show()

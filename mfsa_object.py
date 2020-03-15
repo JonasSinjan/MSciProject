@@ -149,8 +149,8 @@ class mfsa_object:
             #tmp.append(var_1khz)
             #print(df2[col].abs().idxmax())
         
-        plt.xlabel('Time (s)')
-        plt.ylabel('dB (nT)')
+        plt.xlabel('Time [H:M:S]')
+        plt.ylabel('dB [nT]')
         plt.title(f'Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
         plt.legend(loc="best")
         plt.show()
@@ -261,21 +261,22 @@ if __name__ == "__main__":
     EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
     """
     day = 2
-    probe = 9 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
-    sampling_fs = 100
+    probe = 7 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
+    sampling_fs = 1
 
-    #eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
-    #eui.get_data()
+    eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
+    eui.get_data()
+    eui.plot()
     #eui.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667])
     
     #eui.spectrogram()
     #eui.powerspectra()
 
 
-    daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
-    daytwo.get_data()
-    daytwo.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667], scaling='density')
-    daytwo.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667], scaling='spectrum')
+    #daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
+    #daytwo.get_data()
+    #daytwo.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667], scaling='density')
+    #daytwo.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667], scaling='spectrum')
 
     #daytwo.moving_powerfreq(True, len_of_sections=100, desired_freqs=[8.0, 16.667], scaling='density')
     #daytwo.moving_powerfreq(True, len_of_sections=100, desired_freqs=[8.0, 16.667], scaling='spectrum')

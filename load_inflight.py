@@ -358,7 +358,7 @@ if __name__ == "__main__":
     OBS = True
 
     burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0])
-    #burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0], scaling='density')
+    burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0], scaling='density')
 
     #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.001) #0.005
     #burst_object.burst_powerspectra(OBS, name = '_file2_day2')

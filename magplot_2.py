@@ -45,28 +45,29 @@ def mag(filepath, start_dt=None, end_dt=None):
     print(df.tail())
     
     df = df.resample('1s').mean()
-    df2 = df
+    
     df['X'] = df['X'] - df['X'].mean()
     df['Y'] = df['Y'] - df['Y'].mean()
     df['Z'] = df['Z'] - df['Z'].mean()
-
+    df2 = df
     plot = True
     if plot:
         #plt.figure()
         cols = df.columns.tolist()
         #df = df.resample('2s').mean()
-        tmp=[]
-        for col in cols:
+        #tmp=[]
+        for col in cols[1:]:
+            #df2[col] = df2[col] - np.mean(df2[col])
             plt.plot(df2.index.time, df2[col], label =f'{col}')
 
-            var_1hz = np.std(df2[col])
-            print('std - 1Hz', col, var_1hz)
-            tmp.append(var_1hz)
+            #var_1hz = np.std(df2[col])
+            #print('std - 1Hz', col, var_1hz)
+            #tmp.append(var_1hz)
            
         plt.xlabel('Time [H:M:S]')
         plt.ylabel('dB [nT]')
         plt.legend(loc="best")
-        plt.title('MAG Powered Day 2')
+        plt.title('EUI - MAG - Day 2')
         
         """
         #finding the calibration spikes - only appropriate if not in the current time span when the spikes occur (at beginning of data - but first 3 spikes seen are MAG changing measurement ranges)
@@ -79,7 +80,7 @@ def mag(filepath, start_dt=None, end_dt=None):
         """
         plt.show()
         
-    return tmp
+    #return tmp
     
 if __name__ == "__main__":
     day = 2
@@ -98,13 +99,18 @@ if __name__ == "__main__":
         else:
             filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay2.csv.txt")
         
-    start_dt = datetime(2019,6,24,7,55)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
-    end_dt = datetime(2019,6,24,8,0)# this is the end
+    #start_dt = datetime(2019,6,24,7,55)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
+    #end_dt = datetime(2019,6,24,8,0)# this is the end
+
+    start_dt = datetime(2019,6,24,9,24)
+    end_dt = datetime(2019,6,24,10,9)
 
     b_noise = mag(filepath, start_dt=start_dt, end_dt=end_dt)
 
+    """
     w = csv.writer(open(f"day2_mag_vars.csv", "w"))
     w.writerow(["Bx_var","By_var","Bz_var"])
     val = b_noise
     w.writerow([val[0],val[1],val[2]])#,val[9],val[10],val[11]])
+    """
         
