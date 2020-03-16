@@ -243,7 +243,7 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
 
 if __name__ == "__main__":
     windows = True
-    daynumber = 2
+    daynumber = 1
     dict_cur = current_peaks(windows, daynumber, plot = True)
     #print(dict_cur['EUI Current [A]'])
     #print(dict_cur['METIS Current [A]'])
