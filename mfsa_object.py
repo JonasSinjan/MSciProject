@@ -99,6 +99,9 @@ class mfsa_object:
         self.df = processing.shifttime(self.df, soloA_bool, 2)
         self.dflen = len(self.df) 
 
+        print(self.df.head())
+        print(self.df.tail())
+
     def spectrogram(self, *, downlimit = 0, uplimit=0.1):
         x = np.sqrt(self.df[self.collist[1]]**2 + self.df[self.collist[2]]**2 + self.df[self.collist[3]]**2)
         y = (self.df[self.collist[1]] + self.df[self.collist[2]] + self.df[self.collist[3]])
@@ -262,11 +265,25 @@ if __name__ == "__main__":
     """
     day = 2
     probe = 7 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
-    sampling_fs = 1
+    sampling_fs = 100
+    
+    """
+    import cProfile, pstats
+    pr = cProfile.Profile()
+    pr.enable()
+    pr.disable()
+    ps = pstats.Stats(pr).sort_stats('tottime')
+    ps.print_stats(0.05)
+    """
 
-    eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
-    eui.get_data()
-    eui.plot()
+    daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
+    daytwo.get_data()
+    daytwo.spectrogram(uplimit = 0.1)
+    #daytwo.powerspectra()
+
+    #eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
+    #eui.get_data()
+    #eui.plot()
     #eui.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667])
     
     #eui.spectrogram()

@@ -14,7 +14,8 @@ from tqdm import tqdm
 import csv
 
 class processing:
-
+    
+    #@profile
     @staticmethod
     def read_files(all_files, soloA, sampling_freq = None, collist=None, day=1, start_dt = None, end_dt = None): #removed windows after soloA for mfsa object and also redundant
         #path - location of folder to concat
@@ -50,24 +51,48 @@ class processing:
             print(factor)
             df = df.groupby(np.arange(len(df))//factor).mean()
         """    
+        df = df.sort_values('time', ascending = True, kind = 'mergesort')
+
         if soloA:
             if '21' in all_files[0]: #for day_one
-                df['time'] = df['time'] + 10.12
-                df['time'] =  pd.to_datetime(df['time'], unit = 's', origin = '2019-06-21 08:10:00' )
+                start_second = df['time'][0] + 10.12
+                start_dt_time = pd.to_datetime(start_second, unit = 's', origin = '2019-06-24 08:10:00' )
+
+                #df['time'] = df['time'] + 10.12
+                #df['time'] =  pd.to_datetime(df['time'], unit = 's', origin = '2019-06-21 08:10:00' )
             elif '24' in all_files[0]: #for day_two
-                df['time'] = df['time'] + 46.93
-                df['time'] =  pd.to_datetime(df['time'], unit = 's', origin = '2019-06-24 08:14:00' )
+                start_second = df['time'][0] + 46.93
+                start_dt_time = pd.to_datetime(start_second, unit = 's', origin = '2019-06-24 08:14:00' )
+                
+                #df['time'] = df['time'] + 46.93
+                #df['time'] =  pd.to_datetime(df['time'], unit = 's', origin = '2019-06-24 08:14:00' )
         else:
             if '21' in all_files[0]:
-                df['time'] = df['time'] + 10
-                df['time'] =  pd.to_datetime(df['time'], unit = 's', origin = '2019-06-21 08:09:00' )
+                start_second = df['time'][0] + 10
+                start_dt_time = pd.to_datetime(start_second, unit = 's', origin = '2019-06-21 08:09:00' )
+
+                #df['time'] = df['time'] + 10
+                #df['time'] =  pd.to_datetime(df['time'], unit = 's', origin = '2019-06-21 08:09:00' )
             elif '24' in all_files[0]:
-                df['time'] = df['time'] + 24
-                df['time'] =  pd.to_datetime(df['time'], unit = 's', origin = '2019-06-24 08:14:00' )
-                
+                start_second = df['time'][0] + 24
+                start_dt_time = pd.to_datetime(start_second, unit = 's', origin = '2019-06-24 08:14:00' )
+
+                #df['time'] = df['time'] + 24
+                #df['time'] =  pd.to_datetime(df['time'], unit = 's', origin = '2019-06-24 08:14:00' )
+
+        seconds = len(df)//1000
+        microseconds = (len(df)/1000 - seconds)*1000000
+        end_time = start_dt_time + timedelta(seconds = seconds, microseconds=microseconds)
+        date_range = pd.date_range(start = start_dt_time, end = end_time, freq='1000000ns') #1/128 seconds exactly for 1/16 just need microseconds 'ms'
+        print(len(date_range), len(df))
+        df['time'] = date_range[:-1]
+
         df['time'] = df['time'].dt.round('ms')
-        df = df.sort_values('time', ascending = True, kind = 'mergesort')
+        #df = df.sort_values('time', ascending = True, kind = 'mergesort')
         df.set_index('time', inplace = True)
+
+        #print(df.head())
+        #print(df.tail())
 
         if sampling_freq < 1000:
             factor = int(1000/sampling_freq)
@@ -281,6 +306,7 @@ class processing:
                 probe = probe_x.split('_')[0]
                 print(probe, inst)
         try:
+            print(f'Trying to find file: {probe}_{inst}_powerspectra{name}.csv')
             with open(f'.\\Results\\PowerSpectrum\\Peak_files\\{probe}_{inst}_powerspectra{name}.csv') as f:
                 clicks1, clicks2, clicks3, clicks4 = [], [], [], []
                 for i, line in enumerate(f):
