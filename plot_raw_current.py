@@ -37,7 +37,7 @@ def plot_raw(windows, inst, daynumber):
     print (df.tail())
 
 if __name__ == "__main__":
-    windows = False
+    windows = True
     day = 2
     inst = 'EUI'
 

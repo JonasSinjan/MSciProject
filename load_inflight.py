@@ -146,7 +146,7 @@ class burst_data:
         else:
             df = self.df
 
-        processing.powerspecplot(df, 128, collist, False, probe = 'MAG', inst = name_str, inflight = True, scaling = 'spectrum', name = name)
+        processing.powerspecplot(df, 128, collist, False, probe = 'MAG', inst = name_str, inflight = True, scaling = 'density', name = name)
 
         
     def power_proportionality(self):
@@ -228,7 +228,7 @@ class burst_data:
 
         def get_powerspec_of_desired_freq(f, Pxx, desired_frequencies):
             assert type(desired_frequencies) == list
-            dfreq = 0.02
+            dfreq = 0.004
             mean_power_dict = defaultdict(list)
 
             for i in desired_frequencies:
@@ -292,8 +292,9 @@ class burst_data:
         x = [i*len_of_sections/3600 for i in range(sections)]
         for j in desired_freqs:
             plt.plot(x, t_dict[str(j)], label = f'T - {j}Hz')
+            print(f'{j}Hz mean power:', np.mean(t_dict[str(j)]), '+/-', np.std(t_dict[str(j)])/np.sqrt(len(t_dict[str(j)])))
 
-        print(max(t_dict[str(8.0)]))
+        #print(max(t_dict[str(8.0)]))
         
         #plt.plot(range(sections), m_dict[str(8.0)], label = 'M')
         plt.legend(loc='upper right')
@@ -353,15 +354,15 @@ def heater_data(windows):
 if __name__ == "__main__":
     
     burst_object = burst_data()
-    burst_object.get_df_from_mat(file_one=False, start = int(128*3600*0.3), end = int(128*3600*24)) #0.3 to 24, 24 to 47.6 and 48.3 to 72
+    burst_object.get_df_from_mat(file_one=False, start = int(128*3600*0.3), end = int(128*3600*72)) #0.3 to 24, 24 to 47.6 and 48.3 to 72
     #burst_object.plot_burst()
-    OBS = True
+    OBS = False
 
-    burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0])
-    burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0], scaling='density')
+    #burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0])
+    burst_object.moving_powerfreq(OBS,len_of_sections=3600,desired_freqs=[0.1, 0.119,7.9, 8.0, 15.8, 16.0], scaling='density')
 
     #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.001) #0.005
-    #burst_object.burst_powerspectra(OBS, name = '_file2_day2')
+    #burst_object.burst_powerspectra(OBS, name = '_file2_alldays')
 
     #burst_object.df_to_csv(name='file_2_day_1')
 

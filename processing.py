@@ -252,15 +252,15 @@ class processing:
         probe_z = collist[3]
         #probe_m = collist[4]
         x = df[probe_x]#[:20000]
-        f_x, Pxx_x = sps.periodogram(x, fs, scaling=f'{scaling}')
+        f_x, Pxx_x = sps.periodogram(x, fs, nfft = 10_000_000, scaling=f'{scaling}')
         x_y = df[probe_y]#[:20000]
-        f_y, Pxx_y = sps.periodogram(x_y, fs, scaling=f'{scaling}')
+        f_y, Pxx_y = sps.periodogram(x_y, fs, nfft = 10_000_000,scaling=f'{scaling}')
         x_z = df[probe_z]#[:20000]
-        f_z, Pxx_z = sps.periodogram(x_z, fs, scaling=f'{scaling}')
+        f_z, Pxx_z = sps.periodogram(x_z, fs, nfft = 10_000_000,scaling=f'{scaling}')
         #x = df[probe_m]#[:20000]
         #f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
         x_t = x + x_y + x_z #trace
-        f_t, Pxx_t = sps.periodogram(x_t, fs, scaling =f'{scaling}')
+        f_t, Pxx_t = sps.periodogram(x_t, fs, nfft = 10_000_000, scaling =f'{scaling}')
 
         def filter_Pxx(f,Pxx, mask_frequencies, harmonics):
             harmonics = range(3,400,2)#[3,5,7,8,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41]
@@ -280,7 +280,7 @@ class processing:
             plt.loglog(f,np.sqrt(Pxx), f'{col}-', picker=100) #sqrt required for power spectrum, and semi log y axis
             plt.xlim(left = 10e-2, right=fs/2)
             if inflight:
-                plt.ylim(bottom = 10e-6, top = 10e-3)
+                plt.ylim(bottom = 10e-4, top = 10e2)
             else:
                 plt.ylim(bottom = 10e-2, top = 10e1)
             plt.xlabel('Frequency [Hz]')
@@ -296,7 +296,7 @@ class processing:
             fig = plt.figure()
             plot_power(f, fs, Pxx, Probe, 'b')
             plt.xlim(left = 10e-2)
-            plt.ylim(top = 10e-1)
+            plt.ylim(top = 10e1)
             mpl.rcParams['agg.path.chunksize'] = 10000
             fig.canvas.mpl_connect('button_press_event', onclick)
             plt.show()
@@ -372,11 +372,11 @@ class processing:
 
         fig = plt.figure(figsize = (10,8))#, ax = plt.subplots(2, 2, figsize = (10,8))
         mpl.rcParams['agg.path.chunksize'] = 10000
-        uplim = 10e-3 #11 otherwise, 50 only for probe 12
+        uplim = 10e0 #11 otherwise, 50 only for probe 12
         if probe_x == 'Probe12_X':
             uplim = 50
         elif inflight == True:
-            downlim = 10e-6
+            downlim = 10e-4
         else:
             downlim = 10e-3
         """

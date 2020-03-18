@@ -47,6 +47,7 @@ class mfsa_object:
             self.name = name #str
 
     def get_data(self, windows=True):
+        start = time.time()
         if windows:
             os.environ['MFSA_raw'] = 'C:\\Users\\jonas\\MSci-Data'
         else:
@@ -102,7 +103,10 @@ class mfsa_object:
         print(self.df.head())
         print(self.df.tail())
 
+        print('Data Loaded - Execution Time: ' ,round(time.time()-start, 2), 'seconds')
+
     def spectrogram(self, *, downlimit = 0, uplimit=0.1):
+        start = time.time()
         x = np.sqrt(self.df[self.collist[1]]**2 + self.df[self.collist[2]]**2 + self.df[self.collist[3]]**2)
         y = (self.df[self.collist[1]] + self.df[self.collist[2]] + self.df[self.collist[3]])
         div = (self.dflen)/1000
@@ -122,13 +126,13 @@ class mfsa_object:
             plt.title(f'{self.name} - Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
         else:
             plt.title(f'Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
-        plt.ylim((10**0,self.fs/2))
+        plt.ylim((10e-2,self.fs/2))
         #plt.clim()
         fig = plt.gcf()
         cbar = plt.colorbar(ticks = [0, 0.05, 0.1, 0.15, 0.2, 0.5, 1])
         #cbar.ax.set_yticklabels(fontsize=8)
         cbar.set_label('Normalised Power Spectral Density of the Trace')#, rotation=270)
-        
+        print('Spectrogram Created - Execution Time: ' ,round(time.time()-start, 2), 'seconds')
         plt.show()
 
     def powerspectra(self):
@@ -253,6 +257,7 @@ class mfsa_object:
 
 
 if __name__ == "__main__":
+    #start = time.time()
     """
     METIS - 10:10-10:56
     EUI - 9:24-10:09
@@ -276,9 +281,9 @@ if __name__ == "__main__":
     ps.print_stats(0.05)
     """
 
-    daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
-    daytwo.get_data()
-    daytwo.spectrogram(uplimit = 0.1)
+    #daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
+    #daytwo.get_data()
+    #daytwo.spectrogram(uplimit = 0.1)
     #daytwo.powerspectra()
 
     #eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
@@ -300,7 +305,9 @@ if __name__ == "__main__":
     #daytwo.spectrogram(downlimit = 0.5, uplimit = 1.0)
     #daytwo.powerspectra()
 
-    #metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
-    #metis.get_data()
-    #metis.spectrogram(downlimit = 0, uplimit = 0.1) #need 0.4 for trace, 0.1 for absolute magnitude
+    metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
+    metis.get_data()
+    metis.spectrogram(downlimit = 0, uplimit = 0.1) #need 0.4 for trace, 0.1 for absolute magnitude
     #metis.powerspectra()
+
+    #print('Execution Time: ' ,round(time.time()-start, 2), 'seconds')

@@ -46,7 +46,7 @@ def vector_linalg_lstsq(file_path):
     a = 10**(-7)*a
     b = 10**-9*b #get in units of Tesla
     m, rss, rank, s = np.linalg.lstsq(a,b, rcond=None)
-    #print(m)
+    print(m)
     #print(rss)
     #print(rank)
     #print(s)
@@ -72,23 +72,25 @@ def vector_linalg_lstsq(file_path):
     tss = [(b_i-mean_b)**2 for b_i in b]
     r_2_test = 1 - rss/sum(tss)
     r_2_test = 1 - rss/(33*b.var())
-    print(round(r_2_test[0],3))
+    print('r_2 = ', round(r_2_test[0],3))
     return m, rss
 
 if __name__ == "__main__":
     windows = True
     #inst = 'PHI'
     day = 2
-    instru_list = ['EUI','METIS','PHI','SWA','SoloHI','STIX','SPICE','EPD']
+    instru_list = ['EUI','METIS']#,'PHI','SWA','SoloHI','STIX','SPICE','EPD']
     
     
 
     for inst in instru_list:
         #print(inst)
         if windows:
-            file_path = f'.\\Results\\Gradient_dicts\\Day_{day}\\1hz_noorigin\\cur\\{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv'
+            #file_path = f'.\\Results\\Gradient_dicts\\Day_{day}\\1hz_noorigin\\cur\\{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv'
+            file_path = f'.\\Results\\Gradient_dicts\\newdI_dicts\\Day_{day}\\cur\\{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv'
         else:
-            file_path = os.path.expanduser(f'./Results/Gradient_dicts/Day_{day}/1hz_noorigin/cur/{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv')
+            #file_path = os.path.expanduser(f'./Results/Gradient_dicts/Day_{day}/1hz_noorigin/cur/{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv')
+            file_path = os.path.expanduser(f'./Results/Gradient_dicts/newdI_dicts/Day_{day}/cur/{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv')
         vector_linalg_lstsq(file_path)
 
 
