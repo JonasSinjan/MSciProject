@@ -46,12 +46,17 @@ def return_ypanel_dist(probe_list):
 
 if __name__ == "__main__":
     probe_list = return_ypanel_loc()
+    #print(probe_list)
     distance, factor = return_ypanel_dist(probe_list)
 
     j = 0
     for i in range(len(probe_list)):
         tmp_dist, tmp_factor = distance[i], factor[i]
-        print('Probe no.', j+1, 'dist = ', round(tmp_dist,3), 'factor = ', round(tmp_factor,5))
+        probe_dists = probe_list[i]
+        x = probe_dists[0]
+        y = probe_dists[1]
+        z = probe_dists[2]
+        print('Probe no.', j+1, 'x = ', x, 'y = ', y, 'z = ', z, 'dist = ', round(tmp_dist,3), 'factor = ', round(tmp_factor,5))
         j += 1
  
     

@@ -192,15 +192,16 @@ class burst_data:
         lognorm = mpl.colors.LogNorm(vmin=downlimit, vmax = uplimit, clip=True)
         plt.pcolormesh(t, f, Sxx, norm = normalize, cmap = 'viridis') #sqrt? 
         #plt.pcolormesh(t, f, Sxx, clim = (0,uplimit))
-        #plt.semilogy()
+        
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [s]')
         
         plt.title(f'MAG {name_str} Spectrogram @ {self.fs}Hz')
-        plt.ylim((0,10))
+        plt.ylim((10e-2,10))
+        plt.semilogy()
         #plt.clim()
         fig = plt.gcf()
-        ticks = [0, 0.05, 0.1, 0.15, 0.2, 0.5, 1]
+        ticks = [0,0.005, 0.01, 0.05, 0.1, 0.15, 0.2, 0.5, 1]
         if OBS:
             ticks = [0, 10e-6,10e-5,10e-4,10e-3,10e-2]
         cbar = plt.colorbar(ticks = ticks)
@@ -300,7 +301,11 @@ class burst_data:
         plt.legend(loc='upper right')
         plt.ylabel('Power [dB]')
         plt.xlabel('Time [Hours]')
-        plt.title(f'{len_of_sections//60} min moving max Power')
+        if OBS:
+            str_sensor = 'OBS'
+        else:
+            str_sensor = 'IBS'
+        plt.title(f'{str_sensor} - {len_of_sections//60} min. Max Power Timeseries')
         plt.semilogy()
         plt.show()
         
@@ -354,15 +359,15 @@ def heater_data(windows):
 if __name__ == "__main__":
     
     burst_object = burst_data()
-    burst_object.get_df_from_mat(file_one=False, start = int(128*3600*0.3), end = int(128*3600*72)) #0.3 to 24, 24 to 47.6 and 48.3 to 72
+    burst_object.get_df_from_mat(file_one=False, start = int(128*3600*0), end = int(128*3600*72)) #0.3 to 24, 24 to 47.6 and 48.3 to 72
     #burst_object.plot_burst()
-    OBS = False
+    OBS = True
 
     #burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0])
-    burst_object.moving_powerfreq(OBS,len_of_sections=3600,desired_freqs=[0.1, 0.119,7.9, 8.0, 15.8, 16.0], scaling='density')
+    #burst_object.moving_powerfreq(OBS,len_of_sections=1200,desired_freqs=[0.1, 0.119,7.9, 8.0], scaling='spectrum')
 
-    #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.001) #0.005
-    #burst_object.burst_powerspectra(OBS, name = '_file2_alldays')
+    burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.01) #0.005
+    burst_object.burst_powerspectra(OBS, name = '_file2_alldays')
 
     #burst_object.df_to_csv(name='file_2_day_1')
 

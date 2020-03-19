@@ -40,7 +40,8 @@ def vector_linalg_lstsq(file_path):
         a[j+2][0] = 3*x*z/r**5
         a[j+2][1] = 3*y*z/r**5
         a[j+2][2] = (3*(z**2)/r**5)-(1/r**3)
-        
+        #if i == 9:
+        #    print(a @ np.array([[14.1e-3],[-7.7e-3], [0.9e-3]]))
         j += 3
         
     a = 10**(-7)*a
@@ -79,7 +80,7 @@ if __name__ == "__main__":
     windows = True
     #inst = 'PHI'
     day = 2
-    instru_list = ['EUI','METIS']#,'PHI','SWA','SoloHI','STIX','SPICE','EPD']
+    instru_list = ['METIS']#,'PHI','SWA','SoloHI','STIX','SPICE','EPD']
     
     
 
