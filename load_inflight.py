@@ -361,12 +361,12 @@ if __name__ == "__main__":
     burst_object = burst_data()
     burst_object.get_df_from_mat(file_one=False, start = int(128*3600*0), end = int(128*3600*72)) #0.3 to 24, 24 to 47.6 and 48.3 to 72
     #burst_object.plot_burst()
-    OBS = True
+    OBS = False
 
     #burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0])
     #burst_object.moving_powerfreq(OBS,len_of_sections=1200,desired_freqs=[0.1, 0.119,7.9, 8.0], scaling='spectrum')
 
-    burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.01) #0.005
+    #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.01) #0.005
     burst_object.burst_powerspectra(OBS, name = '_file2_alldays')
 
     #burst_object.df_to_csv(name='file_2_day_1')
