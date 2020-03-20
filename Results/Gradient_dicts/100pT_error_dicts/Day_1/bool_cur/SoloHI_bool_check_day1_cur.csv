@@ -1,0 +1,13 @@
+Probe,X_bool_sig,X_sig_level,Y_bool_sig,Y_sig_level,Z_bool_sig,Z_sig_level,X_int_bool,Y_int_bool,Z_int_bool
+1,False,0.0,False,0.0,True,2.5,True,True,True
+2,False,0.0,True,2.14,True,2.41,True,True,True
+3,True,5.46,True,4.06,False,0.0,True,False,False
+4,True,3.61,False,0.0,False,0.0,False,False,True
+5,False,0.0,False,0.0,False,0.0,True,False,False
+6,False,0.0,True,2.8,False,0.0,False,False,True
+7,True,2.27,True,2.59,False,0.0,False,False,True
+8,False,0.0,False,0.0,False,0.0,True,True,True
+9,False,0.0,False,0.0,False,0.0,True,False,True
+10,False,0.0,True,3.98,False,0.0,True,False,False
+11,False,0.0,False,0.0,False,0.0,True,False,True
+12,True,88.62,True,11.75,True,27.63,True,True,True

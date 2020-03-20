@@ -95,9 +95,9 @@ def plot_new_curve(windows, day, instruments, probes, sample):
             probe_y_tmp = df['dB_Y']
             probe_z_tmp = df['dB_Z']
 
-            probe_x_tmp_err = df['dB_X_err']
-            probe_y_tmp_err = df['dB_Y_err']
-            probe_z_tmp_err = df['dB_Z_err']
+            probe_x_tmp_err = [0.1 for i in range(len(probe_x_tmp))]#df['dB_X_err']
+            probe_y_tmp_err = [0.1 for i in range(len(probe_x_tmp))]#df['dB_Y_err']
+            probe_z_tmp_err = [0.1 for i in range(len(probe_x_tmp))]#df['dB_Z_err']
 
             def line(x,a,b):
                 return a*x + b
@@ -111,9 +111,9 @@ def plot_new_curve(windows, day, instruments, probes, sample):
             perr_z = np.sqrt(np.diag(cov_z))
             
             print('spo.curve_fit')
-            print('Slope = ', params_x[0], '+/-', perr_x[0], 'Intercept = ', params_x[1], '+/-', perr_x[1])
-            print('Slope = ', params_y[0], '+/-', perr_y[0], 'Intercept = ', params_y[1], '+/-', perr_y[1])
-            print('Slope = ', params_z[0], '+/-', perr_z[0], 'Intercept = ', params_z[1], '+/-', perr_z[1])
+            print('Slope = ', round(params_x[0],2), '+/-', round(perr_x[0],2))#, 'Intercept = ', params_x[1], '+/-', perr_x[1])
+            print('Slope = ', round(params_y[0],2), '+/-', round(perr_y[0],2))#, 'Intercept = ', params_y[1], '+/-', perr_y[1])
+            print('Slope = ', round(params_z[0],2), '+/-', round(perr_z[0],2))#, 'Intercept = ', params_z[1], '+/-', perr_z[1])
             
             plt.plot(xdata, params_x[0]*xdata + params_x[1], 'b-',label='_nolegend_')
             plt.plot(xdata, params_y[0]*xdata + params_y[1], 'r-',label='_nolegend_')
@@ -133,8 +133,8 @@ def plot_new_curve(windows, day, instruments, probes, sample):
             
             vect_dict[f'{probe}'] = [params_x[0], params_y[0], params_z[0], perr_x[0], perr_y[0], perr_z[0], params_x[1], params_y[1], params_z[1], perr_x[1], perr_y[1], perr_z[1]]
             #print(vect_dict[f'{probe}'])
-
-        w = csv.writer(open(f".\\Results\\Gradient_dicts\\newdI_dicts\\Day_{day}\\cur\\{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv", "w"))
+        
+        w = csv.writer(open(f".\\Results\\Gradient_dicts\\100pT_error_dicts\\Day_{day}\\cur\\{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv", "w"))
         w.writerow(["Probe","X.slope_cur", "Y.slope_cur", "Z.slope_cur","X.slope_cur_err", "Y.slope_cur_err", "Z.slope_cur_err","X_zero_int","Y_zero_int","Z_zero_int", "X_zero_int_err","Y_zero_int_err","Z_zero_int_err"])
         for key, val in vect_dict.items():
             w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9],val[10],val[11]])

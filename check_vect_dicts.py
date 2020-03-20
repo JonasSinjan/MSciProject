@@ -53,11 +53,11 @@ def check_grads(folder_path, day):
         df['Z_sig_level'] = df['Z_sig_level'].where(df['Z_sig_level'] > 2, other = 0)
         
         
-        df.to_csv(f'.\\Results\\Gradient_dicts\\newdI_dicts\\Day_{day}\\bool_cur\\{inst}_bool_check_day{day}_{tmp}.csv')
+        df.to_csv(f'.\\Results\\Gradient_dicts\\100pT_error_dicts\\Day_{day}\\bool_cur\\{inst}_bool_check_day{day}_{tmp}.csv')
         
 if __name__ == "__main__":
-    day = 1
+    day = 2
     line_fit_type = 'cur'
-    fol_path = f'.\\Results\\Gradient_dicts\\newdI_dicts\\Day_{day}\\{line_fit_type}\\'
+    fol_path = f'.\\Results\\Gradient_dicts\\100pT_error_dicts\\Day_{day}\\{line_fit_type}\\'
     check_grads(fol_path, day)
     
