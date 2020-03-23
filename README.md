@@ -19,24 +19,33 @@ In June 2019, ESA/NASA Solar Orbiter spacecraft sent to IABG's facility: MFSA (M
 ## Navigating the Data
 
 - Results
-   - dBdI_data -------------------> contains csv files with the xdata, ydata to plot dB vs dI
-      - Day 1
-      - Day 2
-        - 1Hz ------------> original files sampling MFSA data at 1Hz
-        - 1Hz_with_err ---> same files but the random noise for each probe is added
-        - 1kHz -----------> sampling MFSA at 1kHz (raw data)
-        - mag ------------> for the stowed MAG_OBS
+   - dBdI_data -------------------> contains .csv files with the xdata, ydata to plot dB vs dI
+     - newdI_copy ---------------> correct dbdI with corrected dI values
+        - Day 1
+        - Day 2
+          - 1Hz ------------> original files sampling MFSA data at 1Hz
+          - 1Hz_with_err ---> same files but the random noise for each probe is added
+          - 1kHz -----------> sampling MFSA at 1kHz (raw data)
+          - mag ------------> for the stowed MAG_OBS
     - dBdB_oldplots ----------------> some saved plots of using 1Hz data
     - dI_graphs ---------------------> saved current profiles
-    - Gradient_dicts ----------------> contains csv files of B/I proportionality constants
-        - Day_1
-        - Day_2
-        - 1hz_noorigin ----------> gradients where not forced through origin
-          - cur --------------> using `scipy.optimise.curve_fit` method
-          - lin ---------------> using `scipy.stats.linregress` method
-        - bool_check_grads_cur -> df's that contain booleans if grad/intercept signicifant
-        - bool_check_grads_lin
-    - PowerSpectrum ---------------> powerspectrum for day 2 MFSA - need to be updated
+    - Gradient_dicts ----------------> contains csv files of B/I constants proportionality constants
+        - newdI_dicts ---------> correct dicts with corrected dI values
+          - Day_1
+          - Day_2
+            - cur -------------> using `scipy.optimise.curve_fit` method
+            - bool_cur ---------> boolean df showing if grads significant
+        - old_dicts ------------> old dicts, show original methods
+          - Day_1
+          - Day_2
+          - 1hz_noorigin ----------> gradients where not forced through origin
+            - cur --------------> using `scipy.optimise.curve_fit` method
+            - lin ---------------> using `scipy.stats.linregress` method
+          - bool_check_grads_cur -> df's that contain booleans if grad/intercept signicifant
+          - bool_check_grads_lin
+    - PowerSpectrum ---------------> contains powerspectrum plots and files containing peaks
+      - Day_2 ------------------> mainly Day2 power spectrum plots
+      - Peak_files ---------------> contains .csv files with the selected peaks for each power spectra
     - Variation -----------------------> contains csv for estimated dB for I variation in EUI and METIS
   
 ## Code files
@@ -69,24 +78,30 @@ Same as `dB.py` but creates files for all probes, all instruments on a given day
 
 ### Core Files
 ```python
-current.py
+current_newdI.py
 ```
 
-Finds the datetime objects for each current step change for day 1 & 2. Found by looking at the gradient and setting a threshold. The anomalous peaks are removed. Current LCL data in spacecraft time. MFSA data in German UT local time.
+Finds the datetime objects for each current step change for day 1 & 2. Found by looking at the gradient and setting a threshold. The anomalous peaks are removed. Current LCL data in spacecraft time. MFSA data in German UT local time. Exact current dI found averaging either side of step change for higher accuracy.
+
 
 ```python
 processing.py
 ```
 
-Contains class `processing` that contains many methods which reads in, cleans the csv raw data files (changes to correct timezone and creates datetimeindex - datetimeindex must time consuming operation for entire code, cannot use faster parser method as raw data time just in seconds as a float, not close to required ISO8601 format) from MFSA. Also rotates the axis into the desired reference frame and contains the `calculate_db` method that the core of finding dB.
-
+Contains class `processing` that contains many methods which reads in, cleans the csv raw data files, changes to correct timezone and creates datetimeindex, from MFSA. Also rotates the axis into the desired reference frame and contains the `calculate_db` method that the core of finding dB.
 
 ### Analysis/Plotting Files
 
 ```python
 mfsa_object.py, deprecated(day_one.py, day_two.py) 
 ```
-Updated class to better organise code (supersedes day_one and day_two). Used to plot, calculate powerspectrum & noise level of MFSA probes for a given timespan, probe and instrument 
+Updated class to better organise code (supersedes day_one and day_two). Used to plot, calculate powerspectrum & noise level of MFSA probes for a given timespan, probe and instrument.
+
+```python
+load_inflight.py
+```
+
+Contains class `burst_data` that creates an object for desired timespan for in-flight Burst mode data - similar analysis methods as used in mfsa_object.py.
 
 ```python
 check_vect_dicts.py
@@ -108,7 +123,7 @@ Time index of MAG_OBS for day 1 and day 2 properly calculated (`mag.py` now redu
 metis_var.py
 ```
 
-Calculates average current (I) variation during METIS scientific operations and estimates dB at MAG_OBS location because of this dI
+Calculates average current (I) variation during METIS scientific operations and estimates dB at MAG_OBS location because of this dI.
 
 ```python
 plot_variation.py
@@ -120,8 +135,7 @@ Plots bar chart and cubic fit of the variations csv folders - showing the estima
 plot_raw_current.py
 ```
 
-Plots timeseries of raw LCL current data
-
+Plots timeseries of raw LCL current data.
 
 ```python
 probe_dist.py
@@ -147,7 +161,7 @@ Plots 3D map showing the vectors of the proportionality constants calculated at 
 ```python
 vect_dipole_fit.py
 ```
-Calculates magnetic moment in x,y,z for each probes' prop. const. and fits line through, if dipole should be flat line
+Calculates magnetic moment in x,y,z for each probes' prop. const. and fits line through, if dipole should be flat line.
 
 ```python
 vect_over_det_fit.py
@@ -157,14 +171,25 @@ Uses `numpy.linalg.lstsq` least squares regression to solve over determined syst
 ```python
 lowpassdif.py
 ```
-Calculates % dif if a order 10 butterworth low pass filter is applied to the MFSA data before calculating the proportionality constants
+Calculates % dif if a order 10 butterworth low pass filter is applied to the MFSA data before calculating the proportionality constants.
 
 ```python
 adjust_errs.py
 ```
 
-Corrects the errors on dBdI_data to only be the random noise level by each probe (previously this was added in quadrature with the standard error of mean propagation)
+Corrects the errors on dBdI_data to only be the random noise level by each probe (previously this was added in quadrature with the standard error of mean propagation).
 
+```python
+analyse_powerspec.py
+```
+
+Comparing different Peak_files .csv's.
+
+```python
+changedI_in_dbdi.py
+```
+
+Helper script to update gradient dicts with corrected dI values (using current_newdI.py instead of current.py) and save to new files.
 
 
 
