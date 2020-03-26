@@ -10,9 +10,22 @@ from datetime import datetime, timedelta
 import time
 import math
 import csv
+from plot_raw_current import plot_raw
 
-def mag(filepath, start_dt=None, end_dt=None):
-    
+def mag(windows, day, start_dt=None, end_dt=None, plot = False, current_v_b = False):
+
+    if day == 1:
+        if windows:
+            filepath = r'C:\Users\jonas\MSci-Data\PoweredDay1.csv'
+        else:
+            filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay1.csv")
+        
+    if day == 2:
+        if windows:
+            filepath = r'C:\Users\jonas\MSci-Data\PoweredDay2.csv.txt'
+        else:
+            filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay2.csv.txt")
+
     origin = datetime(2019, 6, 24, hour = 7, minute = 48, second = 19)
 
     if start_dt == None:
@@ -50,21 +63,37 @@ def mag(filepath, start_dt=None, end_dt=None):
     df['Y'] = df['Y'] - df['Y'].mean()
     df['Z'] = df['Z'] - df['Z'].mean()
     df2 = df
-    plot = True
+    
     if plot:
-        #plt.figure()
+        plt.figure()
         cols = df.columns.tolist()
         #df = df.resample('2s').mean()
         #tmp=[]
-        for col in cols[1:]:
-            #df2[col] = df2[col] - np.mean(df2[col])
-            plt.plot(df2.index.time, df2[col], label =f'{col}')
+        if current_v_b:
 
-            #var_1hz = np.std(df2[col])
-            #print('std - 1Hz', col, var_1hz)
-            #tmp.append(var_1hz)
+            current_df = plot_raw(True, 'EUI', day, plot=False)
+            current_df = current_df.between_time(start_dt.time(), end_dt.time())
+            current_df = current_df.resample('1s').mean()
+
+            print(len(current_df), len(df2))
+            df2 = df2.iloc[:min(len(current_df), len(df2))]
+            current_df = current_df.iloc[:min(len(current_df), len(df2))]
+
+            for col in cols:
+                plt.scatter(current_df[f'EUI Current [A]'], df2[col], label = str(col))
+            plt.xlabel('Current [A]')
+
+        else:
+            for col in cols[1:]:
+                #df2[col] = df2[col] - np.mean(df2[col])
+                plt.plot(df2.index.time, df2[col], label =f'{col}')
+
+                #var_1hz = np.std(df2[col])
+                #print('std - 1Hz', col, var_1hz)
+                #tmp.append(var_1hz)
            
-        plt.xlabel('Time [H:M:S]')
+            plt.xlabel('Time [H:M:S]')
+            
         plt.ylabel('dB [nT]')
         plt.legend(loc="best")
         plt.title('EUI - MAG - Day 2')
@@ -79,6 +108,8 @@ def mag(filepath, start_dt=None, end_dt=None):
         print(time_list[2]- time_list[0], time_list[1]-time_list[2])
         """
         plt.show()
+    else:
+        return df2
         
     #return tmp
     
@@ -86,18 +117,6 @@ if __name__ == "__main__":
     day = 2
     windows = True
     
-
-    if day == 1:
-        if windows:
-            filepath = r'C:\Users\jonas\MSci-Data\PoweredDay1.csv'
-        else:
-            filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay1.csv")
-        
-    if day == 2:
-        if windows:
-            filepath = r'C:\Users\jonas\MSci-Data\PoweredDay2.csv.txt'
-        else:
-            filepath = os.path.expanduser("~/Documents/MSciProject/Data/mag/PoweredDay2.csv.txt")
         
     #start_dt = datetime(2019,6,24,7,55)# this is the start of the time we want to look at, #datetime(2019,6,21,10,57,50)
     #end_dt = datetime(2019,6,24,8,0)# this is the end
@@ -105,7 +124,7 @@ if __name__ == "__main__":
     start_dt = datetime(2019,6,24,9,24)
     end_dt = datetime(2019,6,24,10,9)
 
-    b_noise = mag(filepath, start_dt=start_dt, end_dt=end_dt)
+    b_noise = mag(windows, day, start_dt=start_dt, end_dt=end_dt, plot = True, current_v_b = True)
 
     """
     w = csv.writer(open(f"day2_mag_vars.csv", "w"))

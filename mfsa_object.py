@@ -14,6 +14,7 @@ import csv
 from current import current_peaks
 from collections import defaultdict
 from plot_raw_current import plot_raw
+from magplot_2 import mag
 
 class mfsa_object:
 
@@ -165,7 +166,7 @@ class mfsa_object:
         plt.legend(loc="best")
         plt.show()
 
-    def plot_B_v_I(self):
+    def plot_B_v_I(self, mag_bool = False):
         if self.name in ['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']:
             df2 = self.df.resample('1s').mean()
             
@@ -192,13 +193,14 @@ class mfsa_object:
             current_df = current_df.iloc[:min(len(current_df), len(df2))]
             print(current_df.head())
             plt.figure()
+           
             for col in self.collist[1:]:
                 df2[col] = df2[col] - df2[col].mean()
                 plt.scatter(current_df[f'{self.name} Current [A]'], df2[col], label=str(col))
+            plt.title(f'{self.name} - Probe {self.probe} @ 1Hz, {self.start.date()}')
 
             plt.xlabel('Current [A]')
-            plt.ylabel('B [nT]')
-            plt.title(f'Inst: {self.name} - Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
+            plt.ylabel('dB [nT]')
             plt.legend(loc="best")
             plt.show()
         else:
@@ -330,7 +332,7 @@ if __name__ == "__main__":
 
     eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
     eui.get_data()
-    eui.plot_B_v_I()
+    eui.plot_B_v_I(mag_bool = True)
     #eui.plot()
     #eui.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667])
     
