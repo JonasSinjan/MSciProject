@@ -13,6 +13,7 @@ import glob
 import csv
 from current import current_peaks
 from collections import defaultdict
+from plot_raw_current import plot_raw
 
 class mfsa_object:
 
@@ -144,6 +145,7 @@ class mfsa_object:
     def plot(self):
         df2 = self.df.resample('1s').mean()
         #tmp = []
+
         for col in self.collist[1:]:
             df2[col] = df2[col] - df2[col].mean()
             plt.plot(df2.index.time, df2[col], label=str(col))
@@ -156,11 +158,51 @@ class mfsa_object:
             #tmp.append(var_1khz)
             #print(df2[col].abs().idxmax())
         
+        
         plt.xlabel('Time [H:M:S]')
         plt.ylabel('dB [nT]')
         plt.title(f'Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
         plt.legend(loc="best")
         plt.show()
+
+    def plot_B_v_I(self):
+        if self.name in ['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']:
+            df2 = self.df.resample('1s').mean()
+            
+            if self.day == 1:
+                if self.probe < 8:
+                    timezone_change = pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 30, milliseconds = 137)
+                else:
+                    timezone_change = pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 1, milliseconds = 606)
+            elif self.day == 2:
+                if self.probe < 8:
+                    timezone_change = pd.Timedelta(days = 0, hours = 1, minutes = 59, seconds = 14, milliseconds = 283)
+                else:
+                    timezone_change = pd.Timedelta(days = 0, hours = 1, minutes = 58, seconds = 46, milliseconds = 499)
+
+            start = self.start - timezone_change
+            end = self.end - timezone_change
+
+            current_df = plot_raw(True, self.name, self.day, plot=False)
+            current_df = current_df.between_time(start.time(), end.time())
+            current_df = current_df.resample('1s').mean()
+
+            print(len(current_df), len(df2))
+            df2 = df2.iloc[:min(len(current_df), len(df2))]
+            current_df = current_df.iloc[:min(len(current_df), len(df2))]
+            print(current_df.head())
+            plt.figure()
+            for col in self.collist[1:]:
+                df2[col] = df2[col] - df2[col].mean()
+                plt.scatter(current_df[f'{self.name} Current [A]'], df2[col], label=str(col))
+
+            plt.xlabel('Current [A]')
+            plt.ylabel('B [nT]')
+            plt.title(f'Inst: {self.name} - Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
+            plt.legend(loc="best")
+            plt.show()
+        else:
+            print('The objects attribute: name is not a correct instrument.')
 
     def moving_powerfreq(self, OBS, len_of_sections = 600, desired_freqs = [8.0], *, scaling = 'spectrum'):
         
@@ -286,8 +328,9 @@ if __name__ == "__main__":
     #daytwo.spectrogram(uplimit = 0.1)
     #daytwo.powerspectra()
 
-    #eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
-    #eui.get_data()
+    eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
+    eui.get_data()
+    eui.plot_B_v_I()
     #eui.plot()
     #eui.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667])
     
@@ -305,9 +348,9 @@ if __name__ == "__main__":
     #daytwo.spectrogram(downlimit = 0.5, uplimit = 1.0)
     #daytwo.powerspectra()
 
-    metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
-    metis.get_data()
-    metis.spectrogram(downlimit = 0, uplimit = 0.1) #need 0.4 for trace, 0.1 for absolute magnitude
+    #metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
+    #metis.get_data()
+    #metis.spectrogram(downlimit = 0, uplimit = 0.1) #need 0.4 for trace, 0.1 for absolute magnitude
     #metis.powerspectra()
 
     #print('Execution Time: ' ,round(time.time()-start, 2), 'seconds')

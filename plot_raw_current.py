@@ -5,7 +5,7 @@ from current import current_peaks
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 
-def plot_raw(windows, inst, daynumber):
+def plot_raw(windows, inst, daynumber, plot = False):
 
     if windows:
             if daynumber == 1:
@@ -18,27 +18,29 @@ def plot_raw(windows, inst, daynumber):
     df =  pd.read_excel(filename)
     df.set_index(['EGSE Time'], inplace = True)
 
-    dict_current = current_peaks(windows, daynumber, plot=False) #need to get the peak datetimes
-    peak_datetimes = dict_current.get(f'{inst} Current [A]')
-    if daynumber == 1:
-        peak_datetimes = [peak for peak in peak_datetimes if peak < datetime(2019,6,21,14,44)]
+    if plot:
+        dict_current = current_peaks(windows, daynumber, plot=False) #need to get the peak datetimes
+        peak_datetimes = dict_current.get(f'{inst} Current [A]')
+        if daynumber == 1:
+            peak_datetimes = [peak for peak in peak_datetimes if peak < datetime(2019,6,21,14,44)]
 
-    df = df.between_time((peak_datetimes[0]-timedelta(seconds = 30)).time(), (peak_datetimes[-1]+timedelta(seconds = 30)).time())
+        df = df.between_time((peak_datetimes[0]-timedelta(seconds = 30)).time(), (peak_datetimes[-1]+timedelta(seconds = 30)).time())
 
-    plt.figure()
-    plt.plot(df.index.time, df[f'{inst} Current [A]'], label=str(f'{inst} Current [A]'))     
-    plt.legend(loc='best')
-    plt.xlabel('Time [H:M:S]')
-    plt.ylabel('Current [A]')
-    plt.title(f'{inst} Raw Current Profile - Day {daynumber}')
-    plt.show()
-
-    print (df.head())
-    print (df.tail())
+        plt.figure()
+        plt.plot(df.index.time, df[f'{inst} Current [A]'], label=str(f'{inst} Current [A]'))     
+        plt.legend(loc='best')
+        plt.xlabel('Time [H:M:S]')
+        plt.ylabel('Current [A]')
+        plt.title(f'{inst} Raw Current Profile - Day {daynumber}')
+        plt.show()
+    else:
+        return df
+    #print (df.head())
+    #print (df.tail())
 
 if __name__ == "__main__":
     windows = True
     day = 2
     inst = 'EUI'
 
-    plot_raw(windows, inst, day)
+    plot_raw(windows, inst, day, plot = True)
