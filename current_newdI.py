@@ -205,17 +205,19 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
             peak_times = [i.time() for i in peak_datetimes]
             #print("len(peak_times) = ", len(peak_times))
             #print("len(index_list) = ", len(index_list))
-            plt.scatter(peak_times, current_dif[index_list], label='Current Step Changes')
+            #plt.scatter(peak_times, current_dif[index_list], label='Current Step Changes')
 
             df2 = df.between_time((peak_datetimes[0]-pd.Timedelta(minutes = 1)).time(), (peak_datetimes[-1]+pd.Timedelta(minutes = 1)).time())
-            plt.plot(df2.index.time, df2[col], label=str(col))
+            plt.plot(df2.index.time, df2[col], label='Current')
             
             
             plt.plot(df2.index.time, df2['Current Dif'], label='Gradient')
-            plt.scatter(peak_times, step_list)
+            plt.scatter(peak_times, step_list, color = 'r', label = 'dI')
             plt.legend(loc='best')
             plt.xlabel('Time [H:M:S]')
             plt.ylabel('Current [A]')
+            inst = str(col).split(' ')[0]
+            plt.title(f'{inst} Current Profile')
             #else:
             #   print("no peaks detected")
             #plt.savefig('%s_dI' % str(col))
@@ -243,7 +245,7 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
 
 if __name__ == "__main__":
     windows = True
-    daynumber = 1
+    daynumber = 2
     dict_cur = current_peaks(windows, daynumber, plot = True)
     #print(dict_cur['EUI Current [A]'])
     #print(dict_cur['METIS Current [A]'])
