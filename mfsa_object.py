@@ -15,6 +15,7 @@ from current import current_peaks
 from collections import defaultdict
 from plot_raw_current import plot_raw
 from magplot_2 import mag
+import scipy.optimize as spo
 
 class mfsa_object:
 
@@ -192,11 +193,30 @@ class mfsa_object:
             df2 = df2.iloc[:min(len(current_df), len(df2))]
             current_df = current_df.iloc[:min(len(current_df), len(df2))]
             print(current_df.head())
-            plt.figure()
-           
+
+            xdata = current_df[f'{self.name} Current [A]']
+            def line(x,a,b):
+                return a*x + b
+
             for col in self.collist[1:]:
                 df2[col] = df2[col] - df2[col].mean()
-                plt.scatter(current_df[f'{self.name} Current [A]'], df2[col], label=str(col))
+
+            params_x,cov_x = spo.curve_fit(line, xdata, df2[self.collist[1]])
+            params_y,cov_y = spo.curve_fit(line, xdata, df2[self.collist[2]])
+            params_z,cov_z = spo.curve_fit(line, xdata, df2[self.collist[3]])
+
+            perr_x = np.sqrt(np.diag(cov_x))
+            perr_y = np.sqrt(np.diag(cov_y))
+            perr_z = np.sqrt(np.diag(cov_z))
+            
+            plt.figure()
+
+            plt.plot(xdata, params_x[0]*xdata + params_x[1], 'b-',label=f'X {round(params_x[0],2)} +/-{round(perr_x[0],2)}')
+            plt.plot(xdata, params_y[0]*xdata + params_y[1], color = 'orange', linestyle = '-',label=f'Y {round(params_y[0],2)} +/-{round(perr_y[0],2)}')
+            plt.plot(xdata, params_z[0]*xdata + params_z[1], 'g-',label=f'Z {round(params_z[0],2)} +/-{round(perr_z[0],2)}')
+           
+            for col in self.collist[1:]:
+                plt.scatter(current_df[f'{self.name} Current [A]'], df2[col])
             plt.title(f'{self.name} - Probe {self.probe} @ 1Hz, {self.start.date()}')
 
             plt.xlabel('Current [A]')
