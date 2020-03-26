@@ -11,6 +11,8 @@ import time
 import math
 import csv
 from plot_raw_current import plot_raw
+import scipy.optimize as spo
+import scipy.stats as spstats
 
 def mag(windows, day, start_dt=None, end_dt=None, plot = False, current_v_b = False):
 
@@ -78,10 +80,31 @@ def mag(windows, day, start_dt=None, end_dt=None, plot = False, current_v_b = Fa
             print(len(current_df), len(df2))
             df2 = df2.iloc[:min(len(current_df), len(df2))]
             current_df = current_df.iloc[:min(len(current_df), len(df2))]
+            xdata = current_df[f'EUI Current [A]']
 
             for col in cols:
                 plt.scatter(current_df[f'EUI Current [A]'], df2[col], label = str(col))
             plt.xlabel('Current [A]')
+
+            def line(x,a,b):
+                return a*x + b
+
+            params_x,cov_x = spo.curve_fit(line, xdata, df2['X'])
+            params_y,cov_y = spo.curve_fit(line, xdata, df2['Y'])
+            params_z,cov_z = spo.curve_fit(line, xdata, df2['Z'])
+
+            perr_x = np.sqrt(np.diag(cov_x))
+            perr_y = np.sqrt(np.diag(cov_y))
+            perr_z = np.sqrt(np.diag(cov_z))
+            
+            #print('spo.curve_fit')
+            #print('Slope = ', round(params_x[0],2), '+/-', round(perr_x[0],2))#, 'Intercept = ', params_x[1], '+/-', perr_x[1])
+            #print('Slope = ', round(params_y[0],2), '+/-', round(perr_y[0],2))#, 'Intercept = ', params_y[1], '+/-', perr_y[1])
+            #print('Slope = ', round(params_z[0],2), '+/-', round(perr_z[0],2))#, 'Intercept = ', params_z[1], '+/-', perr_z[1])
+            
+            plt.plot(xdata, params_x[0]*xdata + params_x[1], 'b-',label=f'{round(params_x[0],2)} +/-{round(perr_x[0],2)}')
+            plt.plot(xdata, params_y[0]*xdata + params_y[1], 'r-',label=f'{round(params_y[0],2)} +/-{round(perr_y[0],2)}')
+            plt.plot(xdata, params_z[0]*xdata + params_z[1], 'g-',label=f'{round(params_z[0],2)} +/-{round(perr_z[0],2)}')
 
         else:
             for col in cols[1:]:
@@ -93,7 +116,7 @@ def mag(windows, day, start_dt=None, end_dt=None, plot = False, current_v_b = Fa
                 #tmp.append(var_1hz)
            
             plt.xlabel('Time [H:M:S]')
-            
+
         plt.ylabel('dB [nT]')
         plt.legend(loc="best")
         plt.title('EUI - MAG - Day 2')
