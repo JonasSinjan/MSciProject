@@ -16,6 +16,7 @@ from collections import defaultdict
 from plot_raw_current import plot_raw
 from magplot_2 import mag
 import scipy.optimize as spo
+import seaborn as sns
 
 class mfsa_object:
 
@@ -167,7 +168,7 @@ class mfsa_object:
         plt.legend(loc="best")
         plt.show()
 
-    def plot_B_v_I(self, mag_bool = False):
+    def plot_B_v_I(self):
         if self.name in ['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']:
             df2 = self.df.resample('1s').mean()
             
@@ -211,12 +212,16 @@ class mfsa_object:
             
             plt.figure()
 
-            plt.plot(xdata, params_x[0]*xdata + params_x[1], 'b-',label=f'X {round(params_x[0],2)} +/-{round(perr_x[0],2)}')
-            plt.plot(xdata, params_y[0]*xdata + params_y[1], color = 'orange', linestyle = '-',label=f'Y {round(params_y[0],2)} +/-{round(perr_y[0],2)}')
-            plt.plot(xdata, params_z[0]*xdata + params_z[1], 'g-',label=f'Z {round(params_z[0],2)} +/-{round(perr_z[0],2)}')
+            #plt.plot(xdata, params_x[0]*xdata + params_x[1], 'b-',label=f'X {round(params_x[0],2)} +/-{round(perr_x[0],2)}')
+            #plt.plot(xdata, params_y[0]*xdata + params_y[1], color = 'orange', linestyle = '-',label=f'Y {round(params_y[0],2)} +/-{round(perr_y[0],2)}')
+            #plt.plot(xdata, params_z[0]*xdata + params_z[1], 'g-',label=f'Z {round(params_z[0],2)} +/-{round(perr_z[0],2)}')
+
+            concatenate = pd.concat([current_df, df2], axis = 1)
+            #concatenate.head()
            
             for col in self.collist[1:]:
-                plt.scatter(current_df[f'{self.name} Current [A]'], df2[col])
+                #plt.scatter(current_df[f'{self.name} Current [A]'], df2[col])
+                sns.scatterplot(x=current_df[f'{self.name} Current [A]'], y = f'{col}', data = concatenate, label = f'{col}')
             plt.title(f'{self.name} - Probe {self.probe} @ 1Hz, {self.start.date()}')
 
             plt.xlabel('Current [A]')
@@ -352,7 +357,7 @@ if __name__ == "__main__":
 
     eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
     eui.get_data()
-    eui.plot_B_v_I(mag_bool = True)
+    eui.plot_B_v_I()
     #eui.plot()
     #eui.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667])
     
