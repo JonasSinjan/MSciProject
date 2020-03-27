@@ -108,11 +108,13 @@ def mag(windows, day, start_dt=None, end_dt=None, plot = False, current_v_b = Fa
             plt.plot(xdata, params_z[0]*xdata + params_z[1], 'g-',label=f'{round(params_z[0],2)} +/-{round(perr_z[0],2)}')
 
         else:
+            colour = [u'#1f77b4', u'#ff7f0e', u'#2ca02c']
+            i = 0
             for col in cols:
                 #df2[col] = df2[col] - np.mean(df2[col])
                 #plt.plot(df2.index.time, df2[col], label =f'{col}')
-                sns.lineplot(df.index.time, y = f'{col}', data = df2, label = f'{col}')
-
+                sns.lineplot(df.index.time, y = f'{col}', data = df2, label = f'{col}', color = colour[i])
+                i += 1
                 #var_1hz = np.std(df2[col])
                 #print('std - 1Hz', col, var_1hz)
                 #tmp.append(var_1hz)
