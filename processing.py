@@ -24,20 +24,20 @@ class processing:
         for filename in tqdm(all_files):   
             if soloA:
                 if collist == None:
-                    df =  pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';')
+                    df =  pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';', dtype = np.float32)
                     cols = df.columns.tolist()
                     new_cols = cols[0:5] + cols[-16:-1] + [cols[-1]] + cols[13:17] + cols[9:13] + cols[5:9] #this will reorder the columns into the correct order
                     df = df[new_cols]
                 else:
-                    df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';', usecols = collist)#header = 350, nrows = rows)
+                    df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 351, sep=';', usecols = collist, dtype = np.float32)#header = 350, nrows = rows)
             else:
                 if collist == None:
-                    df =  pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';')
+                    df =  pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';', dtype = np.float32)
                     cols = df.columns.tolist()
                     new_cols = [cols[0]] + cols[9:13] + cols[1:9] + cols[13:17]
                     df = df[new_cols]
                 else:
-                    df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';', usecols = collist)#, header = 170, nrows = rows)
+                    df = pd.read_csv(filename, error_bad_lines=False, warn_bad_lines = False, skiprows = 170, sep=';', usecols = collist, dtype = np.float32)#, header = 170, nrows = rows)
                 
             li.append(df)
         #tqdm.pandas(desc="Progress Bar")
