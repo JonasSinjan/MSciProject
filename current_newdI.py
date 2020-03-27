@@ -11,6 +11,7 @@ import time
 from datetime import datetime
 import glob
 import math
+import seaborn as sns
 
 def current_peaks(windows, daynumber, plot = False, sample = False):
     #daynumber = 1
@@ -144,31 +145,32 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
         step_list = [0]*len(peak_datetimes)
         step_err_list = [0]*len(peak_datetimes)
 
-        time_to_avg = 32
-
+        time_to_avg = 30
+        buffer = 10
+        time_to_avg += buffer
         for l, time in enumerate(peak_datetimes): #looping through the peaks datetimes        
             if l == 0:
                 time_before_left = time - pd.Timedelta(seconds = time_to_avg)
             else:
                 #time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = 2) #old method to average over maximum possible time
                 tmp = time - pd.Timedelta(seconds = time_to_avg)
-                if tmp > peak_datetimes[l-1] + pd.Timedelta(seconds = 2): #checking to see which is later, if time distance between two peaks less than a minute
+                if tmp > peak_datetimes[l-1] + pd.Timedelta(seconds = buffer): #checking to see which is later, if time distance between two peaks less than a minute
                     time_before_left = tmp
                 else:
-                    time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = 2)
+                    time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = buffer)
                 
-            time_before_right = time - pd.Timedelta(seconds = 2) #buffer time since sampling at 5sec, must be integers
-            time_after_left = time + pd.Timedelta(seconds = 2)
+            time_before_right = time - pd.Timedelta(seconds = buffer) #buffer time since sampling at 5sec, must be integers
+            time_after_left = time + pd.Timedelta(seconds = buffer)
             
             if l == len(peak_datetimes)-1:
                 time_after_right = time + pd.Timedelta(seconds = time_to_avg)
             else:
                 #time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2) # old method to average over maximum possible time
                 tmp = time + pd.Timedelta(seconds = time_to_avg)
-                if tmp < peak_datetimes[l+1] - pd.Timedelta(seconds = 2):
+                if tmp < peak_datetimes[l+1] - pd.Timedelta(seconds = buffer):
                     time_after_right = tmp
                 else:
-                    time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2)
+                    time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = buffer)
 
             df_tmp = df[col]
             df_before = df_tmp.between_time(time_before_left.time(), time_before_right.time())
@@ -208,11 +210,11 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
             #plt.scatter(peak_times, current_dif[index_list], label='Current Step Changes')
 
             df2 = df.between_time((peak_datetimes[0]-pd.Timedelta(minutes = 1)).time(), (peak_datetimes[-1]+pd.Timedelta(minutes = 1)).time())
-            plt.plot(df2.index.time, df2[col], label='Current')
+            sns.lineplot(df2.index.time, df2[col], label='Current')
             
             
-            plt.plot(df2.index.time, df2['Current Dif'], label='Gradient')
-            plt.scatter(peak_times, step_list, color = 'r', label = 'dI')
+            sns.lineplot(df2.index.time, df2['Current Dif'], label='Gradient')
+            sns.scatterplot(peak_times, step_list, color = u'#2ca02c',  label = 'dI', s=60)
             plt.legend(loc='best')
             plt.xlabel('Time [H:M:S]')
             plt.ylabel('Current [A]')
@@ -246,7 +248,7 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
 if __name__ == "__main__":
     windows = True
     daynumber = 2
-    dict_cur = current_peaks(windows, daynumber, plot = True)
+    dict_cur = current_peaks(windows, daynumber, plot = False)
     #print(dict_cur['EUI Current [A]'])
     #print(dict_cur['METIS Current [A]'])
 

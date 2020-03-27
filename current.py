@@ -10,6 +10,7 @@ import scipy.signal as sps
 import time
 from datetime import datetime
 import glob
+import seaborn as sns
 
 def current_peaks(windows, daynumber, plot = False, sample = False):
     #daynumber = 1
@@ -151,13 +152,16 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
             peak_times = [i.time() for i in peak_datetimes]
             #print("len(peak_times) = ", len(peak_times))
             #print("len(index_list) = ", len(index_list))
-            plt.scatter(peak_times, current_dif[index_list], label='Current Step Changes')
+            #plt.scatter(peak_times, current_dif[index_list], label='Current Step Changes')
+            sns.scatterplot(peak_times, current_dif[index_list], label='Current Step Changes')
 
             df2 = df.between_time((peak_datetimes[0]-pd.Timedelta(minutes = 1)).time(), (peak_datetimes[-1]+pd.Timedelta(minutes = 1)).time())
-            plt.plot(df2.index.time, df2[col], label=str(col))
+            #plt.plot(df2.index.time, df2[col], label=str(col))
+            sns.lineplot(df2.index.time, df2[col], label=str(col))
             
             
-            plt.plot(df2.index.time, df2['Current Dif'], label='Gradient')
+            #plt.plot(df2.index.time, df2['Current Dif'], label='Gradient')
+            sns.lineplot(df2.index.time, df2['Current Dif'], label='Gradient')
             plt.legend(loc='best')
             plt.xlabel('Time [H:M:S]')
             plt.ylabel('Current [A]')

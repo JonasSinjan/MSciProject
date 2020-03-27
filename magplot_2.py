@@ -13,6 +13,7 @@ import csv
 from plot_raw_current import plot_raw
 import scipy.optimize as spo
 import scipy.stats as spstats
+import seaborn as sns
 
 def mag(windows, day, start_dt=None, end_dt=None, plot = False, current_v_b = False):
 
@@ -107,9 +108,10 @@ def mag(windows, day, start_dt=None, end_dt=None, plot = False, current_v_b = Fa
             plt.plot(xdata, params_z[0]*xdata + params_z[1], 'g-',label=f'{round(params_z[0],2)} +/-{round(perr_z[0],2)}')
 
         else:
-            for col in cols[1:]:
+            for col in cols:
                 #df2[col] = df2[col] - np.mean(df2[col])
-                plt.plot(df2.index.time, df2[col], label =f'{col}')
+                #plt.plot(df2.index.time, df2[col], label =f'{col}')
+                sns.lineplot(df.index.time, y = f'{col}', data = df2, label = f'{col}')
 
                 #var_1hz = np.std(df2[col])
                 #print('std - 1Hz', col, var_1hz)
@@ -147,7 +149,7 @@ if __name__ == "__main__":
     start_dt = datetime(2019,6,24,9,24)
     end_dt = datetime(2019,6,24,10,9)
 
-    b_noise = mag(windows, day, start_dt=start_dt, end_dt=end_dt, plot = True, current_v_b = True)
+    b_noise = mag(windows, day, start_dt=start_dt, end_dt=end_dt, plot = True, current_v_b = False)
 
     """
     w = csv.writer(open(f"day2_mag_vars.csv", "w"))

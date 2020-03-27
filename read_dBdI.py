@@ -10,7 +10,11 @@ import os
 import numpy as np
 import csv 
 import scipy.optimize as spo
-
+import seaborn as sns
+#print(mpl.font_manager.get_cacheddir())
+#mpl.rcParams['font.family'] = ['sans-serif']
+#mpl.rcParams['font.sans-serif'] = ['cmr10']
+#mpl.rcParams['text.usetex'] = True
 
 
 def plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate):
@@ -60,7 +64,7 @@ def plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate):
             print('Slope = ', Z.slope, '+/-', Z.stderr, ' Intercept = ', Z.intercept)
 
             plt.figure()
-            plt.errorbar(xdata, probe_x_tmp, yerr = probe_x_tmp_err, fmt = 'bs',label = f'X grad: {round(X.slope,2)} ± {round(X.stderr,2)} int: {round(X.intercept, 2)}', markeredgewidth = 2)
+            plt.errorbar(xdata, probe_x_tmp, yerr = probe_x_tmp_err, fmt = 'bs',label = f'X grad: {round(X.slope,2)} $\pm$ {round(X.stderr,2)} int: {round(X.intercept, 2)}', markeredgewidth = 2)
             plt.errorbar(xdata, probe_y_tmp, yerr = probe_y_tmp_err, fmt = 'rs', label = f'Y grad: {round(Y.slope,2)} ± {round(Y.stderr,2)} int: {round(Y.intercept, 2)}', markeredgewidth = 2)
             plt.errorbar(xdata, probe_z_tmp, yerr = probe_z_tmp_err, fmt = 'gs', label = f'Z grad: {round(Z.slope,2)} ± {round(Z.stderr,2)} int: {round(Z.intercept, 2)}', markeredgewidth = 2)
 
@@ -114,14 +118,29 @@ def plot_new_curve(windows, day, instruments, probes, sample):
             print('Slope = ', round(params_x[0],2), '+/-', round(perr_x[0],2))#, 'Intercept = ', params_x[1], '+/-', perr_x[1])
             print('Slope = ', round(params_y[0],2), '+/-', round(perr_y[0],2))#, 'Intercept = ', params_y[1], '+/-', perr_y[1])
             print('Slope = ', round(params_z[0],2), '+/-', round(perr_z[0],2))#, 'Intercept = ', params_z[1], '+/-', perr_z[1])
-            
-            plt.plot(xdata, params_x[0]*xdata + params_x[1], 'b-',label='_nolegend_')
-            plt.plot(xdata, params_y[0]*xdata + params_y[1], 'r-',label='_nolegend_')
-            plt.plot(xdata, params_z[0]*xdata + params_z[1], 'g-',label='_nolegend_')
+            #g = plt.figure()
+            plt.plot(xdata, params_x[0]*xdata + params_x[1], '-', color = u'#1f77b4', label='_nolegend_')
+            plt.plot(xdata, params_y[0]*xdata + params_y[1], '-', color = u'#ff7f0e', label='_nolegend_')
+            plt.plot(xdata, params_z[0]*xdata + params_z[1], '-', color = u'#2ca02c', label='_nolegend_')
 
-            plt.errorbar(xdata, probe_x_tmp, yerr = probe_x_tmp_err, fmt = 'bs', markeredgewidth = 2, label = f'X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} nT/A')#, int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
-            plt.errorbar(xdata, probe_y_tmp, yerr = probe_y_tmp_err, fmt = 'rs', markeredgewidth = 2, label = f'Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} nT/A')#', int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
-            plt.errorbar(xdata, probe_z_tmp, yerr = probe_z_tmp_err, fmt = 'gs', markeredgewidth = 2, label = f'Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} nT/A')#', int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
+            cap_size = 3
+            error_colour = None
+            eline_width = 1.5
+            cap_thick = 0
+            ms = 8
+            #u'#1f77b4', u'#ff7f0e', u'#2ca02c'
+            plt.errorbar(xdata, probe_x_tmp, yerr = probe_x_tmp_err, fmt = 'o', color = u'#1f77b4', capsize = cap_size, capthick = cap_thick, ecolor = error_colour, elinewidth = eline_width, markeredgecolor = "white", markersize = ms, label = f'X grad: {round(params_x[0],2)} $\pm$ {round(perr_x[0],2)} nT/A')#, int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
+            plt.errorbar(xdata, probe_y_tmp, yerr = probe_y_tmp_err, fmt = 'o', color=u'#ff7f0e', capsize = cap_size, capthick = cap_thick, ecolor = error_colour, elinewidth = eline_width, markeredgecolor = "white", markersize = ms, label = f'Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} nT/A')#', int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
+            plt.errorbar(xdata, probe_z_tmp, yerr = probe_z_tmp_err, fmt = 'o', color = u'#2ca02c', capsize = cap_size, capthick = cap_thick, ecolor = error_colour, elinewidth = eline_width, markeredgecolor = "white", markersize = ms, label = f'Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} nT/A')#', int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
+            
+            #sns.pointplot(data = [xdata, probe_x_tmp], fmt = 'bs', label = f'X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} nT/A')#, int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
+            #sns.pointplot(data = [xdata, probe_y_tmp], fmt = 'bs', label = f'X grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} nT/A')#', int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
+            #sns.pointplot(data = [xdata, probe_z_tmp], fmt = 'bs', label = f'X grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} nT/A')#', int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
+            
+            #d = {'xdata': xdata, 'probe_x_tmp': probe_x_tmp, 'probe_x_tmp_err':probe_x_tmp_err}
+            #df = pd.DataFrame(data = d)
+            #g = sns.FacetGrid(df, size = 5)
+            #g.map(plt.errorbar, "xdata", "probe_x_tmp", "probe_x_tmp_err", fmt = 'bs')
 
             plt.legend(loc="best")
             plt.title(f'Day {day} - {inst} - Probe {probe} - {sample}Hz')
@@ -142,9 +161,9 @@ def plot_new_curve(windows, day, instruments, probes, sample):
         
 if __name__ == "__main__":
     windows = True
-    day = 1
-    instruments = ['SoloHI']#['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
-    probes = range(1,13)
+    day = 2
+    instruments = ['EUI']#['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
+    probes = [7]
     sample_rate = 1
 
     #plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate)
