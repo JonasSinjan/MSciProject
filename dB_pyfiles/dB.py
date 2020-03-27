@@ -4,7 +4,7 @@ import sys
 sys.path.append("..") 
 from processing import processing
 from pandas.plotting import register_matplotlib_converters
-from current import current_peaks
+from current_newdI import current_peaks
 register_matplotlib_converters()
 import pandas as pd
 import os
@@ -142,6 +142,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 
         #get data for dI
         xdata = list(current_dif[:len(peak_datetimes)])
+        print(xdata)
         
         #get data for dB
         probe_x_tmp = step_dict.get(f'Probe{num_str}_X')
@@ -169,9 +170,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
         if rand_noise:
             #takes random noise and adds it in quadrature with the standard error of averaging 
             if day == 1:
-                    err_path = f'..\\day1_mfsa_probe_vars.csv'
+                    err_path = f'..\\Results\\day1_mfsa_probe_vars.csv'
             elif day == 2:
-                err_path = f'..\\day2_mfsa_probe_vars.csv'
+                err_path = f'..\\Results\\day2_mfsa_probe_vars.csv'
             
             df_err_correction = pd.read_csv(err_path)
             df_err = df_err_correction.iloc[i]
@@ -212,9 +213,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             plt.figure()
             
             if rand_noise:
-                plt.plot(xdata, params_x[0]*xdata + params_x[1], 'b:', label = f'curve_fit - X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
-                plt.plot(xdata, params_y[0]*xdata + params_y[1], 'r:', label = f'curve_fit - Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
-                plt.plot(xdata, params_z[0]*xdata + params_z[1], 'g:', label = f'curve_fit - Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
+                plt.plot(xdata, params_x[0]*np.array(xdata) + params_x[1], 'b:', label = f'curve_fit - X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
+                plt.plot(xdata, params_y[0]*np.array(xdata) + params_y[1], 'r:', label = f'curve_fit - Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
+                plt.plot(xdata, params_z[0]*np.array(xdata) + params_z[1], 'g:', label = f'curve_fit - Z grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
             
             elif rand_noise == False:
                 plt.plot(xdata, X.intercept + X.slope*np.array(xdata), 'b-', label = f'X grad: {round(X.slope,2)} ± {round(X.stderr,2)} int: {round(X.intercept, 2)}')
@@ -231,7 +232,7 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
             plt.ylabel('dB [nT]')
             plt.show()
 
-        save_all = True
+        save_all = False
         if save_all:
             dBdI = {}
             for dI in range(len(xdata)):
@@ -254,9 +255,9 @@ def dB(day, peak_datetimes, instrument, current_dif, windows, probe_list, plot =
 if __name__ == "__main__":
     #these 3 factors need to be set 
     windows = True
-    probes = range(12)#range(8,12) #what probes are desired
-    day_number = 1
-    instru_list = ['SWA', 'EPD']#['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI', 'EUI', 'SWA', 'EPD']
+    probes = [6]#range(12)#range(8,12) #what probes are desired
+    day_number = 2
+    instru_list = ['EUI']#['STIX', 'METIS', 'SPICE', 'PHI', 'SoloHI', 'EUI', 'SWA', 'EPD']
 
     #create dictionary with all current peaks for every instrument (v. fast)
     dict_current = current_peaks(windows, day_number, plot=False)
@@ -272,14 +273,15 @@ if __name__ == "__main__":
         #need current dif (gradient in current) to plot later
         current_dif = dict_current.get(f'{instrument} Current [A] dI')
         #create dictionary of the Magnetic Field/Amp proportionality for the desired instrument
-        vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot = False, lowpass = False, rand_noise = True)
+        vect_dict = dB(day_number, peak_datetimes, instrument, current_dif, windows, probes, plot = True, lowpass = False, rand_noise = True)
         #print(vect_dict['12'])
         
         #write the Magnetic Field/Amp proportionality to csv
         
+        """
         w = csv.writer(open(f"..\\Results\\Gradient_dicts\\Day_{day_number}\\1hz_noorigin\\cur\\{instrument}_vect_dict_NOORIGIN_Day{day_number}_curve_fit.csv", "w"))
         #w.writerow(["Probe","X.slope_lin", "Y.slope_lin", "Z.slope_lin","X.slope_lin_err", "Y.slope_lin_err", "Z.slope_lin_err","X_zero_err","Y_zero_err","Z_zero_err"])#,"X.slope_curve", "Y.slope_curve", "Z.slope_curve","X.slope_curve_err", "Y.slope_curve_err", "Z.slope_curve_err"])
         w.writerow(["Probe","X.slope_cur", "Y.slope_cur", "Z.slope_cur","X.slope_cur_err", "Y.slope_cur_err", "Z.slope_cur_err","X_zero_int","Y_zero_int","Z_zero_int", "X_zero_int_err","Y_zero_int_err","Z_zero_int_err"])
         for key, val in vect_dict.items():
             w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9],val[10],val[11]])
-        
+        """

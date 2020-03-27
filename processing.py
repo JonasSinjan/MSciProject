@@ -175,7 +175,9 @@ class processing:
     @staticmethod
     def calculate_dB(df, peak_datetimes):
         step_dict = {}
-        time_to_avg = 30 + 2 #need the 2 seconds for buffer time, as exact timestamp of current has uncertainty of ~2 seconds either side (current at 5sec resample)
+        time_to_avg = 30 #need the 2 seconds for buffer time, as exact timestamp of current has uncertainty of ~2 seconds either side (current at 5sec resample)
+        buffer = 2
+        time_to_avg += buffer
         for k in df.columns.tolist(): #looping through x, y, z
             print(k)
             if str(k) not in step_dict.keys():
@@ -191,23 +193,23 @@ class processing:
                 else:
                     #time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = 2) #old method to average over maximum possible time
                     tmp = time - pd.Timedelta(seconds = time_to_avg)
-                    if tmp > peak_datetimes[l-1] + pd.Timedelta(seconds = 2): #checking to see which is later, if time distance between two peaks less than a minute
+                    if tmp > peak_datetimes[l-1] + pd.Timedelta(seconds = buffer): #checking to see which is later, if time distance between two peaks less than a minute
                         time_before_left = tmp
                     else:
-                        time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = 2)
+                        time_before_left = peak_datetimes[l-1] + pd.Timedelta(seconds = buffer)
                     
-                time_before_right = time - pd.Timedelta(seconds = 2) #buffer time since sampling at 5sec, must be integers
-                time_after_left = time + pd.Timedelta(seconds = 2)
+                time_before_right = time - pd.Timedelta(seconds = buffer) #buffer time since sampling at 5sec, must be integers
+                time_after_left = time + pd.Timedelta(seconds = buffer)
                 
                 if l == len(peak_datetimes)-1:
                     time_after_right = time + pd.Timedelta(seconds = time_to_avg)
                 else:
                     #time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2) # old method to average over maximum possible time
                     tmp = time + pd.Timedelta(seconds = time_to_avg)
-                    if tmp < peak_datetimes[l+1] - pd.Timedelta(seconds = 2):
+                    if tmp < peak_datetimes[l+1] - pd.Timedelta(seconds = buffer):
                         time_after_right = tmp
                     else:
-                        time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = 2)
+                        time_after_right = peak_datetimes[l+1] - pd.Timedelta(seconds = buffer)
                     
                 df_tmp = df[str(k)]
                 df_before = df_tmp.between_time(time_before_left.time(), time_before_right.time())

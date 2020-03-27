@@ -25,6 +25,7 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
     
     df =  pd.read_excel(filename)
     df.set_index(['EGSE Time'], inplace = True)
+    df1 = df
     df = df.resample(f'{5}s').mean()
     #print (df.tail())
 
@@ -209,10 +210,10 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
             #print("len(index_list) = ", len(index_list))
             #plt.scatter(peak_times, current_dif[index_list], label='Current Step Changes')
 
+            df3 = df1.between_time((peak_datetimes[0]-pd.Timedelta(minutes = 1)).time(), (peak_datetimes[-1]+pd.Timedelta(minutes = 1)).time())
+            sns.lineplot(df3.index.time, df3[col], label='Current')
+            
             df2 = df.between_time((peak_datetimes[0]-pd.Timedelta(minutes = 1)).time(), (peak_datetimes[-1]+pd.Timedelta(minutes = 1)).time())
-            sns.lineplot(df2.index.time, df2[col], label='Current')
-            
-            
             sns.lineplot(df2.index.time, df2['Current Dif'], label='Gradient')
             sns.scatterplot(peak_times, step_list, color = u'#2ca02c',  label = 'dI', s=60)
             plt.legend(loc='best')
@@ -248,7 +249,7 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
 if __name__ == "__main__":
     windows = True
     daynumber = 2
-    dict_cur = current_peaks(windows, daynumber, plot = False)
+    dict_cur = current_peaks(windows, daynumber, plot = True)
     #print(dict_cur['EUI Current [A]'])
     #print(dict_cur['METIS Current [A]'])
 
