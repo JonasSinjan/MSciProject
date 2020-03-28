@@ -41,7 +41,8 @@ def plot_raw(windows, inst, daynumber, plot = False):
 
         plt.axvspan(datetime(2019,6,24,9,28,36).time(),datetime(2019,6,24,9,29,6).time(), color = "grey", alpha = 0.3)     
         plt.axvspan(datetime(2019,6,24,9,29,16).time(),datetime(2019,6,24,9,29,46).time(), color = "grey", alpha = 0.3)  
-            
+        diff = df[f'{inst} Current [A]'].diff()
+        plt.plot(df.index.time, diff)
         plt.legend(loc='best')
         plt.xlabel('Time [H:M:S]')
         plt.ylabel('Current [A]')

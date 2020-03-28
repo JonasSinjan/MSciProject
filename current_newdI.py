@@ -26,6 +26,7 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
     df =  pd.read_excel(filename)
     df.set_index(['EGSE Time'], inplace = True)
     df1 = df
+    
     df = df.resample(f'{5}s').mean()
     #print (df.tail())
 
@@ -41,6 +42,7 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
         if daynumber == 2:
             day = datetime(2019,6,24,0,0,0)
 
+        diff2 = df1[col].diff()
         #.diff() finds difference between each row as it goes - change in I per sample     
         diff = df[col].diff()
         df['Current Dif'] = diff
@@ -214,7 +216,7 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
             sns.lineplot(df3.index.time, df3[col], label='Current')
             
             df2 = df.between_time((peak_datetimes[0]-pd.Timedelta(minutes = 1)).time(), (peak_datetimes[-1]+pd.Timedelta(minutes = 1)).time())
-            sns.lineplot(df2.index.time, df2['Current Dif'], label='Gradient')
+            sns.lineplot(df3.index.time, df3[col].diff(), label='Gradient')
             sns.scatterplot(peak_times, step_list, color = u'#2ca02c',  label = 'dI', s=60)
             plt.legend(loc='best')
             plt.xlabel('Time [H:M:S]')
