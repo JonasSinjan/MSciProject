@@ -87,22 +87,26 @@ def plot_new_curve(windows, day, instruments, probes, sample):
         for probe in probes:
 
             if windows:
-                #path = f'.\\Results\\dBdI_data\\old_dI\\Day{day}\\{sample}Hz_with_err\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz_day{day}.csv'
+                #path = f'.\\Results\\dBdI_data\\old_dI\\Day{day}\\{sample}Hz\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz.csv' #day{day} for day 1
                 path = f'.\\Results\\dBdI_data\\new_dI_copy\\Day{day}\\{inst}\\{inst}_probe{probe}_vect_dict_{sample}Hz_day{day}.csv'
 
             else:
                 path = os.path.expanduser(f"~/Documents/MSciProject/NewCode//Results/dBdI_data/Day{day}/{sample}Hz_with_err/{inst}/{inst}_probe{probe}_vect_dict_{sample}Hz_day{day}.csv")
         
             df = pd.read_csv(path)
-            xdata = df['dI']
+            #xdata = df['dI']
+            xdata = np.array([0.291, 0.096, 0.352, -0.322, 0.091, 0.093, 0.109, 0.041, -0.109, -0.111, -0.108, -0.443])
             probe_x_tmp = df['dB_X']
             probe_y_tmp = df['dB_Y']
             probe_z_tmp = df['dB_Z']
 
-            probe_x_tmp_err = df['dB_X_err']
-            probe_y_tmp_err = df['dB_Y_err']
-            probe_z_tmp_err = df['dB_Z_err']
+            #probe_x_tmp_err = df['dB_X_err']
+            #probe_y_tmp_err = df['dB_Y_err']
+            #probe_z_tmp_err = df['dB_Z_err']
 
+            probe_x_tmp_err = [0.1 for i in range(len(probe_x_tmp))]
+            probe_y_tmp_err = [0.1 for i in range(len(probe_x_tmp))]
+            probe_z_tmp_err = [0.1 for i in range(len(probe_x_tmp))]
             def line(x,a,b):
                 return a*x + b
 

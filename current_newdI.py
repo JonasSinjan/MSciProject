@@ -202,7 +202,8 @@ def current_peaks(windows, daynumber, plot = False, sample = False):
             dict[str(col) + ' dI'] = step_list#current_dif[index_list]
             
         #print(peak_datetimes)
-        print(step_list)
+        print('dI = ', step_list)
+        print('Err = ', step_err_list)
         if plot:
             plt.figure(i)
          
