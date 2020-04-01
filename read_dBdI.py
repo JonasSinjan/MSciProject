@@ -94,12 +94,18 @@ def plot_new_curve(windows, day, instruments, probes, sample):
                 path = os.path.expanduser(f"~/Documents/MSciProject/NewCode//Results/dBdI_data/Day{day}/{sample}Hz_with_err/{inst}/{inst}_probe{probe}_vect_dict_{sample}Hz_day{day}.csv")
         
             df = pd.read_csv(path)
-            #xdata = df['dI']
-            xdata = np.array([0.291, 0.096, 0.352, -0.322, 0.091, 0.093, 0.109, 0.041, -0.109, -0.111, -0.108, -0.443])
+            xdata = df['dI']
+            #xdata = np.array([0.291, 0.096, 0.352, -0.322, 0.091, 0.093, 0.109, 0.041, -0.109, -0.111, -0.108, -0.443])
+            #xdata = np.array([0.128, 0.324, 0.042, 0.107, -0.482, 0.325, -0.459, 0.135, 0.325, 0.043, -0.374, -0.125, 0.126, 0.325, 0.042, -0.369, 0.426, 0.046, -0.482, -0.124])
+            #xdata = np.array([0.326, -0.015, 0.061, 0.137, 0.047, -0.045, 0.048, -0.048, 0.152, 0.372, -0.739, -0.312])
             probe_x_tmp = df['dB_X']
             probe_y_tmp = df['dB_Y']
             probe_z_tmp = df['dB_Z']
-
+            
+            #print(list(xdata))
+            #print(list(probe_y_tmp))
+            #print(len(list(probe_x_tmp)))
+            
             #probe_x_tmp_err = df['dB_X_err']
             #probe_y_tmp_err = df['dB_Y_err']
             #probe_z_tmp_err = df['dB_Z_err']
@@ -107,6 +113,7 @@ def plot_new_curve(windows, day, instruments, probes, sample):
             probe_x_tmp_err = [0.1 for i in range(len(probe_x_tmp))]
             probe_y_tmp_err = [0.1 for i in range(len(probe_x_tmp))]
             probe_z_tmp_err = [0.1 for i in range(len(probe_x_tmp))]
+
             def line(x,a,b):
                 return a*x + b
 
@@ -122,6 +129,8 @@ def plot_new_curve(windows, day, instruments, probes, sample):
             print('Slope = ', round(params_x[0],2), '+/-', round(perr_x[0],2))#, 'Intercept = ', params_x[1], '+/-', perr_x[1])
             print('Slope = ', round(params_y[0],2), '+/-', round(perr_y[0],2))#, 'Intercept = ', params_y[1], '+/-', perr_y[1])
             print('Slope = ', round(params_z[0],2), '+/-', round(perr_z[0],2))#, 'Intercept = ', params_z[1], '+/-', perr_z[1])
+
+            """
             #g = plt.figure()
             plt.plot(xdata, params_x[0]*xdata + params_x[1], '-', color = u'#1f77b4', label='_nolegend_')
             plt.plot(xdata, params_y[0]*xdata + params_y[1], '-', color = u'#ff7f0e', label='_nolegend_')
@@ -151,23 +160,24 @@ def plot_new_curve(windows, day, instruments, probes, sample):
             plt.xlabel('dI [A]')
             plt.ylabel('dB [nT]')
             plt.show()
+            """
             
             #   this """ section is to update the gradient dicts using the corrected dbdi data
             
             vect_dict[f'{probe}'] = [params_x[0], params_y[0], params_z[0], perr_x[0], perr_y[0], perr_z[0], params_x[1], params_y[1], params_z[1], perr_x[1], perr_y[1], perr_z[1]]
             #print(vect_dict[f'{probe}'])
-        """
+        
         w = csv.writer(open(f".\\Results\\Gradient_dicts\\100pT_error_dicts\\Day_{day}\\cur\\{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv", "w"))
         w.writerow(["Probe","X.slope_cur", "Y.slope_cur", "Z.slope_cur","X.slope_cur_err", "Y.slope_cur_err", "Z.slope_cur_err","X_zero_int","Y_zero_int","Z_zero_int", "X_zero_int_err","Y_zero_int_err","Z_zero_int_err"])
         for key, val in vect_dict.items():
             w.writerow([key,val[0],val[1],val[2],val[3],val[4],val[5],val[6],val[7],val[8],val[9],val[10],val[11]])
-        """
+        
         
 if __name__ == "__main__":
     windows = True
-    day = 2
-    instruments = ['EUI']#['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
-    probes = [7]
+    day = 1
+    instruments = ['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
+    probes = range(1,13)
     sample_rate = 1
 
     #plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate)
