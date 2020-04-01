@@ -176,7 +176,7 @@ def plot_new_curve(windows, day, instruments, probes, sample):
 if __name__ == "__main__":
     windows = True
     day = 1
-    instruments = ['EUI', 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
+    instruments = ['EUI']#, 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
     probes = range(1,13)
     sample_rate = 1
 

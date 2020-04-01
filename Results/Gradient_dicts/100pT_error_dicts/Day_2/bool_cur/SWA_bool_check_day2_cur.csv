@@ -2,12 +2,12 @@ Probe,X_bool_sig,X_sig_level,Y_bool_sig,Y_sig_level,Z_bool_sig,Z_sig_level,X_int
 1,False,0.0,False,0.0,False,0.0,False,False,False
 2,False,0.0,False,0.0,False,0.0,True,False,True
 3,False,0.0,False,0.0,False,0.0,True,True,False
-4,False,0.0,True,3.0,False,0.0,False,False,False
+4,False,0.0,True,2.99,False,0.0,False,False,False
 5,False,0.0,False,0.0,False,0.0,True,True,True
 6,False,0.0,False,0.0,False,0.0,True,False,True
 7,False,0.0,False,0.0,False,0.0,True,True,False
 8,False,0.0,False,0.0,False,0.0,False,True,True
 9,False,0.0,False,0.0,False,0.0,False,False,False
-10,False,0.0,False,0.0,True,2.25,False,False,False
+10,False,0.0,False,0.0,True,2.27,False,False,False
 11,False,0.0,False,0.0,False,0.0,False,False,False
-12,True,44.47,True,27.89,True,26.26,True,True,True
+12,True,42.71,True,27.19,True,26.63,True,True,True
