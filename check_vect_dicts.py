@@ -4,7 +4,7 @@ import glob
 def check_grads(folder_path, day):
 
     int_thresh = 0.1
-    sig_thresh = 2
+    sig_thresh = 1.5
     #print(glob.glob(f'{folder_path}*.csv'))
     for file in glob.glob(f'{folder_path}*.csv'):
         df = pd.read_csv(file)
@@ -53,11 +53,11 @@ def check_grads(folder_path, day):
         df['Z_sig_level'] = df['Z_sig_level'].where(df['Z_sig_level'] > 2, other = 0)
         
         
-        df.to_csv(f'.\\Results\\Gradient_dicts\\100pT_error_dicts\\Day_{day}\\bool_cur\\{inst}_bool_check_day{day}_{tmp}.csv')
+        df.to_csv(f'.\\Results\\Gradient_dicts\\newdI_dicts\\Day_{day}\\bool_cur_1_5_sig\\{inst}_bool_check_day{day}_{tmp}_1_5sig.csv')
         
 if __name__ == "__main__":
     day = 1
     line_fit_type = 'cur'
-    fol_path = f'.\\Results\\Gradient_dicts\\100pT_error_dicts\\Day_{day}\\{line_fit_type}\\'
+    fol_path = f'.\\Results\\Gradient_dicts\\newdI_dicts\\Day_{day}\\{line_fit_type}\\'
     check_grads(fol_path, day)
     
