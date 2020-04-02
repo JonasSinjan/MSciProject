@@ -48,15 +48,15 @@ def check_grads(folder_path, day):
 
         df = df[['X_bool_sig', 'X_sig_level', 'Y_bool_sig', 'Y_sig_level', 'Z_bool_sig', 'Z_sig_level','X_int_bool', 'Y_int_bool', 'Z_int_bool']]
 
-        df['X_sig_level'] = df['X_sig_level'].where(df['X_sig_level'] > 2, other = 0)
-        df['Y_sig_level'] = df['Y_sig_level'].where(df['Y_sig_level'] > 2, other = 0)
-        df['Z_sig_level'] = df['Z_sig_level'].where(df['Z_sig_level'] > 2, other = 0)
+        df['X_sig_level'] = df['X_sig_level'].where(df['X_sig_level'] > sig_thresh, other = 0)
+        df['Y_sig_level'] = df['Y_sig_level'].where(df['Y_sig_level'] > sig_thresh, other = 0)
+        df['Z_sig_level'] = df['Z_sig_level'].where(df['Z_sig_level'] > sig_thresh, other = 0)
         
         
         df.to_csv(f'.\\Results\\Gradient_dicts\\newdI_dicts\\Day_{day}\\bool_cur_1_5_sig\\{inst}_bool_check_day{day}_{tmp}_1_5sig.csv')
         
 if __name__ == "__main__":
-    day = 1
+    day = 2
     line_fit_type = 'cur'
     fol_path = f'.\\Results\\Gradient_dicts\\newdI_dicts\\Day_{day}\\{line_fit_type}\\'
     check_grads(fol_path, day)

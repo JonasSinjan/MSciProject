@@ -10,4 +10,4 @@ Probe,X_bool_sig,X_sig_level,Y_bool_sig,Y_sig_level,Z_bool_sig,Z_sig_level,X_int
 9,False,0.0,False,0.0,False,0.0,False,True,False
 10,False,0.0,False,0.0,False,0.0,False,True,False
 11,False,0.0,False,0.0,False,0.0,False,True,False
-12,True,0.0,True,2.3,False,0.0,False,True,True
+12,True,1.66,True,2.3,False,0.0,False,True,True

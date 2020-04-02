@@ -1,7 +1,7 @@
 Probe,X_bool_sig,X_sig_level,Y_bool_sig,Y_sig_level,Z_bool_sig,Z_sig_level,X_int_bool,Y_int_bool,Z_int_bool
 1,False,0.0,False,0.0,False,0.0,False,False,False
 2,False,0.0,False,0.0,False,0.0,False,False,False
-3,True,0.0,True,0.0,False,0.0,False,False,False
+3,True,1.79,True,1.61,False,0.0,False,False,False
 4,False,0.0,False,0.0,False,0.0,False,False,False
 5,False,0.0,False,0.0,False,0.0,True,False,False
 6,False,0.0,False,0.0,False,0.0,False,False,False
