@@ -171,6 +171,7 @@ class mfsa_object:
         day_1_offsets = [26, 14, 31] #p8
         day_1_offsets = [5,-45, 61] #p10
         day_1_offsets = [-65,-38, -5] #p10 non rotated
+        day_1_offsets = [4.4,47.8,2.2] p7
         
         plt.plot(df2.index.time, df2[self.collist[2]]-49, label ='Probe09_Y')
         for col in self.collist[1:]:
@@ -195,52 +196,130 @@ class mfsa_object:
         #plt.plot(df2.index.time, (df2[self.collist[3]]+102.5), label = 'X')
 
         #b_magnitude = np.sqrt((df2[self.collist[2]]-49)**2 + (df2[self.collist[1]]+203)**2 + (df2[self.collist[3]]+102.5)**2)
-        b_magnitude = np.sqrt((df2[self.collist[2]]-45)**2 + (df2[self.collist[1]]+5)**2 + (df2[self.collist[3]]+61)**2)
+        #b_magnitude = np.sqrt((df2[self.collist[2]]-45)**2 + (df2[self.collist[1]]+5)**2 + (df2[self.collist[3]]+61)**2)
+        #b_magnitude = np.sqrt((df2[self.collist[2]]+47.8)**2 + (df2[self.collist[1]]+4.4)**2 + (df2[self.collist[3]]+2.2)**2)#p7
+        b_magnitude = np.sqrt((df2[self.collist[2]]-46.7)**2 + (df2[self.collist[1]]+6)**2 + (df2[self.collist[3]]+63.5)**2)
         plt.plot(df2.index.time, b_magnitude, label = '|B|')
         
         y = np.linspace(-0.25,10,100)
 
-        plt.plot([datetime(2019,6,21,7,41,0).time() for i in y], y, linestyle="--", color = 'black')
-        plt.text(x = datetime(2019,6,21,7,31,0).time(), y = -0.5, s = 'Core On')
+        if self.day == 1:
+            plt.plot([datetime(2019,6,21,7,41,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,21,7,31,0).time(), y = -0.5, s = 'Core On')
 
-        plt.plot([datetime(2019,6,21,8,59,0).time() for i in y], y, linestyle="--", color = 'black')
-        plt.text(x = datetime(2019,6,21,8,59,0).time(), y = -0.5, s = 'Power Amplifier')
-        
-        plt.plot([datetime(2019,6,21,8,56,0).time() for i in y], y, linestyle="--", color = 'black')
-        plt.text(x = datetime(2019,6,21,8,45,0).time(), y = -0.5, s = 'MAG')
+            plt.plot([datetime(2019,6,21,8,59,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,21,8,59,0).time(), y = -0.5, s = 'Power Amplifier')
+            
+            plt.plot([datetime(2019,6,21,8,56,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,21,8,45,0).time(), y = -0.5, s = 'MAG')
 
-        plt.plot([datetime(2019,6,21,9,58,0).time() for i in y], y, linestyle="--", color = 'black')
-        plt.text(x = datetime(2019,6,21,9,56,0).time(), y = -0.5, s = 'STIX')
+            plt.plot([datetime(2019,6,21,9,58,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,21,9,56,0).time(), y = -0.5, s = 'STIX')
 
-        plt.plot([datetime(2019,6,21,10,20,0).time() for i in y], y, linestyle="--", color = 'black')
-        plt.text(x = datetime(2019,6,21,10,18,0).time(), y = -0.5, s = 'EPD')
+            plt.plot([datetime(2019,6,21,10,20,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,21,10,18,0).time(), y = -0.5, s = 'EPD')
 
-        plt.plot([datetime(2019,6,21,10,35,0).time() for i in y], y, linestyle="--", color = 'black')
-        plt.text(x = datetime(2019,6,21,10,40,0).time(), y = -0.5, s = 'SWA')
+            plt.plot([datetime(2019,6,21,10,35,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,21,10,40,0).time(), y = -0.5, s = 'SWA')
 
-        plt.plot([datetime(2019,6,21,11,46,0).time() for i in y], y, linestyle="--", color = 'black')
-        plt.text(x = datetime(2019,6,21,11,38,0).time(), y = -0.5, s = 'METIS')
+            plt.plot([datetime(2019,6,21,11,46,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,21,11,38,0).time(), y = -0.5, s = 'METIS')
 
-        plt.plot([datetime(2019,6,21,12,10,0).time() for i in y], y, linestyle="--", color = 'black')
-        plt.text(x = datetime(2019,6,21,12,5,0).time(), y = -0.5, s = 'EUI')
+            plt.plot([datetime(2019,6,21,12,10,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,21,12,5,0).time(), y = -0.5, s = 'EUI')
 
-        plt.plot([datetime(2019,6,21,12,32,0).time() for i in y], y, linestyle="--", color = 'black')
-        plt.text(x = datetime(2019,6,21,12,27,0).time(), y = -0.5, s = 'PHI')
+            plt.plot([datetime(2019,6,21,12,32,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,21,12,27,0).time(), y = -0.5, s = 'PHI')
 
-        plt.plot([datetime(2019,6,21,12,40,0).time() for i in y], y, linestyle="--", color = 'black')
-        plt.text(x = datetime(2019,6,21,12,34,0).time(), y = -0.5, s = 'SPICE')
+            plt.plot([datetime(2019,6,21,12,40,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,21,12,34,0).time(), y = -0.5, s = 'SPICE')
 
-        plt.plot([datetime(2019,6,21,12,49,0).time() for i in y], y, linestyle="--", color = 'black')
-        plt.text(x = datetime(2019,6,21,12,48,0).time(), y = -0.5, s = 'SoloHI')
+            plt.plot([datetime(2019,6,21,12,49,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,21,12,48,0).time(), y = -0.5, s = 'SoloHI')
 
-        plt.plot([datetime(2019,6,21,14,4,0).time() for i in y], y, linestyle="--", color = 'black')
-        plt.text(x = datetime(2019,6,21,13,44,0).time(), y = -0.5, s = 'Power Amplifier')
+            plt.plot([datetime(2019,6,21,14,4,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,21,13,44,0).time(), y = -0.5, s = 'Power Amplifier')
+
+        elif self.day == 2:
+            #plt.plot([datetime(2019,6,24,6,24,0).time() for i in y], y, linestyle="--", color = 'black')
+            #plt.text(x = datetime(2019,6,24,6,24,0).time(), y = -0.5, s = 'Core On')
+
+            plt.plot([datetime(2019,6,24,8,2,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,24,8,1,0).time(), y = -0.5, s = 'Power Amplifier')
+            
+            plt.plot([datetime(2019,6,24,7,28,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,24,7,28,0).time(), y = -0.5, s = 'MAG')
+
+            plt.plot([datetime(2019,6,24,11,41,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,24,11,40,0).time(), y = -0.5, s = 'STIX')
+
+            plt.plot([datetime(2019,6,24,13,42,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,24,13,41,0).time(), y = -0.5, s = 'EPD')
+
+            plt.plot([datetime(2019,6,24,12,15,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,24,12,14,0).time(), y = -0.5, s = 'SWA')
+
+            plt.plot([datetime(2019,6,24,10,9,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,24,10,8,0).time(), y = -0.5, s = 'METIS')
+
+            plt.plot([datetime(2019,6,24,9,22,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,24,9,21,0).time(), y = -0.5, s = 'EUI')
+
+            plt.plot([datetime(2019,6,24,8,8,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,24,8,1,0).time(), y = -0.5, s = 'PHI')
+
+            plt.plot([datetime(2019,6,24,8,41,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,24,8,35,0).time(), y = -0.5, s = 'SPICE')
+
+            plt.plot([datetime(2019,6,24,11,16,0).time() for i in y], y, linestyle="--", color = 'black')
+            plt.text(x = datetime(2019,6,24,11,16,0).time(), y = -0.5, s = 'SoloHI')
+
+            #plt.plot([datetime(2019,6,24,15,0,0).time() for i in y], y, linestyle="--", color = 'black')
+            #plt.text(x = datetime(2019,6,24,15,0,0).time(), y = -0.5, s = 'Power Amplifier')
 
         plt.ylim(-1,7)
 
         plt.xlabel('Time [H:M:S]')
         plt.ylabel('dB [nT]')
         plt.title(f'Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
+        plt.legend(loc="best")
+        plt.show()
+
+    def moving_variation(self,*,len_of_sections):
+
+        sections = len(self.df)//(self.fs*len_of_sections)
+        start = 0
+        end = len_of_sections*self.fs
+
+        x_var_list, y_var_list, z_var_list, mag_var_list = [], [], [], []
+
+        for i in range(sections):
+            if end >= len(self.df):
+                end = len(self.df)
+            df_tmp = self.df.iloc[start:end,:]
+            x_var = df_tmp[self.collist[1]].std()
+            y_var = df_tmp[self.collist[2]].std()
+            z_var = df_tmp[self.collist[3]].std()
+            magnitude = np.sqrt(df_tmp[self.collist[1]]**2 +df_tmp[self.collist[2]]**2 + df_tmp[self.collist[3]]**2)
+            magnitude_var = magnitude.std()
+
+
+            x_var_list.append(x_var)
+            y_var_list.append(y_var)
+            z_var_list.append(z_var)
+            mag_var_list.append(magnitude_var)
+
+            start += len_of_sections
+            end += len_of_sections
+
+        x = [i*len_of_sections/3600 for i in range(sections)]
+
+        plt.figure()
+        plt.plot(x, x_var_list, label = 'X VAR')
+        plt.plot(x, y_var_list, label = 'Y VAR')
+        plt.plot(x, z_var_list, label = 'Z VAR')
+        plt.plot(x, mag_var_list, label = '|B| VAR')
+
         plt.legend(loc="best")
         plt.show()
 
@@ -413,7 +492,7 @@ if __name__ == "__main__":
     SoloHI - 11:19-11;44
     EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
     """
-    day = 1
+    day = 2
     probe = 10 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
     sampling_fs = 1
     
@@ -441,9 +520,9 @@ if __name__ == "__main__":
     #eui.powerspectra()
 
 
-    #daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2') #7:27 normally start, 15:00 end
-    #daytwo.get_data()
-    #daytwo.plot()
+    daytwo = mfsa_object(day, datetime(2019,6,24,6,30), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2') #7:27 normally start, 15:00 end
+    daytwo.get_data()
+    daytwo.plot()
     #daytwo.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667], scaling='density')
     #daytwo.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667], scaling='spectrum')
 
@@ -457,8 +536,9 @@ if __name__ == "__main__":
     #metis.spectrogram(downlimit = 0, uplimit = 0.1) #need 0.4 for trace, 0.1 for absolute magnitude
     #metis.powerspectra()
 
-    dayone = mfsa_object(day, datetime(2019,6,21,6,30,0), datetime(2019,6,21,14,45,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_1')
-    dayone.get_data()
-    dayone.plot()
+    #dayone = mfsa_object(day, datetime(2019,6,21,6,30,0), datetime(2019,6,21,14,45,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_1')
+    #dayone.get_data()
+    #dayone.plot()
+    #dayone.moving_variation(len_of_sections=120)
     #dayone.spectrogram(downlimit = 0, uplimit = 0.1, div = 1000)
     #print('Execution Time: ' ,round(time.time()-start, 2), 'seconds')
