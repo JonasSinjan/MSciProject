@@ -161,7 +161,7 @@ class mfsa_object:
             processing.powerspecplot(self.df, self.fs, self.collist, alt=False, save = False)
 
     def plot(self):
-        df2 = self.df.resample('1s').mean()
+        df2 = self.df.resample('2s').mean()
         print(df2.head())
         plt.figure()
         #tmp = []
@@ -194,8 +194,50 @@ class mfsa_object:
         #plt.plot(df2.index.time, -(df2[self.collist[1]]+203), label = 'Z')
         #plt.plot(df2.index.time, (df2[self.collist[3]]+102.5), label = 'X')
 
-        b_magnitude = np.sqrt((df2[self.collist[2]]-49)**2 + (df2[self.collist[1]]+203)**2 + (df2[self.collist[3]]+102.5)**2)
+        #b_magnitude = np.sqrt((df2[self.collist[2]]-49)**2 + (df2[self.collist[1]]+203)**2 + (df2[self.collist[3]]+102.5)**2)
+        b_magnitude = np.sqrt((df2[self.collist[2]]-45)**2 + (df2[self.collist[1]]+5)**2 + (df2[self.collist[3]]+61)**2)
         plt.plot(df2.index.time, b_magnitude, label = '|B|')
+        
+        y = np.linspace(-0.25,10,100)
+
+        plt.plot([datetime(2019,6,21,7,41,0).time() for i in y], y, linestyle="--", color = 'black')
+        plt.text(x = datetime(2019,6,21,7,31,0).time(), y = -0.5, s = 'Core On')
+
+        plt.plot([datetime(2019,6,21,8,59,0).time() for i in y], y, linestyle="--", color = 'black')
+        plt.text(x = datetime(2019,6,21,8,59,0).time(), y = -0.5, s = 'Power Amplifier')
+        
+        plt.plot([datetime(2019,6,21,8,56,0).time() for i in y], y, linestyle="--", color = 'black')
+        plt.text(x = datetime(2019,6,21,8,45,0).time(), y = -0.5, s = 'MAG')
+
+        plt.plot([datetime(2019,6,21,9,58,0).time() for i in y], y, linestyle="--", color = 'black')
+        plt.text(x = datetime(2019,6,21,9,56,0).time(), y = -0.5, s = 'STIX')
+
+        plt.plot([datetime(2019,6,21,10,20,0).time() for i in y], y, linestyle="--", color = 'black')
+        plt.text(x = datetime(2019,6,21,10,18,0).time(), y = -0.5, s = 'EPD')
+
+        plt.plot([datetime(2019,6,21,10,35,0).time() for i in y], y, linestyle="--", color = 'black')
+        plt.text(x = datetime(2019,6,21,10,40,0).time(), y = -0.5, s = 'SWA')
+
+        plt.plot([datetime(2019,6,21,11,46,0).time() for i in y], y, linestyle="--", color = 'black')
+        plt.text(x = datetime(2019,6,21,11,38,0).time(), y = -0.5, s = 'METIS')
+
+        plt.plot([datetime(2019,6,21,12,10,0).time() for i in y], y, linestyle="--", color = 'black')
+        plt.text(x = datetime(2019,6,21,12,5,0).time(), y = -0.5, s = 'EUI')
+
+        plt.plot([datetime(2019,6,21,12,32,0).time() for i in y], y, linestyle="--", color = 'black')
+        plt.text(x = datetime(2019,6,21,12,27,0).time(), y = -0.5, s = 'PHI')
+
+        plt.plot([datetime(2019,6,21,12,40,0).time() for i in y], y, linestyle="--", color = 'black')
+        plt.text(x = datetime(2019,6,21,12,34,0).time(), y = -0.5, s = 'SPICE')
+
+        plt.plot([datetime(2019,6,21,12,49,0).time() for i in y], y, linestyle="--", color = 'black')
+        plt.text(x = datetime(2019,6,21,12,48,0).time(), y = -0.5, s = 'SoloHI')
+
+        plt.plot([datetime(2019,6,21,14,4,0).time() for i in y], y, linestyle="--", color = 'black')
+        plt.text(x = datetime(2019,6,21,13,44,0).time(), y = -0.5, s = 'Power Amplifier')
+
+        plt.ylim(-1,7)
+
         plt.xlabel('Time [H:M:S]')
         plt.ylabel('dB [nT]')
         plt.title(f'Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
@@ -372,7 +414,7 @@ if __name__ == "__main__":
     EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
     """
     day = 1
-    probe = 9 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
+    probe = 10 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
     sampling_fs = 1
     
     """
