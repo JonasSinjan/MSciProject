@@ -162,29 +162,22 @@ class mfsa_object:
 
     def plot(self):
         df2 = self.df.resample('1s').mean()
-        #print(df2.head())
+        print(df2.head())
+        plt.figure()
         #tmp = []
-        b_magnitude = 0
+        """
         i = 0
-        """
-        df3 = df2.between_time(datetime(2019,6,21,6,31,0).time(), datetime(2019,6,21,8,58,30).time())
-        df4 = df2.between_time(datetime(2019,6,21,9,0,0).time(), datetime(2019,6,21,14,3,30).time())
-        df5 = df2.between_time(datetime(2019,6,21,14,5,0).time(), datetime(2019,6,21,14,45,0).time())
-        """
-        day_1_offsets = [203, -49, 102.5]
+        day_1_offsets = [203, -49, 102.5] #p9
+        day_1_offsets = [26, 14, 31] #p8
+        day_1_offsets = [5,-45, 61] #p10
+        day_1_offsets = [-65,-38, -5] #p10 non rotated
+        
+        plt.plot(df2.index.time, df2[self.collist[2]]-49, label ='Probe09_Y')
         for col in self.collist[1:]:
-            df2[col] = df2[col] + day_1_offsets[i]#- df2[col].mean()
-            plt.plot(df2.index.time, df2[col], label=str(col))
-            i+=1
-            """
-            df3[col] = df3[col] + day_1_offsets[i]
-            df4[col] = df4[col] + day_1_offsets[i]
-            df5[col] = df5[col] + day_1_offsets[i]
-            i += 1
-            plt.plot(df3.index.time, df3[col], label=str(col))
-            plt.plot(df4.index.time, df4[col], label=str(col))
-            plt.plot(df5.index.time, df5[col], label=str(col))
-            """
+           df2[col] = df2[col] + day_1_offsets[i]#- df2[col].mean()
+           plt.plot(df2.index.time, df2[col], label=str(col))
+           i+=1
+       
             #var_1hz = np.std(df2[col])
             #var_1khz = np.std(df2[col])
             #print('std - 1Hz', col, var_1hz)
@@ -192,10 +185,17 @@ class mfsa_object:
             #tmp.append(var_1hz)
             #tmp.append(var_1khz)
             #print(df2[col].abs().idxmax())
-            b_magnitude += df2[col]**2
-        b_magnitude = np.sqrt(b_magnitude)
+            #b_magnitude += df2[col]**2
         #plt.plot(df2.index.time, b_magnitude, label = '|B|')
+        """
+        #to create same plot as p10 airbus, p9 ours
         
+        #plt.plot(df2.index.time, df2[self.collist[2]]-49, label = 'Y')
+        #plt.plot(df2.index.time, -(df2[self.collist[1]]+203), label = 'Z')
+        #plt.plot(df2.index.time, (df2[self.collist[3]]+102.5), label = 'X')
+
+        b_magnitude = np.sqrt((df2[self.collist[2]]-49)**2 + (df2[self.collist[1]]+203)**2 + (df2[self.collist[3]]+102.5)**2)
+        plt.plot(df2.index.time, b_magnitude, label = '|B|')
         plt.xlabel('Time [H:M:S]')
         plt.ylabel('dB [nT]')
         plt.title(f'Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
