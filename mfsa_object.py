@@ -79,29 +79,44 @@ class mfsa_object:
         self.collist = ['time', f'Probe{num_str}_X', f'Probe{num_str}_Y', f'Probe{num_str}_Z']
 
         #finding the correct MFSA data files
-        start_csv, end_csv = processing.which_csvs(soloA_bool, 2, self.start, self.end, tz_MAG=False) #this function (in processing.py) finds the number at the end of the csv files we want
+        start_csv, end_csv = processing.which_csvs(soloA_bool, day, self.start, self.end, tz_MAG=False) #this function (in processing.py) finds the number at the end of the csv files we want
         print(start_csv, end_csv)
 
         all_files = [0]*(end_csv + 1 - start_csv)
         
-        for index, i in enumerate(range(start_csv, end_csv + 1)): #this will loop through and add the csv files that contain the start and end time set above
-            if soloA_bool:
-                all_files[index] = os.path.join(mfsa_fol_A, f'SoloA_2019-06-24--08-14-46_{i}.csv')
-                
-            else:
-                all_files[index] = os.path.join(mfsa_fol_B, f'SoloB_2019-06-24--08-14-24_{i}.csv')
+        if self.day == 2:
+            for index, i in enumerate(range(start_csv, end_csv + 1)): #this will loop through and add the csv files that contain the start and end time set above
+                if soloA_bool:
+                    all_files[index] = os.path.join(mfsa_fol_A, f'SoloA_2019-06-24--08-14-46_{i}.csv')
+                    
+                else:
+                    all_files[index] = os.path.join(mfsa_fol_B, f'SoloB_2019-06-24--08-14-24_{i}.csv')
+        
+        elif self.day == 1:
+            for index, i in enumerate(range(start_csv, end_csv + 1)): #this will loop through and add the csv files that contain the start and end time set above
+                if soloA_bool:
+                    all_files[index] = os.path.join(mfsa_fol_A, f'SoloA_2019-06-21--08-10-10_{i}.csv')
+                    
+                else:
+                    all_files[index] = os.path.join(mfsa_fol_B, f'SoloB_2019-06-21--08-09-10_{i}.csv')
 
         if soloA_bool:
             self.df = processing.read_files(all_files, soloA_bool, self.fs, self.collist, self.day, start_dt = self.start, end_dt = self.end)
-            rotate_mat = processing.rotate_24(soloA_bool)[self.probe-1]
+            if self.day == 2:
+                rotate_mat = processing.rotate_24(soloA_bool)[self.probe-1]
+            elif self.day == 1:
+                rotate_mat = processing.rotate_21(soloA_bool)[self.probe-1]
         else:
             self.df = processing.read_files(all_files, soloA_bool, self.fs, self.collist, self.day, start_dt = self.start, end_dt = self.end)
-            rotate_mat = processing.rotate_24(soloA_bool)[self.probe-9]
+            if self.day == 2:
+                rotate_mat = processing.rotate_24(soloA_bool)[self.probe-9]
+            elif self.day == 1:
+                rotate_mat = processing.rotate_21(soloA_bool)[self.probe-9]
 
         self.df.iloc[:,0:3] = np.matmul(rotate_mat, self.df.iloc[:,0:3].values.T).T
         #find the df of the exact time span desired
         self.df = self.df.between_time(self.start.time(), self.end.time())
-        self.df = processing.shifttime(self.df, soloA_bool, 2)
+        self.df = processing.shifttime(self.df, soloA_bool, self.day)
         self.dflen = len(self.df) 
 
         print(self.df.head())
@@ -109,11 +124,11 @@ class mfsa_object:
 
         print('Data Loaded - Execution Time: ' ,round(time.time()-start, 2), 'seconds')
 
-    def spectrogram(self, *, downlimit = 0, uplimit=0.1):
+    def spectrogram(self, *, downlimit = 0, uplimit=0.1, div = 1000):
         start = time.time()
         x = np.sqrt(self.df[self.collist[1]]**2 + self.df[self.collist[2]]**2 + self.df[self.collist[3]]**2)
         y = (self.df[self.collist[1]] + self.df[self.collist[2]] + self.df[self.collist[3]])
-        div = (self.dflen)/1000
+        #div = (self.dflen)/len_div
         #f, Pxx = sps.periodogram(x,fs)
         #div = 500
         nff = self.dflen//div
@@ -147,12 +162,29 @@ class mfsa_object:
 
     def plot(self):
         df2 = self.df.resample('1s').mean()
+        #print(df2.head())
         #tmp = []
-
+        b_magnitude = 0
+        i = 0
+        """
+        df3 = df2.between_time(datetime(2019,6,21,6,31,0).time(), datetime(2019,6,21,8,58,30).time())
+        df4 = df2.between_time(datetime(2019,6,21,9,0,0).time(), datetime(2019,6,21,14,3,30).time())
+        df5 = df2.between_time(datetime(2019,6,21,14,5,0).time(), datetime(2019,6,21,14,45,0).time())
+        """
+        day_1_offsets = [203, -49, 102.5]
         for col in self.collist[1:]:
-            df2[col] = df2[col] - df2[col].mean()
+            df2[col] = df2[col] + day_1_offsets[i]#- df2[col].mean()
             plt.plot(df2.index.time, df2[col], label=str(col))
-            
+            i+=1
+            """
+            df3[col] = df3[col] + day_1_offsets[i]
+            df4[col] = df4[col] + day_1_offsets[i]
+            df5[col] = df5[col] + day_1_offsets[i]
+            i += 1
+            plt.plot(df3.index.time, df3[col], label=str(col))
+            plt.plot(df4.index.time, df4[col], label=str(col))
+            plt.plot(df5.index.time, df5[col], label=str(col))
+            """
             #var_1hz = np.std(df2[col])
             #var_1khz = np.std(df2[col])
             #print('std - 1Hz', col, var_1hz)
@@ -160,7 +192,9 @@ class mfsa_object:
             #tmp.append(var_1hz)
             #tmp.append(var_1khz)
             #print(df2[col].abs().idxmax())
-        
+            b_magnitude += df2[col]**2
+        b_magnitude = np.sqrt(b_magnitude)
+        #plt.plot(df2.index.time, b_magnitude, label = '|B|')
         
         plt.xlabel('Time [H:M:S]')
         plt.ylabel('dB [nT]')
@@ -337,9 +371,9 @@ if __name__ == "__main__":
     SoloHI - 11:19-11;44
     EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
     """
-    day = 2
-    probe = 7 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
-    sampling_fs = 100
+    day = 1
+    probe = 9 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
+    sampling_fs = 1
     
     """
     import cProfile, pstats
@@ -355,9 +389,9 @@ if __name__ == "__main__":
     #daytwo.spectrogram(uplimit = 0.1)
     #daytwo.powerspectra()
 
-    eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
-    eui.get_data()
-    eui.plot_B_v_I()
+    #eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
+    #eui.get_data()
+    #eui.plot_B_v_I()
     #eui.plot()
     #eui.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667])
     
@@ -365,14 +399,15 @@ if __name__ == "__main__":
     #eui.powerspectra()
 
 
-    #daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2')
+    #daytwo = mfsa_object(day, datetime(2019,6,24,7,27), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2') #7:27 normally start, 15:00 end
     #daytwo.get_data()
+    #daytwo.plot()
     #daytwo.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667], scaling='density')
     #daytwo.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667], scaling='spectrum')
 
     #daytwo.moving_powerfreq(True, len_of_sections=100, desired_freqs=[8.0, 16.667], scaling='density')
     #daytwo.moving_powerfreq(True, len_of_sections=100, desired_freqs=[8.0, 16.667], scaling='spectrum')
-    #daytwo.spectrogram(downlimit = 0.5, uplimit = 1.0)
+    #daytwo.spectrogram(downlimit = 0, uplimit = 0.1, div = 500)
     #daytwo.powerspectra()
 
     #metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
@@ -380,4 +415,8 @@ if __name__ == "__main__":
     #metis.spectrogram(downlimit = 0, uplimit = 0.1) #need 0.4 for trace, 0.1 for absolute magnitude
     #metis.powerspectra()
 
+    dayone = mfsa_object(day, datetime(2019,6,21,6,30,0), datetime(2019,6,21,14,45,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_1')
+    dayone.get_data()
+    dayone.plot()
+    #dayone.spectrogram(downlimit = 0, uplimit = 0.1, div = 1000)
     #print('Execution Time: ' ,round(time.time()-start, 2), 'seconds')
