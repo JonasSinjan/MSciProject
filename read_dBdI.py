@@ -110,9 +110,9 @@ def plot_new_curve(windows, day, instruments, probes, sample):
             probe_y_tmp_err = df['dB_Y_err']
             probe_z_tmp_err = df['dB_Z_err']
 
-            #probe_x_tmp_err = [0.1 for i in range(len(probe_x_tmp))]
-            #probe_y_tmp_err = [0.1 for i in range(len(probe_x_tmp))]
-            #probe_z_tmp_err = [0.1 for i in range(len(probe_x_tmp))]
+            probe_x_tmp_err = [0.1 for i in range(len(probe_x_tmp))]
+            probe_y_tmp_err = [0.1 for i in range(len(probe_x_tmp))]
+            probe_z_tmp_err = [0.1 for i in range(len(probe_x_tmp))]
 
             def line(x,a,b):
                 return a*x + b
@@ -132,15 +132,16 @@ def plot_new_curve(windows, day, instruments, probes, sample):
 
             
             #g = plt.figure()
-            plt.plot(xdata, params_x[0]*xdata + params_x[1], '-', color = u'#1f77b4', label='_nolegend_')
-            plt.plot(xdata, params_y[0]*xdata + params_y[1], '-', color = u'#ff7f0e', label='_nolegend_')
-            plt.plot(xdata, params_z[0]*xdata + params_z[1], '-', color = u'#2ca02c', label='_nolegend_')
-
             cap_size = 3
             error_colour = None
             eline_width = 1.5
             cap_thick = 0
             ms = 8
+            """
+            plt.plot(xdata, params_x[0]*xdata + params_x[1], '-', color = u'#1f77b4', label='_nolegend_')
+            plt.plot(xdata, params_y[0]*xdata + params_y[1], '-', color = u'#ff7f0e', label='_nolegend_')
+            plt.plot(xdata, params_z[0]*xdata + params_z[1], '-', color = u'#2ca02c', label='_nolegend_')
+
             #u'#1f77b4', u'#ff7f0e', u'#2ca02c'
             plt.errorbar(xdata, probe_x_tmp, yerr = probe_x_tmp_err, fmt = 'o', color = u'#1f77b4', capsize = cap_size, capthick = cap_thick, ecolor = error_colour, elinewidth = eline_width, markeredgecolor = "white", markersize = ms, label = f'X grad: {round(params_x[0],2)} $\pm$ {round(perr_x[0],2)} nT/A')#, int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
             plt.errorbar(xdata, probe_y_tmp, yerr = probe_y_tmp_err, fmt = 'o', color=u'#ff7f0e', capsize = cap_size, capthick = cap_thick, ecolor = error_colour, elinewidth = eline_width, markeredgecolor = "white", markersize = ms, label = f'Y grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} nT/A')#', int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
@@ -149,17 +150,32 @@ def plot_new_curve(windows, day, instruments, probes, sample):
             #sns.pointplot(data = [xdata, probe_x_tmp], fmt = 'bs', label = f'X grad: {round(params_x[0],2)} ± {round(perr_x[0],2)} nT/A')#, int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
             #sns.pointplot(data = [xdata, probe_y_tmp], fmt = 'bs', label = f'X grad: {round(params_y[0],2)} ± {round(perr_y[0],2)} nT/A')#', int: {round(params_y[1],2)} ± {round(perr_y[1],2)}')
             #sns.pointplot(data = [xdata, probe_z_tmp], fmt = 'bs', label = f'X grad: {round(params_z[0],2)} ± {round(perr_z[0],2)} nT/A')#', int: {round(params_z[1],2)} ± {round(perr_z[1],2)}')
-            
-            #d = {'xdata': xdata, 'probe_x_tmp': probe_x_tmp, 'probe_x_tmp_err':probe_x_tmp_err}
-            #df = pd.DataFrame(data = d)
-            #g = sns.FacetGrid(df, size = 5)
-            #g.map(plt.errorbar, "xdata", "probe_x_tmp", "probe_x_tmp_err", fmt = 'bs')
-
             plt.legend(loc="best")
             plt.title(f'Day {day} - {inst} - Probe {probe} - {sample}Hz')
             plt.xlabel('dI [A]')
             plt.ylabel('dB [nT]')
             plt.show()
+            """
+            #d = {'xdata': xdata, 'probe_x_tmp': probe_x_tmp, 'probe_x_tmp_err':probe_x_tmp_err}
+            #df = pd.DataFrame(data = d)
+            #g = sns.FacetGrid(df, size = 5)
+            #g.map(plt.errorbar, "xdata", "probe_x_tmp", "probe_x_tmp_err", fmt = 'bs')
+            params_list = [params_x, params_y, params_z]
+            perr_list = [perr_x, perr_y, perr_z]
+            errorbar_list = [probe_x_tmp, probe_x_tmp_err, probe_y_tmp, probe_y_tmp_err, probe_z_tmp, probe_z_tmp_err]
+            j = 0
+            for i in [0,1,2]:
+                correlation_matrix = np.corrcoef(xdata, errorbar_list[j])
+                correlation_xy = correlation_matrix[0,1]
+                r_squared = correlation_xy**2
+                plt.plot(xdata, params_list[i][0]*xdata + params_list[i][1], '-', color = u'#1f77b4', label=f'R2 = {r_squared}')
+                plt.errorbar(xdata, errorbar_list[j], yerr = errorbar_list[j+1], fmt = 'o', color = u'#1f77b4', capsize = cap_size, capthick = cap_thick, ecolor = error_colour, elinewidth = eline_width, markeredgecolor = "white", markersize = ms, label = f'X grad: {round(params_list[i][0],2)} $\pm$ {round(perr_list[i][0],2)} nT/A')#, int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
+                j += 2
+                plt.legend(loc="best")
+                plt.title(f'Day {day} - {inst} - Probe {probe} - {sample}Hz')
+                plt.xlabel('dI [A]')
+                plt.ylabel('dB [nT]')
+                plt.show()
             
             
             #   this """ section is to update the gradient dicts using the corrected dbdi data
@@ -175,9 +191,9 @@ def plot_new_curve(windows, day, instruments, probes, sample):
         
 if __name__ == "__main__":
     windows = True
-    day = 2
-    instruments = ['EUI']#, 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
-    probes = [3,4,5]
+    day = 1
+    instruments = ['EUI', 'METIS']#, 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
+    probes = range(1,12)
     sample_rate = 1
 
     #plot_old_errs_with_lin(windows,day,instruments,probes,sample_rate)
