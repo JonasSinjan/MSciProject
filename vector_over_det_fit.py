@@ -6,7 +6,7 @@ import os
 import matplotlib.pyplot as plt
 import scipy.optimize as spo
 
-def vector_linalg_lstsq(file_path):
+def vector_linalg_lstsq(file_path, probes, max_current):
     df = pd.read_csv(file_path)
     df = df.iloc[:-1] #exclude probe 12
 
@@ -15,20 +15,27 @@ def vector_linalg_lstsq(file_path):
 
     probe_dist_list, factor = return_ypanel_dist(probe_loc_list)
 
-    a = np.zeros((33,3))
-    b = np.zeros((33,1))
+    #a = np.zeros((33,3))
+    #b = np.zeros((33,1))
+    a = np.zeros((len(probes)*3, 3))
+    b = np.zeros((len(probes)*3, 1))
     j = 0
-    for i in range(0,11):
+    for i in probes:
         #print(j)
         df_tmp = df.iloc[i]
-        b[j][0] = df_tmp['X.slope_cur']
-        b[j+1][0] = df_tmp['Y.slope_cur']
-        b[j+2][0] = df_tmp['Z.slope_cur']
+        b[j][0] = df_tmp['X.slope_cur']*max_current
+        b[j+1][0] = df_tmp['Y.slope_cur']*max_current
+        b[j+2][0] = df_tmp['Z.slope_cur']*max_current
        
         loc = probe_loc_list[i]
+        if i == 8:
+            loc = probe_loc_list[i+1]
         x, y, z = loc[0], loc[1], loc[2]
         #print('x,y,z = ', x, ',', y, ',', z)
         r = probe_dist_list[i]
+        if i == 8:
+            loc = probe_loc_list[i+1]
+            r = probe_dist_list[i+1]
         #print('r = ', r)
         
         a[j][0] = (3*(x**2)/r**5)-(1/r**3)
@@ -57,19 +64,19 @@ def vector_linalg_lstsq(file_path):
     mean_b = np.mean(b)
     #print(mean_bx, mean_by, mean_bz)
 
-    tss_x = sum([(b_i - mean_bx)**2 for b_i in b[::3,0]])
-    tss_y = sum([(b_i - mean_by)**2 for b_i in b[1::3,0]])
-    tss_z = sum([(b_i - mean_bz)**2 for b_i in b[2::3,0]]) 
-    r_2 = 1 - rss / np.sqrt(tss_x**2+tss_y**2 + tss_z**2)#np.sum((b**2))
-    N = np.identity(33) - 1/33 * np.ones((33,33))
-    test_tss = b.T @ N @ b 
-    #print('r_2 = ', r_2)
-    r2_conv = 1-rss/np.sum(b**2)
-    #print(round(r2_conv[0],3))
-    r_2_new  = 1-rss/test_tss
-    #print(r_2_new[0][0])
-    r_2_adj = 1 - ((1-r_2)*(10)/6) #3 or 1 independent variable? I think 3
-    #print(r_2_adj)
+    # tss_x = sum([(b_i - mean_bx)**2 for b_i in b[::3,0]])
+    # tss_y = sum([(b_i - mean_by)**2 for b_i in b[1::3,0]])
+    # tss_z = sum([(b_i - mean_bz)**2 for b_i in b[2::3,0]]) 
+    # r_2 = 1 - rss / np.sqrt(tss_x**2+tss_y**2 + tss_z**2)#np.sum((b**2))
+    # N = np.identity(33) - 1/33 * np.ones((33,33))
+    # test_tss = b.T @ N @ b 
+    # #print('r_2 = ', r_2)
+    # r2_conv = 1-rss/np.sum(b**2)
+    # #print(round(r2_conv[0],3))
+    # r_2_new  = 1-rss/test_tss
+    # #print(r_2_new[0][0])
+    # r_2_adj = 1 - ((1-r_2)*(10)/6) #3 or 1 independent variable? I think 3
+    # #print(r_2_adj)
     tss = [(b_i-mean_b)**2 for b_i in b]
     r_2_test = 1 - rss/sum(tss)
     r_2_test = 1 - rss/(33*b.var())
@@ -80,9 +87,17 @@ if __name__ == "__main__":
     windows = True
     #inst = 'PHI'
     day = 2
-    instru_list = ['METIS']#,'PHI','SWA','SoloHI','STIX','SPICE','EPD']
-    
-    
+    instru_list = ['EUI']#,'PHI','SWA','SoloHI','STIX','SPICE','EPD']
+    if 'EUI' in instru_list:
+        max_current = 0.8
+    if 'METIS' in instru_list:
+        max_current = 0.95
+
+    #sig_probes = [0,1,2,4,5,6,7] #d2 metis
+    #sig_probes = [0,1,2,6,7,8] #d1 metis
+
+    #sig_probes = [4,5,6,8] #d1 eui
+    sig_probes = [0,3,5,6,8] #d2 eui
 
     for inst in instru_list:
         #print(inst)
@@ -92,6 +107,6 @@ if __name__ == "__main__":
         else:
             #file_path = os.path.expanduser(f'./Results/Gradient_dicts/Day_{day}/1hz_noorigin/cur/{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv')
             file_path = os.path.expanduser(f'./Results/Gradient_dicts/newdI_dicts/Day_{day}/cur/{inst}_vect_dict_NOORIGIN_Day{day}_curve_fit.csv')
-        vector_linalg_lstsq(file_path)
+        vector_linalg_lstsq(file_path, sig_probes, max_current)
 
 
