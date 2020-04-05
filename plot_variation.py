@@ -82,12 +82,12 @@ def plot_b_var_est(file_path, inst, day, plot = False):
 
 
 if __name__ == "__main__":
-    windows = False
+    windows = True
     inst = 'METIS'
     var = 1
     day =  2
     if windows:
-        file_path = f'.\\Results\\variation\\{inst}_var{var}_B_variation_estimated_day{day}.csv'
+        file_path = f'.\\Results\\variation\\{inst}_var{var}_B_variation_estimated_day{day}.csv' #
     else:
         file_path = os.path.expanduser(f"~/Documents/MSciProject/NewCode/Results/variation/{inst}_var{var}_B_variation_estimated_day{day}.csv")
 
