@@ -254,15 +254,15 @@ class processing:
         probe_z = collist[3]
         #probe_m = collist[4]
         x = df[probe_x]#[:20000]
-        f_x, Pxx_x = sps.periodogram(x, fs, nfft = 10_000_000, scaling=f'{scaling}')
+        f_x, Pxx_x = sps.periodogram(x, fs, scaling=f'{scaling}') #nfft = 10_000_000
         x_y = df[probe_y]#[:20000]
-        f_y, Pxx_y = sps.periodogram(x_y, fs, nfft = 10_000_000,scaling=f'{scaling}')
+        f_y, Pxx_y = sps.periodogram(x_y, fs, scaling=f'{scaling}') #nfft = 10_000_000,
         x_z = df[probe_z]#[:20000]
-        f_z, Pxx_z = sps.periodogram(x_z, fs, nfft = 10_000_000,scaling=f'{scaling}')
+        f_z, Pxx_z = sps.periodogram(x_z, fs, scaling=f'{scaling}') #nfft = 10_000_000
         #x = df[probe_m]#[:20000]
         #f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
         x_t = x + x_y + x_z #trace
-        f_t, Pxx_t = sps.periodogram(x_t, fs, nfft = 10_000_000, scaling =f'{scaling}')
+        f_t, Pxx_t = sps.periodogram(x_t, fs,  scaling =f'{scaling}') #nfft = 10_000_000,
 
         def filter_Pxx(f,Pxx, mask_frequencies, harmonics):
             harmonics = range(3,400,2)#[3,5,7,8,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41]
@@ -280,14 +280,19 @@ class processing:
         def plot_power(f,fs,Pxx, probe, col):
             #Pxx = filter_Pxx(f, Pxx, 0.119, 2)
             plt.loglog(f,np.sqrt(Pxx), f'{col}-', picker=100) #sqrt required for power spectrum, and semi log y axis
-            plt.xlim(left = 10e-2, right=fs/2)
+            plt.xlim(left = 10e-4, right=fs/2)
             if inflight:
                 plt.ylim(bottom = 10e-4, top = 10e2)
             else:
                 plt.ylim(bottom = 10e-2, top = 10e1)
             plt.xlabel('Frequency [Hz]')
-            plt.ylabel('Amplitude Power Spectral Density [sqrt(dB/Hz)]')
+            plt.ylabel('Amplitude Power Spectral Density [$\sqrt{dB/Hz}$]')
+            if probe.split('_')[0] == 'Probe09':
+                probe = 'Probe10_' + str(probe.split('_')[1])
+            elif probe.split('_')[0] == 'Probe10':
+                probe = 'Probe09_' + str(probe.split('_')[1])
             plt.title(f'{probe}')
+            
             peaks, _ = sps.find_peaks(np.log10(Pxx), prominence = 6)
             #print(peaks)
             
@@ -385,7 +390,8 @@ class processing:
         elif scaling == 'spectrum':
             downlim = 10e-7
         """
-        
+        uplim = 10
+        downlim = 10e-2
         ax1 = plt.subplot(221)
         plot_power(f_x, fs, Pxx_x, probe_x, 'b')
         plt.ylim(downlim, uplim)

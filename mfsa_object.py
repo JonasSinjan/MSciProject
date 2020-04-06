@@ -18,6 +18,7 @@ from magplot_2 import mag
 import scipy.optimize as spo
 import seaborn as sns
 
+
 class mfsa_object:
 
     def __init__(self, day, start, end, probe, sampling_freq, *, timezone='MFSA', name=None):
@@ -124,7 +125,8 @@ class mfsa_object:
 
         print('Data Loaded - Execution Time: ' ,round(time.time()-start, 2), 'seconds')
 
-    def spectrogram(self, *, downlimit = 0, uplimit=0.1, div = 1000):
+    def spectrogram(self, *, downlimit = 0, uplimit=0.1, div = 1000, fontsize=18, ylower=10e-1):
+        plt.rcParams.update({'font.size': fontsize})
         start = time.time()
         x = np.sqrt(self.df[self.collist[1]]**2 + self.df[self.collist[2]]**2 + self.df[self.collist[3]]**2)
         y = (self.df[self.collist[1]] + self.df[self.collist[2]] + self.df[self.collist[3]])
@@ -141,11 +143,11 @@ class mfsa_object:
         plt.semilogy()
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [s]')
-        if hasattr(self, 'name'):
-            plt.title(f'{self.name} - Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
-        else:
-            plt.title(f'Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
-        plt.ylim((10e-2,self.fs/2))
+        #if hasattr(self, 'name'):
+            #plt.title(f'{self.name} - Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
+        #else:
+            #plt.title(f'Probe {self.probe} @ {self.fs}Hz, {self.start.date()}')
+        plt.ylim((ylower,self.fs/2))
         #plt.clim()
         fig = plt.gcf()
         cbar = plt.colorbar(ticks = [0, 0.05, 0.1, 0.15, 0.2, 0.5, 1])
@@ -493,8 +495,8 @@ if __name__ == "__main__":
     EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
     """
     day = 2
-    probe = 10 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs)
-    sampling_fs = 1
+    probe = 10 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs) #9 is actually 10 and 10 is actually 9
+    sampling_fs = 100
     
     """
     import cProfile, pstats
@@ -510,25 +512,25 @@ if __name__ == "__main__":
     #daytwo.spectrogram(uplimit = 0.1)
     #daytwo.powerspectra()
 
-    #eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
-    #eui.get_data()
+    eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
+    eui.get_data()
     #eui.plot_B_v_I()
     #eui.plot()
     #eui.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667])
     
     #eui.spectrogram()
-    #eui.powerspectra()
+    eui.powerspectra()
 
 
-    daytwo = mfsa_object(day, datetime(2019,6,24,6,30), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2') #7:27 normally start, 15:00 end
-    daytwo.get_data()
-    daytwo.plot()
+    #daytwo = mfsa_object(day, datetime(2019,6,24,6,30), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2') #7:27 normally start, 15:00 end
+    #daytwo.get_data()
+    #daytwo.plot()
     #daytwo.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667], scaling='density')
     #daytwo.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667], scaling='spectrum')
 
     #daytwo.moving_powerfreq(True, len_of_sections=100, desired_freqs=[8.0, 16.667], scaling='density')
     #daytwo.moving_powerfreq(True, len_of_sections=100, desired_freqs=[8.0, 16.667], scaling='spectrum')
-    #daytwo.spectrogram(downlimit = 0, uplimit = 0.1, div = 500)
+    #daytwo.spectrogram(downlimit = 0, uplimit = 0.1, div = 1500, fontsize = 18, ylower = 10e-1)
     #daytwo.powerspectra()
 
     #metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')

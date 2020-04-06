@@ -29,20 +29,20 @@ def plot_raw(windows, inst, daynumber, plot = False):
 
         plt.figure()
         plt.plot(df.index.time, df[f'{inst} Current [A]'], color = u'#1f77b4', label=str(f'{inst} Current [A]'))
-        plt.scatter(df.index.time, df[f'{inst} Current [A]'], color = u'#1f77b4', s = 10, label = '_nolegend_')
+        #plt.scatter(df.index.time, df[f'{inst} Current [A]'], color = u'#1f77b4', s = 10, label = '_nolegend_')
 
         x_1 = pd.date_range(datetime(2019,6,24,9,28,36), datetime(2019,6,24,9,29,6)).tolist()
         x_2 = pd.date_range(datetime(2019,6,24,9,29,16), datetime(2019,6,24,9,29,46)).tolist()
         y = np.linspace(0,0.9,1000)
-        plt.plot([datetime(2019,6,24,9,29,6).time() for i in y], y, linestyle="--", color = 'black')
-        plt.plot([datetime(2019,6,24,9,28,36).time() for i in y], y, linestyle="--", color = 'black')
-        plt.plot([datetime(2019,6,24,9,29,16).time() for i in y], y, linestyle="--", color = 'black')
-        plt.plot([datetime(2019,6,24,9,29,46).time() for i in y], y, linestyle="--", color = 'black')        
+        #plt.plot([datetime(2019,6,24,9,29,6).time() for i in y], y, linestyle="--", color = 'black')
+        #plt.plot([datetime(2019,6,24,9,28,36).time() for i in y], y, linestyle="--", color = 'black')
+        #plt.plot([datetime(2019,6,24,9,29,16).time() for i in y], y, linestyle="--", color = 'black')
+        #plt.plot([datetime(2019,6,24,9,29,46).time() for i in y], y, linestyle="--", color = 'black')        
 
-        plt.axvspan(datetime(2019,6,24,9,28,36).time(),datetime(2019,6,24,9,29,6).time(), color = "grey", alpha = 0.3)     
-        plt.axvspan(datetime(2019,6,24,9,29,16).time(),datetime(2019,6,24,9,29,46).time(), color = "grey", alpha = 0.3)  
+        #plt.axvspan(datetime(2019,6,24,9,28,36).time(),datetime(2019,6,24,9,29,6).time(), color = "grey", alpha = 0.3)     
+        #plt.axvspan(datetime(2019,6,24,9,29,16).time(),datetime(2019,6,24,9,29,46).time(), color = "grey", alpha = 0.3)  
         diff = df[f'{inst} Current [A]'].diff()
-        plt.plot(df.index.time, diff)
+        #plt.plot(df.index.time, diff)
         plt.legend(loc='best')
         plt.xlabel('Time [H:M:S]')
         plt.ylabel('Current [A]')
@@ -56,6 +56,6 @@ def plot_raw(windows, inst, daynumber, plot = False):
 if __name__ == "__main__":
     windows = True
     day = 2
-    inst = 'EUI'
+    inst = 'METIS'
 
     plot_raw(windows, inst, day, plot = True)
