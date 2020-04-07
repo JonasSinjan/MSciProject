@@ -495,7 +495,7 @@ if __name__ == "__main__":
     EPD - 14:43-14:59 #be wary as epd in different regions #full ==>13:44-14:58
     """
     day = 2
-    probe = 7 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs) #9 is actually 10 and 10 is actually 9
+    probe = 9 #doing only 7,9,10 (7 closest to instruments, 9 at mag ibs, 10 at mag obs) #9 is actually 10 and 10 is actually 9
     sampling_fs = 100
     
     """
@@ -512,14 +512,14 @@ if __name__ == "__main__":
     #daytwo.spectrogram(uplimit = 0.1)
     #daytwo.powerspectra()
 
-    #eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
-    #eui.get_data()
+    eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
+    eui.get_data()
     #eui.plot_B_v_I()
     #eui.plot()
     #eui.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667])
     
     #eui.spectrogram()
-    #eui.powerspectra()
+    eui.powerspectra()
 
 
     #daytwo = mfsa_object(day, datetime(2019,6,24,6,30), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2') #7:27 normally start, 15:00 end
@@ -533,10 +533,10 @@ if __name__ == "__main__":
     #daytwo.spectrogram(downlimit = 0, uplimit = 0.1, div = 1500, fontsize = 18, ylower = 10e-1)
     #daytwo.powerspectra()
 
-    metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
-    metis.get_data()
+    #metis = mfsa_object(day,datetime(2019,6,24,10,10), datetime(2019,6,24,10,56), probe, sampling_fs, timezone = 'MAG', name = 'METIS')
+    #metis.get_data()
     #metis.spectrogram(downlimit = 0, uplimit = 0.1) #need 0.4 for trace, 0.1 for absolute magnitude
-    metis.powerspectra()
+     #metis.powerspectra()
 
     #dayone = mfsa_object(day, datetime(2019,6,21,6,30,0), datetime(2019,6,21,14,45,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_1')
     #dayone.get_data()

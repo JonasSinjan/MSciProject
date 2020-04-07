@@ -286,7 +286,7 @@ class processing:
             else:
                 plt.ylim(bottom = 10e-2, top = 10e1)
             plt.xlabel('Frequency [Hz]')
-            plt.ylabel('Amplitude Power Spectral Density [$\sqrt{dB/Hz}$]')
+            plt.ylabel('Amplitude Power Spectral Density [nT$/\sqrt{Hz}$]')
             if probe.split('_')[0] == 'Probe09':
                 probe = 'Probe10_' + str(probe.split('_')[1])
             elif probe.split('_')[0] == 'Probe10':
