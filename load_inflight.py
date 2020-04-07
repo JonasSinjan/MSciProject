@@ -391,8 +391,8 @@ if __name__ == "__main__":
 
     #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.005) #0.005
     #burst_object.spectrogram(False, downlimit = 0, uplimit = 0.01)
-    burst_object.burst_powerspectra(OBS, name = '_file2_alldays', ten_milly=False)
-    burst_object.burst_powerspectra(False, name = '_file2_alldays', ten_milly=False)
+    #burst_object.burst_powerspectra(OBS, name = '_file2_alldays_fullnfft', ten_milly=False)
+    burst_object.burst_powerspectra(False, name = '_file2_alldays_fullnfft', ten_milly=False)
     #burst_object.burst_powerspectra(OBS)
     #burst_object.df_to_csv(name='file_2_day_1')
 
