@@ -44,6 +44,26 @@ class burst_data:
         #print(flight_data_path)
 
         mat = scipy.io.loadmat(flight_data_path)
+        """
+        if file_one != True:
+            mat_file_one = scipy.io.loadmat(os.path.join(project_data, 'BurstSpectral.mat'))
+
+            void_arr_one = mat_file_one['ddOBS'][0][0] #plot obs on top of ibs to show deviation more clearly
+            void_ibs_one = mat_file_one['ddIBS'][0][0]
+            timeseries_one = void_arr_one[9]
+            ibs_timeseries_one = void_ibs_one[9]
+            #print(ibs_timeseries.shape)
+            
+            y_one = timeseries_one[:,0] #x
+            #print(len(y)) # file 2 has 72 hours
+            y1_one = timeseries_one[:,1] #y
+            y2_one = timeseries_one[:,2] #z 
+            y3_one = timeseries_one[:,3] #total B  OBS
+            ibs_y_one = ibs_timeseries_one[:,0] #x
+            ibs_y1_one = ibs_timeseries_one[:,1] #y
+            ibs_y2_one = ibs_timeseries_one[:,2] #z 
+            ibs_y3_one = ibs_timeseries_one[:,3] #total B IBS
+        """
         #print(mat.keys())
         #print(type(mat['ddIBS']))
         #print(mat['ddIBS'].shape)
@@ -68,7 +88,8 @@ class burst_data:
 
         #x = [round(x/128,3) for x in range(len(y))] #missing y data
     
-        dict_d = {'OBS_X': y, 'OBS_Y': y1, 'OBS_Z': y2, 'OBS_MAGNITUDE': y3, 'IBS_X': ibs_y, 'IBS_Y': ibs_y1, 'IBS_Z': ibs_y2, 'IBS_MAGNITUDE': ibs_y3 }
+        #dict_d = {'OBS_X': np.append(y_one,y), 'OBS_Y': np.append(y1_one,y1), 'OBS_Z': np.append(y2_one,y2), 'OBS_MAGNITUDE': np.append(y3_one,y3), 'IBS_X': np.append(ibs_y_one,ibs_y), 'IBS_Y': np.append(ibs_y1_one,ibs_y1), 'IBS_Z': np.append(ibs_y2_one,ibs_y2), 'IBS_MAGNITUDE': np.append(ibs_y3_one,ibs_y3) }
+        dict_d = {'OBS_X': y, 'OBS_Y': y1, 'OBS_Z': y2, 'OBS_MAGNITUDE': y3, 'IBS_X': ibs_y, 'IBS_Y': ibs_y1, 'IBS_Z': ibs_y2, 'IBS_MAGNITUDE': ibs_y3}
         df = pd.DataFrame(data=dict_d, dtype = np.float64)
         if file_one:
             end_time = datetime(2020,3,3,15,58,46) + timedelta(seconds = 42463, microseconds=734375)
@@ -134,7 +155,7 @@ class burst_data:
         plt.show()
 
 
-    def burst_powerspectra(self, OBS, *, df2 = False , name = ''):
+    def burst_powerspectra(self, OBS, *, df2 = False , name = '', ten_milly = False):
         if OBS:
             collist = ['Time', 'OBS_X', 'OBS_Y', 'OBS_Z']
             name_str = 'OBS_burst'
@@ -146,7 +167,7 @@ class burst_data:
         else:
             df = self.df
 
-        processing.powerspecplot(df, 128, collist, False, probe = 'MAG', inst = name_str, inflight = True, scaling = 'density', name = name)
+        processing.powerspecplot(df, 128, collist, False, probe = 'MAG', inst = name_str, inflight = True, scaling = 'density', name = name, ten_milly = ten_milly)
 
         
     def power_proportionality(self):
@@ -167,6 +188,7 @@ class burst_data:
 
 
     def spectrogram(self, OBS, *, downlimit = 0, uplimit=0.001):
+        plt.rcParams.update({'font.size': 14})
         if OBS:
             collist = ['Time', 'OBS_X', 'OBS_Y', 'OBS_Z']
             name_str = 'OBS_burst'
@@ -196,14 +218,14 @@ class burst_data:
         plt.ylabel('Frequency [Hz]')
         plt.xlabel('Time [s]')
         
-        plt.title(f'MAG {name_str} Spectrogram @ {self.fs}Hz')
+        #plt.title(f'MAG {name_str} Spectrogram @ {self.fs}Hz')
         plt.ylim((10e-2,10))
         plt.semilogy()
         #plt.clim()
         fig = plt.gcf()
         ticks = [0,0.005, 0.01, 0.05, 0.1, 0.15, 0.2, 0.5, 1]
-        if OBS:
-            ticks = [0, 10e-6,10e-5,10e-4,10e-3,10e-2]
+        #if OBS:
+        #    ticks = [0, 10e-6,10e-5,10e-4,10e-3,10e-2]
         cbar = plt.colorbar(ticks = ticks)
         #cbar.ax.set_yticklabels(fontsize=8)
         cbar.set_label('Normalised Power Spectral Density of the Trace')#, rotation=270)
@@ -359,16 +381,19 @@ def heater_data(windows):
 if __name__ == "__main__":
     
     burst_object = burst_data()
+    #burst_object.get_df_from_mat(file_one=False)
     burst_object.get_df_from_mat(file_one=False, start = int(128*3600*0), end = int(128*3600*72)) #0.3 to 24, 24 to 47.6 and 48.3 to 72
     #burst_object.plot_burst()
-    OBS = False
+    OBS = True
 
     #burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0])
     #burst_object.moving_powerfreq(OBS,len_of_sections=1200,desired_freqs=[0.1, 0.119,7.9, 8.0], scaling='spectrum')
 
-    #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.01) #0.005
-    burst_object.burst_powerspectra(OBS, name = '_file2_alldays')
-
+    #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.005) #0.005
+    #burst_object.spectrogram(False, downlimit = 0, uplimit = 0.01)
+    burst_object.burst_powerspectra(OBS, name = '_file2_alldays', ten_milly=False)
+    burst_object.burst_powerspectra(False, name = '_file2_alldays', ten_milly=False)
+    #burst_object.burst_powerspectra(OBS)
     #burst_object.df_to_csv(name='file_2_day_1')
 
 

@@ -240,7 +240,7 @@ class processing:
         return step_dict
 
     @staticmethod
-    def powerspecplot(df, fs, collist, alt, inst = None, save = False, *, probe=None, inflight = False, scaling = 'density', name=''):
+    def powerspecplot(df, fs, collist, alt, inst = None, save = False, *, probe=None, inflight = False, scaling = 'density', name='', ten_milly = False):
         start = time.time()
         clicks = []
         def onclick(event):
@@ -254,15 +254,24 @@ class processing:
         probe_z = collist[3]
         #probe_m = collist[4]
         x = df[probe_x]#[:20000]
-        f_x, Pxx_x = sps.periodogram(x, fs, scaling=f'{scaling}') #nfft = 10_000_000
+         #nfft = 10_000_000
         x_y = df[probe_y]#[:20000]
-        f_y, Pxx_y = sps.periodogram(x_y, fs, scaling=f'{scaling}') #nfft = 10_000_000,
+         #nfft = 10_000_000,
         x_z = df[probe_z]#[:20000]
-        f_z, Pxx_z = sps.periodogram(x_z, fs, scaling=f'{scaling}') #nfft = 10_000_000
+         #nfft = 10_000_000
         #x = df[probe_m]#[:20000]
         #f_m, Pxx_m = sps.periodogram(x,fs, scaling='spectrum')
         x_t = x + x_y + x_z #trace
-        f_t, Pxx_t = sps.periodogram(x_t, fs,  scaling =f'{scaling}') #nfft = 10_000_000,
+        if ten_milly:
+            f_x, Pxx_x = sps.periodogram(x, fs, nfft = 10_000_000, scaling=f'{scaling}')
+            f_y, Pxx_y = sps.periodogram(x_y, fs, nfft = 10_000_000, scaling=f'{scaling}')
+            f_z, Pxx_z = sps.periodogram(x_z, fs, nfft = 10_000_000, scaling=f'{scaling}')
+            f_t, Pxx_t = sps.periodogram(x_t, fs, nfft = 10_000_000, scaling =f'{scaling}') #nfft = 10_000_000,
+        else:
+            f_x, Pxx_x = sps.periodogram(x, fs, scaling=f'{scaling}')
+            f_y, Pxx_y = sps.periodogram(x_y, fs, scaling=f'{scaling}')
+            f_z, Pxx_z = sps.periodogram(x_z, fs, scaling=f'{scaling}')
+            f_t, Pxx_t = sps.periodogram(x_t, fs, scaling =f'{scaling}')
 
         def filter_Pxx(f,Pxx, mask_frequencies, harmonics):
             harmonics = range(3,400,2)#[3,5,7,8,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41]
@@ -391,7 +400,7 @@ class processing:
             downlim = 10e-7
         """
         uplim = 10
-        downlim = 10e-2
+        downlim = 10e-4
         ax1 = plt.subplot(221)
         plot_power(f_x, fs, Pxx_x, probe_x, 'b')
         plt.ylim(downlim, uplim)
