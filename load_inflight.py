@@ -73,23 +73,33 @@ class burst_data:
         ibs_timeseries = void_ibs[9]
         #print(ibs_timeseries.shape)
         
-        y = timeseries[start:end,0] #x
+        y = timeseries[start:int(3600*128*47.6),0] #x
         #print(len(y)) # file 2 has 72 hours
-        y1 = timeseries[start:end,1] #y
-        y2 = timeseries[start:end,2] #z 
-        y3 = timeseries[start:end,3] #total B  OBS
-        ibs_y = ibs_timeseries[start:end,0] #x
-        ibs_y1 = ibs_timeseries[start:end,1] #y
-        ibs_y2 = ibs_timeseries[start:end,2] #z 
-        ibs_y3 = ibs_timeseries[start:end,3] #total B IBS
+        y1 = timeseries[start:int(3600*128*47.6),1] #y
+        y2 = timeseries[start:int(3600*128*47.6),2] #z 
+        y3 = timeseries[start:int(3600*128*47.6),3] #total B  OBS
+        ibs_y = ibs_timeseries[start:int(3600*128*47.6),0] #x
+        ibs_y1 = ibs_timeseries[start:int(3600*128*47.6),1] #y
+        ibs_y2 = ibs_timeseries[start:int(3600*128*47.6),2] #z 
+        ibs_y3 = ibs_timeseries[start:int(3600*128*47.6),3] #total B IBS
+
+        y_one = timeseries[int(3600*128*48.3):end,0] #x
+            #print(len(y)) # file 2 has 72 hours
+        y1_one = timeseries[int(3600*128*48.3):end,1] #y
+        y2_one = timeseries[int(3600*128*48.3):end,2] #z 
+        y3_one = timeseries[int(3600*128*48.3):end,3] #total B  OBS
+        ibs_y_one = ibs_timeseries[int(3600*128*48.3):end,0] #x
+        ibs_y1_one = ibs_timeseries[int(3600*128*48.3):end,1] #y
+        ibs_y2_one = ibs_timeseries[int(3600*128*48.3):end,2] #z 
+        ibs_y3_one = ibs_timeseries[int(3600*128*48.3):end,3] #total B IBS
 
         #print(np.sqrt(y[0]**2 + y1[0]**2 + y2[0]**2), y3[0]) - confirms suspicion 4th column is B mag
         #print(np.sqrt(ibs_y[0]**2 + ibs_y1[0]**2 + ibs_y2[0]**2), ibs_y3[0])
 
         #x = [round(x/128,3) for x in range(len(y))] #missing y data
     
-        #dict_d = {'OBS_X': np.append(y_one,y), 'OBS_Y': np.append(y1_one,y1), 'OBS_Z': np.append(y2_one,y2), 'OBS_MAGNITUDE': np.append(y3_one,y3), 'IBS_X': np.append(ibs_y_one,ibs_y), 'IBS_Y': np.append(ibs_y1_one,ibs_y1), 'IBS_Z': np.append(ibs_y2_one,ibs_y2), 'IBS_MAGNITUDE': np.append(ibs_y3_one,ibs_y3) }
-        dict_d = {'OBS_X': y, 'OBS_Y': y1, 'OBS_Z': y2, 'OBS_MAGNITUDE': y3, 'IBS_X': ibs_y, 'IBS_Y': ibs_y1, 'IBS_Z': ibs_y2, 'IBS_MAGNITUDE': ibs_y3}
+        dict_d = {'OBS_X': np.append(y,y_one), 'OBS_Y': np.append(y1,y1_one), 'OBS_Z': np.append(y2,y2_one), 'OBS_MAGNITUDE': np.append(y3,y3_one), 'IBS_X': np.append(ibs_y,ibs_y_one), 'IBS_Y': np.append(ibs_y1,ibs_y1_one), 'IBS_Z': np.append(ibs_y2,ibs_y2_one), 'IBS_MAGNITUDE': np.append(ibs_y3,ibs_y3_one) }
+        #dict_d = {'OBS_X': y, 'OBS_Y': y1, 'OBS_Z': y2, 'OBS_MAGNITUDE': y3, 'IBS_X': ibs_y, 'IBS_Y': ibs_y1, 'IBS_Z': ibs_y2, 'IBS_MAGNITUDE': ibs_y3}
         df = pd.DataFrame(data=dict_d, dtype = np.float64)
         if file_one:
             end_time = datetime(2020,3,3,15,58,46) + timedelta(seconds = 42463, microseconds=734375)
@@ -124,7 +134,7 @@ class burst_data:
     
 
     def plot_burst(self):
-        x = [x/(128*3600) for x in range(len(self.df.index))] #128 vectors a second
+        x = [x/(128) for x in range(len(self.df.index))] #128 vectors a second #in seconds
         fig = plt.figure()
         plt.subplot(4,1,1)
         plt.plot(x, self.df['IBS_X'], label = 'IBS')
@@ -148,7 +158,7 @@ class burst_data:
         plt.plot(x, self.df['IBS_MAGNITUDE'], label = 'IBS')
         plt.plot(x, self.df['OBS_MAGNITUDE'], 'r', label = 'OBS')
         plt.ylabel('B [nT]')
-        plt.xlabel('Time [Hours]')
+        plt.xlabel('Time [Seconds]')
         plt.legend(loc='upper right')
         
         plt.suptitle('Magnetic Field with means removed')
@@ -384,15 +394,15 @@ if __name__ == "__main__":
     #burst_object.get_df_from_mat(file_one=False)
     burst_object.get_df_from_mat(file_one=False, start = int(128*3600*0), end = int(128*3600*72)) #0.3 to 24, 24 to 47.6 and 48.3 to 72
     #burst_object.plot_burst()
-    OBS = True
+    #OBS = True
 
     #burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0])
     #burst_object.moving_powerfreq(OBS,len_of_sections=1200,desired_freqs=[0.1, 0.119,7.9, 8.0], scaling='spectrum')
 
     #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.005) #0.005
-    #burst_object.spectrogram(False, downlimit = 0, uplimit = 0.01)
+    burst_object.spectrogram(False, downlimit = 0, uplimit = 0.01)
     #burst_object.burst_powerspectra(OBS, name = '_file2_alldays_fullnfft', ten_milly=False)
-    burst_object.burst_powerspectra(False, name = '_file2_alldays_fullnfft', ten_milly=False)
+    #burst_object.burst_powerspectra(False, name = '_file2_alldays_fullnfft', ten_milly=False)
     #burst_object.burst_powerspectra(OBS)
     #burst_object.df_to_csv(name='file_2_day_1')
 

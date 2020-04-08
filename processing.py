@@ -289,9 +289,9 @@ class processing:
         def plot_power(f,fs,Pxx, probe, col):
             #Pxx = filter_Pxx(f, Pxx, 0.119, 2)
             plt.loglog(f,np.sqrt(Pxx), f'{col}-', picker=100) #sqrt required for power spectrum, and semi log y axis
-            plt.xlim(left = 10e-4, right=fs/2)
+            plt.xlim(left = 1e-4, right=fs/2)
             if inflight:
-                plt.ylim(bottom = 10e-4, top = 10e2)
+                plt.ylim(bottom = 10e-4, top = 10e4)
             else:
                 plt.ylim(bottom = 10e-2, top = 10e1)
             plt.xlabel('Frequency [Hz]')
