@@ -289,7 +289,7 @@ class processing:
         def plot_power(f,fs,Pxx, probe, col):
             #Pxx = filter_Pxx(f, Pxx, 0.119, 2)
             plt.loglog(f,np.sqrt(Pxx), f'{col}-', picker=100) #sqrt required for power spectrum, and semi log y axis
-            plt.xlim(left = 1e-4, right=fs/2)
+            plt.xlim(left = 5e-2, right=fs/2)
             if inflight:
                 plt.ylim(bottom = 10e-4, top = 10e4)
             else:
@@ -399,7 +399,7 @@ class processing:
         elif scaling == 'spectrum':
             downlim = 10e-7
         """
-        uplim = 10e1
+        uplim = 5e1
         downlim = 10e-4
         ax1 = plt.subplot(221)
         plot_power(f_x, fs, Pxx_x, probe_x, 'b')

@@ -72,7 +72,17 @@ class burst_data:
         timeseries = void_arr[9]
         ibs_timeseries = void_ibs[9]
         #print(ibs_timeseries.shape)
+        y = timeseries[start:end,0] #x
+        #print(len(y)) # file 2 has 72 hours
+        y1 = timeseries[start:end,1] #y
+        y2 = timeseries[start:end,2] #z 
+        y3 = timeseries[start:end,3] #total B  OBS
+        ibs_y = ibs_timeseries[start:end,0] #x
+        ibs_y1 = ibs_timeseries[start:end,1] #y
+        ibs_y2 = ibs_timeseries[start:end,2] #z 
+        ibs_y3 = ibs_timeseries[start:end,3] #total B IBS
         
+        """
         y = timeseries[start:int(3600*128*47.6),0] #x
         #print(len(y)) # file 2 has 72 hours
         y1 = timeseries[start:int(3600*128*47.6),1] #y
@@ -93,13 +103,15 @@ class burst_data:
         ibs_y2_one = ibs_timeseries[int(3600*128*48.3):end,2] #z 
         ibs_y3_one = ibs_timeseries[int(3600*128*48.3):end,3] #total B IBS
 
+
         #print(np.sqrt(y[0]**2 + y1[0]**2 + y2[0]**2), y3[0]) - confirms suspicion 4th column is B mag
         #print(np.sqrt(ibs_y[0]**2 + ibs_y1[0]**2 + ibs_y2[0]**2), ibs_y3[0])
 
         #x = [round(x/128,3) for x in range(len(y))] #missing y data
     
         dict_d = {'OBS_X': np.append(y,y_one), 'OBS_Y': np.append(y1,y1_one), 'OBS_Z': np.append(y2,y2_one), 'OBS_MAGNITUDE': np.append(y3,y3_one), 'IBS_X': np.append(ibs_y,ibs_y_one), 'IBS_Y': np.append(ibs_y1,ibs_y1_one), 'IBS_Z': np.append(ibs_y2,ibs_y2_one), 'IBS_MAGNITUDE': np.append(ibs_y3,ibs_y3_one) }
-        #dict_d = {'OBS_X': y, 'OBS_Y': y1, 'OBS_Z': y2, 'OBS_MAGNITUDE': y3, 'IBS_X': ibs_y, 'IBS_Y': ibs_y1, 'IBS_Z': ibs_y2, 'IBS_MAGNITUDE': ibs_y3}
+        """
+        dict_d = {'OBS_X': y, 'OBS_Y': y1, 'OBS_Z': y2, 'OBS_MAGNITUDE': y3, 'IBS_X': ibs_y, 'IBS_Y': ibs_y1, 'IBS_Z': ibs_y2, 'IBS_MAGNITUDE': ibs_y3}
         df = pd.DataFrame(data=dict_d, dtype = np.float64)
         if file_one:
             end_time = datetime(2020,3,3,15,58,46) + timedelta(seconds = 42463, microseconds=734375)
@@ -218,7 +230,7 @@ class burst_data:
         #plt.figure()
         #
         #plt.hist(Sxx)
-        ax = plt.figure()
+        fig, ax = plt.subplots()
         #Sxx = np.where(Sxx<5)
         normalize = mpl.colors.Normalize(vmin=downlimit, vmax=uplimit,  clip = True)
         lognorm = mpl.colors.LogNorm(vmin=downlimit, vmax = uplimit, clip=True)
@@ -226,7 +238,8 @@ class burst_data:
         #plt.pcolormesh(t, f, Sxx, clim = (0,uplimit))
         
         plt.ylabel('Frequency [Hz]')
-        plt.xlabel('Time [s]')
+        ax.set_xticklabels(["{:.4e}".format(t) for t in ax.get_xticks()])
+        plt.xlabel('Time [S]')
         
         #plt.title(f'MAG {name_str} Spectrogram @ {self.fs}Hz')
         plt.ylim((10e-2,10))
@@ -400,9 +413,9 @@ if __name__ == "__main__":
     #burst_object.moving_powerfreq(OBS,len_of_sections=1200,desired_freqs=[0.1, 0.119,7.9, 8.0], scaling='spectrum')
 
     #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.005) #0.005
-    burst_object.spectrogram(False, downlimit = 0, uplimit = 0.01)
-    #burst_object.burst_powerspectra(OBS, name = '_file2_alldays_fullnfft', ten_milly=False)
-    #burst_object.burst_powerspectra(False, name = '_file2_alldays_fullnfft', ten_milly=False)
+    #burst_object.spectrogram(False, downlimit = 0, uplimit = 0.01)
+    burst_object.burst_powerspectra(True, name = '_file2_alldays_fullnfft', ten_milly=False)
+    burst_object.burst_powerspectra(False, name = '_file2_alldays_fullnfft', ten_milly=False)
     #burst_object.burst_powerspectra(OBS)
     #burst_object.df_to_csv(name='file_2_day_1')
 
