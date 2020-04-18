@@ -160,19 +160,21 @@ def plot_new_curve(windows, day, instruments, probes, sample):
             #df = pd.DataFrame(data = d)
             #g = sns.FacetGrid(df, size = 5)
             #g.map(plt.errorbar, "xdata", "probe_x_tmp", "probe_x_tmp_err", fmt = 'bs')
+            
             params_list = [params_x, params_y, params_z]
             perr_list = [perr_x, perr_y, perr_z]
             errorbar_list = [probe_x_tmp, probe_x_tmp_err, probe_y_tmp, probe_y_tmp_err, probe_z_tmp, probe_z_tmp_err]
             j = 0
+            axis = ['X','Y','Z']
             for i in [0,1,2]:
                 correlation_matrix = np.corrcoef(xdata, errorbar_list[j])
                 correlation_xy = correlation_matrix[0,1]
                 r_squared = correlation_xy**2
                 plt.plot(xdata, params_list[i][0]*xdata + params_list[i][1], '-', color = u'#1f77b4', label=f'R2 = {r_squared}')
-                plt.errorbar(xdata, errorbar_list[j], yerr = errorbar_list[j+1], fmt = 'o', color = u'#1f77b4', capsize = cap_size, capthick = cap_thick, ecolor = error_colour, elinewidth = eline_width, markeredgecolor = "white", markersize = ms, label = f'X grad: {round(params_list[i][0],2)} $\pm$ {round(perr_list[i][0],2)} nT/A')#, int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
+                plt.errorbar(xdata, errorbar_list[j], yerr = errorbar_list[j+1], fmt = 'o', color = u'#1f77b4', capsize = cap_size, capthick = cap_thick, ecolor = error_colour, elinewidth = eline_width, markeredgecolor = "white", markersize = ms, label = f'{axis[i]} grad: {round(params_list[i][0],2)} $\pm$ {round(perr_list[i][0],2)} nT/A')#, int: {round(params_x[1],2)} ± {round(perr_x[1],2)}')
                 j += 2
                 plt.legend(loc="best")
-                plt.title(f'Day {day} - {inst} - Probe {probe} - {sample}Hz')
+                plt.title(f'Day {day} - {inst} - Probe {probe} {axis[i]} - {sample}Hz')
                 plt.xlabel('dI [A]')
                 plt.ylabel('dB [nT]')
                 plt.show()
@@ -191,8 +193,8 @@ def plot_new_curve(windows, day, instruments, probes, sample):
         
 if __name__ == "__main__":
     windows = True
-    day = 1
-    instruments = ['EUI', 'METIS']#, 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
+    day = 2
+    instruments = ['SoloHI']#, 'METIS', 'PHI', 'SWA', 'SoloHI', 'STIX', 'SPICE', 'EPD']
     probes = range(1,12)
     sample_rate = 1
 

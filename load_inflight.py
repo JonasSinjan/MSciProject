@@ -170,7 +170,7 @@ class burst_data:
         plt.plot(x, self.df['IBS_MAGNITUDE'], label = 'IBS')
         plt.plot(x, self.df['OBS_MAGNITUDE'], 'r', label = 'OBS')
         plt.ylabel('B [nT]')
-        plt.xlabel('Time [Seconds]')
+        plt.xlabel('Time [s]')
         plt.legend(loc='upper right')
         
         plt.suptitle('Magnetic Field with means removed')
@@ -405,8 +405,8 @@ if __name__ == "__main__":
     
     burst_object = burst_data()
     #burst_object.get_df_from_mat(file_one=False)
-    burst_object.get_df_from_mat(file_one=False, start = int(128*3600*0), end = int(128*3600*72)) #0.3 to 24, 24 to 47.6 and 48.3 to 72
-    #burst_object.plot_burst()
+    burst_object.get_df_from_mat(file_one=False, start = int(128*3600*0.583), end = int(128*3600*0.61)) #0.3 to 24, 24 to 47.6 and 48.3 to 72
+    burst_object.plot_burst()
     #OBS = True
 
     #burst_object.moving_powerfreq(OBS,len_of_sections=300,desired_freqs=[0.119, 0.238, 0.596, 0.357, 8.0, 16.0])
@@ -414,8 +414,8 @@ if __name__ == "__main__":
 
     #burst_object.spectrogram(OBS, downlimit = 0, uplimit = 0.005) #0.005
     #burst_object.spectrogram(False, downlimit = 0, uplimit = 0.01)
-    burst_object.burst_powerspectra(True, name = '_file2_alldays_fullnfft', ten_milly=False)
-    burst_object.burst_powerspectra(False, name = '_file2_alldays_fullnfft', ten_milly=False)
+    #burst_object.burst_powerspectra(True, name = '_file2_alldays_fullnfft', ten_milly=False)
+    #burst_object.burst_powerspectra(False, name = '_file2_alldays_fullnfft', ten_milly=False)
     #burst_object.burst_powerspectra(OBS)
     #burst_object.df_to_csv(name='file_2_day_1')
 

@@ -379,7 +379,7 @@ class mfsa_object:
             for col in self.collist[1:]:
                 #plt.scatter(current_df[f'{self.name} Current [A]'], df2[col])
                 sns.scatterplot(x=current_df[f'{self.name} Current [A]'], y = f'{col}', data = concatenate, label = f'{col}')
-            plt.title(f'{self.name} - Probe {self.probe} @ 1Hz, {self.start.date()}')
+            #plt.title(f'{self.name} - Probe {self.probe} @ 1Hz, {self.start.date()}')
 
             plt.xlabel('Current [A]')
             plt.ylabel('dB [nT]')
@@ -512,15 +512,19 @@ if __name__ == "__main__":
     #daytwo.spectrogram(uplimit = 0.1)
     #daytwo.powerspectra()
 
-    eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
-    eui.get_data()
+    #eui = mfsa_object(day, datetime(2019,6,24,9,24), datetime(2019,6,24,10,9), probe, sampling_fs, timezone = 'MAG', name = 'EUI')
+    #eui.get_data()
     #eui.plot_B_v_I()
     #eui.plot()
     #eui.moving_powerfreq(True, len_of_sections=60, desired_freqs=[8.0, 16.667])
     
     #eui.spectrogram()
-    eui.powerspectra()
+    #eui.powerspectra()
 
+    solohi = mfsa_object(day, datetime(2019,6,24,11,15), datetime(2019,6,24,11,40), probe, sampling_fs, timezone = 'MAG', name = 'SoloHI')
+    solohi.get_data()
+    #solohi.spectrogram(div = 50)
+    solohi.powerspectra()
 
     #daytwo = mfsa_object(day, datetime(2019,6,24,6,30), datetime(2019,6,24,15,0), probe, sampling_fs, timezone = 'MAG', name = 'Full_Day_2') #7:27 normally start, 15:00 end
     #daytwo.get_data()

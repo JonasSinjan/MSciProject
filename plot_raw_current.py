@@ -56,6 +56,6 @@ def plot_raw(windows, inst, daynumber, plot = False):
 if __name__ == "__main__":
     windows = True
     day = 2
-    inst = 'METIS'
+    inst = 'SoloHI'
 
     plot_raw(windows, inst, day, plot = True)

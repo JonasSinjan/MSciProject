@@ -33,6 +33,14 @@ def return_ypanel_loc(): #x,y,z distance from centre of -y panel
             probe[index] = probe[index] - y_panel[index]
     return probe_list
 
+def return_solohi_loc(): #x,y,z distance from centre of -y panel
+    probe_list = probe_loc()
+    solohi = [1, -1, -0.326]
+    
+    for probe in probe_list:
+        for index in [0,1,2]:
+            probe[index] = probe[index] - solohi[index]
+    return probe_list
 
 def return_ypanel_dist(probe_list):
     distance = []
