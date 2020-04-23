@@ -399,8 +399,8 @@ class processing:
         elif scaling == 'spectrum':
             downlim = 10e-7
         """
-        uplim = 5e1
-        downlim = 10e-4
+        uplim = 5e0
+        downlim = 1e-1
         ax1 = plt.subplot(221)
         plot_power(f_x, fs, Pxx_x, probe_x, 'b')
         plt.ylim(downlim, uplim)
